@@ -200,6 +200,7 @@
             text-align: center;
         }
 
+
         .welcome-screen h2 {
             color: #2c3e50;
             margin-bottom: 20px;
@@ -1024,38 +1025,39 @@
                 <button class="icon-btn" id="toolbar-toggle" title="Toggle toolbar" style="font-size: 1.5em;">▼</button>
             </div>
 
-            <div id="toolbar-content" class="quick-modes">
-                <button class="mode-btn" data-mode="reading">📖 Reading</button>
-                <button class="mode-btn" data-mode="study">📝 Study</button>
-                <button class="mode-btn" data-mode="church">⛪ Church</button>
-                <button class="mode-btn" data-mode="custom">⚙️ Custom</button>
+            <div id="toolbar-content">
+                <div class="quick-modes">
+                    <button class="mode-btn" data-mode="reading">📖 Reading</button>
+                    <button class="mode-btn" data-mode="study">📝 Study</button>
+                    <button class="mode-btn" data-mode="church">⛪ Church</button>
+                    <button class="mode-btn" data-mode="custom">⚙️ Custom</button>
 
-                <div class="mode-divider"></div>
+                    <div class="mode-divider"></div>
 
-                <div class="font-controls">
-                    <span>Notes:</span>
-                    <select id="annotation-set-select" style="padding: 6px 12px; background: #34495e; color: white; border: none; border-radius: 4px; font-size: 0.9em; cursor: pointer;">
-                        <option value="Study">Study</option>
-                        <option value="Church">Church</option>
-                        <option value="HomeGroup">Home Group</option>
-                        <option value="Personal">Personal</option>
-                    </select>
+                    <div class="font-controls">
+                        <span>Notes:</span>
+                        <select id="annotation-set-select" style="padding: 6px 12px; background: #34495e; color: white; border: none; border-radius: 4px; font-size: 0.9em; cursor: pointer;">
+                            <option value="Study">Study</option>
+                            <option value="Church">Church</option>
+                            <option value="HomeGroup">Home Group</option>
+                            <option value="Personal">Personal</option>
+                        </select>
+                    </div>
+
+                    <div class="mode-divider"></div>
+
+                    <div class="font-controls">
+                        <span>Font:</span>
+                        <button class="icon-btn" id="font-decrease" title="Decrease font size">-</button>
+                        <span class="font-size-display" id="font-size-label">100%</span>
+                        <button class="icon-btn" id="font-increase" title="Increase font size">+</button>
+                    </div>
+
+                    <button class="icon-btn" id="dark-mode-toggle" title="Toggle dark mode">🌙</button>
                 </div>
 
-                <div class="mode-divider"></div>
-
-                <div class="font-controls">
-                    <span>Font:</span>
-                    <button class="icon-btn" id="font-decrease" title="Decrease font size">-</button>
-                    <span class="font-size-display" id="font-size-label">100%</span>
-                    <button class="icon-btn" id="font-increase" title="Increase font size">+</button>
-                </div>
-
-                <button class="icon-btn" id="dark-mode-toggle" title="Toggle dark mode">🌙</button>
-            </div>
-
-            <!-- Navigation (hidden until folder loaded) -->
-            <div class="navigation hidden" id="navigation">
+                <!-- Navigation -->
+            <div class="navigation" id="navigation">
                 <button class="nav-btn" id="prev-chapter" disabled>
                     ← Previous
                 </button>
@@ -1136,8 +1138,8 @@
                     </div>
                 </div>
             </div>
-            </div>
-        </div>
+            </div> <!-- End toolbar-content -->
+        </div> <!-- End toolbar -->
 
         <!-- Welcome screen (shown on first load) -->
         <div class="welcome-screen" id="welcome-screen">
