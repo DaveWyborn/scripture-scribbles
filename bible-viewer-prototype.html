@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bible Markdown Viewer - Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .toolbar {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .toolbar h1 {
+            font-size: 1.4em;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #ecf0f1;
+        }
+
+        .quick-modes {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #34495e;
+            flex-wrap: wrap;
+        }
+
+        .mode-divider {
+            width: 1px;
+            height: 30px;
+            background: #34495e;
+            margin: 0 5px;
+        }
+
+        .mode-btn {
+            padding: 8px 16px;
+            background: #34495e;
+            border: 2px solid transparent;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .mode-btn:hover {
+            background: #4a5f7f;
+        }
+
+        .mode-btn.active {
+            background: #3498db;
+            border-color: #5dade2;
+        }
+
+        .font-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .font-controls span {
+            font-size: 0.85em;
+        }
+
+        .icon-btn {
+            background: #34495e;
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #4a5f7f;
+        }
+
+        .font-size-display {
+            min-width: 45px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px 0;
+            user-select: none;
+        }
+
+        .settings-header:hover {
+            opacity: 0.8;
+        }
+
+        .collapse-icon {
+            transition: transform 0.2s;
+            font-size: 0.9em;
+        }
+
+        .collapse-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+        }
+
+        .controls.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .control-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-section-title {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            color: #95a5a6;
+            letter-spacing: 0.5px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 0.9em;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .control-group input[type="checkbox"] {
+            cursor: pointer;
+        }
+
+        .load-section {
+            padding: 30px;
+            background: #ecf0f1;
+            border-bottom: 1px solid #bdc3c7;
+        }
+
+        .load-section textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            border: 2px solid #bdc3c7;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .load-section button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .load-section button:hover {
+            background: #2980b9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .center-me {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin: 20px 0;
+            padding: 10px;
+            border-top: 1px solid #ecf0f1;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .verse-container {
+            display: flex;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .verse-number {
+            min-width: 40px;
+            font-weight: bold;
+            color: #e74c3c;
+            font-size: 0.85em;
+            padding-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .verse-text {
+            flex: 1;
+            position: relative;
+        }
+
+        /* Margin indicators - build gradient based on what's enabled */
+        .verse-text::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: transparent;
+        }
+
+        /* Highlight marker (yellow) */
+        body.show-highlight-markers .verse-text.has-highlight::before {
+            background: #ffc107;
+        }
+
+        /* Note marker (blue) */
+        body.show-note-markers .verse-text.has-note::before {
+            background: #2196f3;
+        }
+
+        /* Tag marker (purple) */
+        body.show-tag-markers .verse-text.has-tag::before {
+            background: #9c27b0;
+        }
+
+        /* Two markers: highlight + note */
+        body.show-highlight-markers.show-note-markers .verse-text.has-highlight.has-note::before {
+            background: linear-gradient(to bottom, #ffc107 50%, #2196f3 50%);
+        }
+
+        /* Two markers: highlight + tag */
+        body.show-highlight-markers.show-tag-markers .verse-text.has-highlight.has-tag::before {
+            background: linear-gradient(to bottom, #ffc107 50%, #9c27b0 50%);
+        }
+
+        /* Two markers: note + tag */
+        body.show-note-markers.show-tag-markers .verse-text.has-note.has-tag::before {
+            background: linear-gradient(to bottom, #2196f3 50%, #9c27b0 50%);
+        }
+
+        /* Three markers: highlight + note + tag */
+        body.show-highlight-markers.show-note-markers.show-tag-markers .verse-text.has-highlight.has-note.has-tag::before {
+            background: linear-gradient(to bottom, #ffc107 33.33%, #2196f3 33.33%, #2196f3 66.66%, #9c27b0 66.66%);
+        }
+
+        /* Combinations with highlight + note (no tag) */
+        body.show-highlight-markers.show-note-markers:not(.show-tag-markers) .verse-text.has-highlight.has-note.has-tag::before {
+            background: linear-gradient(to bottom, #ffc107 50%, #2196f3 50%);
+        }
+
+        /* Combinations with highlight + tag (no note) */
+        body.show-highlight-markers.show-tag-markers:not(.show-note-markers) .verse-text.has-highlight.has-note.has-tag::before {
+            background: linear-gradient(to bottom, #ffc107 50%, #9c27b0 50%);
+        }
+
+        /* Combinations with note + tag (no highlight) */
+        body.show-note-markers.show-tag-markers:not(.show-highlight-markers) .verse-text.has-highlight.has-note.has-tag::before {
+            background: linear-gradient(to bottom, #2196f3 50%, #9c27b0 50%);
+        }
+
+        /* Full highlight mode - yellow for anything with highlight, note, or tag */
+        body.highlight-mode-full .verse-text.has-highlight,
+        body.highlight-mode-full .verse-text.has-note,
+        body.highlight-mode-full .verse-text.has-tag {
+            background: #fff3cd;
+            padding: 5px;
+            margin: -5px;
+            border-radius: 3px;
+        }
+
+        /* Margin-only mode - just use the ::before indicators */
+        body.highlight-mode-margin .verse-text.has-note,
+        body.highlight-mode-margin .verse-text.has-tag {
+            background: transparent;
+        }
+
+        /* Icons for notes/tags */
+        .verse-indicators {
+            display: inline-flex;
+            gap: 4px;
+            margin-left: 8px;
+            font-size: 0.85em;
+        }
+
+        .indicator-note,
+        .indicator-tag {
+            opacity: 0.6;
+        }
+
+        .indicator-note {
+            color: #2196f3;
+        }
+
+        .indicator-tag {
+            color: #9c27b0;
+        }
+
+        .highlight-1 { background-color: #ffeb3b; }
+        .highlight-2 { background-color: #a5d6a7; }
+        .highlight-3 { background-color: #f8bbd0; }
+        .highlight-4 { background-color: #81d4fa; }
+        .highlight-5 { background-color: #ffcc80; }
+        .highlight-6 { background-color: #ce93d8; }
+
+        .note {
+            border-left: 4px solid #2196f3;
+            padding: 10px 15px;
+            margin: 10px 0 10px 40px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        /* Background highlight mode for notes */
+        body.note-style-highlighted .note {
+            background: #e3f2fd;
+        }
+
+        body.note-style-plain .note {
+            background: transparent;
+            border-left: 4px solid #2196f3;
+        }
+
+        .note::before {
+            content: "ⓝ Note";
+            font-weight: bold;
+            color: #1976d2;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85em;
+        }
+
+        .note-verses {
+            color: #1976d2;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .tags {
+            border-left: 4px solid #9c27b0;
+            padding: 8px 15px;
+            margin: 10px 0 10px 40px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Background highlight mode for tags */
+        body.tag-style-highlighted .tags {
+            background: #f3e5f5;
+        }
+
+        body.tag-style-plain .tags {
+            background: transparent;
+            border-left: 4px solid #9c27b0;
+        }
+
+        .tags::before {
+            content: "ⓣ Tags";
+            font-weight: bold;
+            color: #7b1fa2;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85em;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #ce93d8;
+            color: #4a148c;
+            padding: 2px 8px;
+            margin: 2px;
+            border-radius: 12px;
+            font-size: 0.85em;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .wikilink {
+            color: #3498db;
+            text-decoration: none;
+            border-bottom: 1px dotted #3498db;
+        }
+
+        .wikilink:hover {
+            color: #2980b9;
+            border-bottom: 1px solid #2980b9;
+        }
+
+        /* Hide classes when toggles are off */
+        body:not(.show-highlights) .highlight-1,
+        body:not(.show-highlights) .highlight-2,
+        body:not(.show-highlights) .highlight-3,
+        body:not(.show-highlights) .highlight-4,
+        body:not(.show-highlights) .highlight-5,
+        body:not(.show-highlights) .highlight-6 {
+            background-color: transparent !important;
+        }
+
+        body:not(.show-notes) .note {
+            display: none;
+        }
+
+        body:not(.show-tags) .tags {
+            display: none;
+        }
+
+        body:not(.show-indicators) .verse-indicators {
+            display: none;
+        }
+
+        /* Dark mode */
+        body.dark-mode {
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .container {
+            background: #2d2d2d;
+        }
+
+        body.dark-mode .load-section {
+            background: #1f1f1f;
+            border-bottom-color: #3a3a3a;
+        }
+
+        body.dark-mode .load-section textarea {
+            background: #2d2d2d;
+            color: #e0e0e0;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .content {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode h1 {
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .center-me {
+            color: #999;
+            border-top-color: #3a3a3a;
+            border-bottom-color: #3a3a3a;
+        }
+
+        body.dark-mode .verse-number {
+            color: #e74c3c;
+        }
+
+        body.dark-mode .note {
+            border-left-color: #2196f3;
+        }
+
+        body.dark-mode.note-style-highlighted .note {
+            background: #1a2a3a;
+        }
+
+        body.dark-mode .tags {
+            border-left-color: #9c27b0;
+        }
+
+        body.dark-mode.tag-style-highlighted .tags {
+            background: #2a1a2a;
+        }
+
+        body.dark-mode .tag {
+            background: #4a2a5a;
+            color: #d8a8e8;
+        }
+
+        body.dark-mode.highlight-mode-full .verse-text.has-highlight,
+        body.dark-mode.highlight-mode-full .verse-text.has-note,
+        body.dark-mode.highlight-mode-full .verse-text.has-tag {
+            background: #3a3520;
+        }
+
+        body.dark-mode .wikilink {
+            color: #5dade2;
+            border-bottom-color: #5dade2;
+        }
+
+        body.dark-mode .wikilink:hover {
+            color: #85c1e9;
+            border-bottom-color: #85c1e9;
+        }
+
+        /* Dark mode highlight colours - darker backgrounds for visibility */
+        body.dark-mode .highlight-1 { background-color: #665500; } /* dark yellow */
+        body.dark-mode .highlight-2 { background-color: #2d5a2d; } /* dark green */
+        body.dark-mode .highlight-3 { background-color: #6b3d52; } /* dark pink */
+        body.dark-mode .highlight-4 { background-color: #2d5a6b; } /* dark blue */
+        body.dark-mode .highlight-5 { background-color: #6b4d2d; } /* dark orange */
+        body.dark-mode .highlight-6 { background-color: #5a3d6b; } /* dark purple */
+
+        /* Font size control */
+        .content {
+            font-size: 16px;
+        }
+
+        body.font-small .content {
+            font-size: 14px;
+        }
+
+        body.font-large .content {
+            font-size: 18px;
+        }
+
+        body.font-xlarge .content {
+            font-size: 20px;
+        }
+
+        body.font-xxlarge .content {
+            font-size: 22px;
+        }
+    </style>
+</head>
+<body class="show-highlights show-notes show-tags show-indicators show-highlight-markers show-note-markers show-tag-markers highlight-mode-margin note-style-highlighted tag-style-highlighted">
+    <div class="container">
+        <div class="toolbar">
+            <h1>Scripture Scribbles Reader</h1>
+
+            <div class="quick-modes">
+                <button class="mode-btn" data-mode="reading">📖 Reading</button>
+                <button class="mode-btn" data-mode="study">📝 Study</button>
+                <button class="mode-btn" data-mode="church">⛪ Church</button>
+                <button class="mode-btn" data-mode="custom">⚙️ Custom</button>
+
+                <div class="mode-divider"></div>
+
+                <div class="font-controls">
+                    <span>Font:</span>
+                    <button class="icon-btn" id="font-decrease" title="Decrease font size">-</button>
+                    <span class="font-size-display" id="font-size-label">100%</span>
+                    <button class="icon-btn" id="font-increase" title="Increase font size">+</button>
+                </div>
+
+                <button class="icon-btn" id="dark-mode-toggle" title="Toggle dark mode">🌙</button>
+            </div>
+
+            <div class="settings-header" id="settings-toggle">
+                <span class="collapse-icon collapsed">▼</span>
+                <span style="font-size: 0.9em;">Advanced Settings</span>
+            </div>
+
+            <div class="controls collapsed" id="settings-panel">
+                <div class="control-section">
+                    <div class="control-section-title">Text</div>
+                    <div class="control-group">
+                        <input type="checkbox" id="toggle-highlights" checked>
+                        <label for="toggle-highlights">Show Highlights</label>
+                    </div>
+                    <div class="control-group">
+                        <input type="checkbox" id="toggle-highlight-markers" checked>
+                        <label for="toggle-highlight-markers">Highlight Markers</label>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="control-section-title">Notes</div>
+                    <div class="control-group">
+                        <input type="checkbox" id="toggle-notes" checked>
+                        <label for="toggle-notes">Show Notes</label>
+                    </div>
+                    <div class="control-group">
+                        <input type="checkbox" id="toggle-note-bg" checked>
+                        <label for="toggle-note-bg">Note Background</label>
+                    </div>
+                    <div class="control-group">
+                        <input type="checkbox" id="toggle-note-markers" checked>
+                        <label for="toggle-note-markers">Note Markers</label>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="control-section-title">Tags</div>
+                    <div class="control-group">
+                        <input type="checkbox" id="toggle-tags" checked>
+                        <label for="toggle-tags">Show Tags</label>
+                    </div>
+                    <div class="control-group">
+                        <input type="checkbox" id="toggle-tag-bg" checked>
+                        <label for="toggle-tag-bg">Tag Background</label>
+                    </div>
+                    <div class="control-group">
+                        <input type="checkbox" id="toggle-tag-markers" checked>
+                        <label for="toggle-tag-markers">Tag Markers</label>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="control-section-title">Indicators</div>
+                    <div class="control-group">
+                        <input type="checkbox" id="toggle-indicators" checked>
+                        <label for="toggle-indicators">Icons (ⓝ ⓣ)</label>
+                    </div>
+                    <div class="control-group">
+                        <input type="checkbox" id="toggle-full-highlight">
+                        <label for="toggle-full-highlight">Full Highlight</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="load-section">
+            <textarea id="markdown-input" placeholder="Paste your markdown here..."></textarea>
+            <button onclick="renderMarkdown()">Render</button>
+        </div>
+
+        <div class="content" id="output"></div>
+    </div>
+
+    <script>
+        // View mode presets
+        const viewModes = {
+            reading: {
+                name: 'Reading',
+                highlights: false,
+                highlightMarkers: false,
+                notes: false,
+                noteBg: false,
+                noteMarkers: false,
+                tags: false,
+                tagBg: false,
+                tagMarkers: false,
+                indicators: false,
+                fullHighlight: false
+            },
+            study: {
+                name: 'Study',
+                highlights: true,
+                highlightMarkers: true,
+                notes: true,
+                noteBg: true,
+                noteMarkers: true,
+                tags: true,
+                tagBg: true,
+                tagMarkers: true,
+                indicators: true,
+                fullHighlight: false
+            },
+            church: {
+                name: 'Church',
+                highlights: false,
+                highlightMarkers: false,
+                notes: false,
+                noteBg: false,
+                noteMarkers: true,
+                tags: false,
+                tagBg: false,
+                tagMarkers: false,
+                indicators: false,
+                fullHighlight: false
+            }
+        };
+
+        let currentMode = 'study'; // Start in study mode
+        let currentFontSize = 100;
+
+        // Apply view mode
+        function applyViewMode(mode) {
+            if (mode === 'custom') {
+                currentMode = 'custom';
+                updateModeButtons();
+                // Open advanced settings when Custom is clicked
+                const panel = document.getElementById('settings-panel');
+                const icon = document.querySelector('.collapse-icon');
+                if (panel.classList.contains('collapsed')) {
+                    panel.classList.remove('collapsed');
+                    icon.classList.remove('collapsed');
+                }
+                return;
+            }
+
+            if (currentMode === mode) return; // Already in this mode
+
+            const config = viewModes[mode];
+            if (!config) return;
+
+            currentMode = mode;
+
+            // Set flag to prevent switching to custom mode during programmatic changes
+            isProgrammaticChange = true;
+
+            // Update checkboxes
+            document.getElementById('toggle-highlights').checked = config.highlights;
+            document.getElementById('toggle-highlight-markers').checked = config.highlightMarkers;
+            document.getElementById('toggle-notes').checked = config.notes;
+            document.getElementById('toggle-note-bg').checked = config.noteBg;
+            document.getElementById('toggle-note-markers').checked = config.noteMarkers;
+            document.getElementById('toggle-tags').checked = config.tags;
+            document.getElementById('toggle-tag-bg').checked = config.tagBg;
+            document.getElementById('toggle-tag-markers').checked = config.tagMarkers;
+            document.getElementById('toggle-indicators').checked = config.indicators;
+            document.getElementById('toggle-full-highlight').checked = config.fullHighlight;
+
+            // Trigger change events
+            document.getElementById('toggle-highlights').dispatchEvent(new Event('change'));
+            document.getElementById('toggle-highlight-markers').dispatchEvent(new Event('change'));
+            document.getElementById('toggle-notes').dispatchEvent(new Event('change'));
+            document.getElementById('toggle-note-bg').dispatchEvent(new Event('change'));
+            document.getElementById('toggle-note-markers').dispatchEvent(new Event('change'));
+            document.getElementById('toggle-tags').dispatchEvent(new Event('change'));
+            document.getElementById('toggle-tag-bg').dispatchEvent(new Event('change'));
+            document.getElementById('toggle-tag-markers').dispatchEvent(new Event('change'));
+            document.getElementById('toggle-indicators').dispatchEvent(new Event('change'));
+            document.getElementById('toggle-full-highlight').dispatchEvent(new Event('change'));
+
+            // Reset flag
+            isProgrammaticChange = false;
+
+            updateModeButtons();
+        }
+
+        function updateModeButtons() {
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === currentMode);
+            });
+        }
+
+        // Mode button clicks
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                applyViewMode(btn.dataset.mode);
+            });
+        });
+
+        // Settings collapse/expand
+        document.getElementById('settings-toggle').addEventListener('click', function() {
+            const panel = document.getElementById('settings-panel');
+            const icon = this.querySelector('.collapse-icon');
+
+            panel.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed');
+        });
+
+        // Dark mode
+        document.getElementById('dark-mode-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            this.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        });
+
+        // Font size controls
+        const fontSizes = [14, 16, 18, 20, 22];
+        const fontClasses = ['font-small', '', 'font-large', 'font-xlarge', 'font-xxlarge'];
+        let fontSizeIndex = 1; // Start at 100% (16px)
+
+        function updateFontSize() {
+            // Remove all font classes
+            fontClasses.forEach(cls => {
+                if (cls) document.body.classList.remove(cls);
+            });
+
+            // Add current font class
+            if (fontClasses[fontSizeIndex]) {
+                document.body.classList.add(fontClasses[fontSizeIndex]);
+            }
+
+            // Update display
+            const percentage = Math.round((fontSizes[fontSizeIndex] / 16) * 100);
+            document.getElementById('font-size-label').textContent = percentage + '%';
+
+            // Disable buttons at limits
+            document.getElementById('font-decrease').disabled = fontSizeIndex === 0;
+            document.getElementById('font-increase').disabled = fontSizeIndex === fontSizes.length - 1;
+        }
+
+        document.getElementById('font-decrease').addEventListener('click', () => {
+            if (fontSizeIndex > 0) {
+                fontSizeIndex--;
+                updateFontSize();
+            }
+        });
+
+        document.getElementById('font-increase').addEventListener('click', () => {
+            if (fontSizeIndex < fontSizes.length - 1) {
+                fontSizeIndex++;
+                updateFontSize();
+            }
+        });
+
+        // Track if we're programmatically changing toggles (from mode buttons)
+        let isProgrammaticChange = false;
+
+        // Toggle controls
+        // When user manually changes a toggle, switch to custom mode
+        function switchToCustomMode() {
+            if (!isProgrammaticChange && currentMode !== 'custom') {
+                currentMode = 'custom';
+                updateModeButtons();
+            }
+        }
+
+        // Toggle controls
+        document.getElementById('toggle-highlights').addEventListener('change', function(e) {
+            document.body.classList.toggle('show-highlights', e.target.checked);
+            switchToCustomMode();
+        });
+
+        document.getElementById('toggle-notes').addEventListener('change', function(e) {
+            document.body.classList.toggle('show-notes', e.target.checked);
+            switchToCustomMode();
+        });
+
+        document.getElementById('toggle-note-bg').addEventListener('change', function(e) {
+            if (e.target.checked) {
+                document.body.classList.add('note-style-highlighted');
+                document.body.classList.remove('note-style-plain');
+            } else {
+                document.body.classList.add('note-style-plain');
+                document.body.classList.remove('note-style-highlighted');
+            }
+            switchToCustomMode();
+        });
+
+        document.getElementById('toggle-tags').addEventListener('change', function(e) {
+            document.body.classList.toggle('show-tags', e.target.checked);
+            switchToCustomMode();
+        });
+
+        document.getElementById('toggle-tag-bg').addEventListener('change', function(e) {
+            if (e.target.checked) {
+                document.body.classList.add('tag-style-highlighted');
+                document.body.classList.remove('tag-style-plain');
+            } else {
+                document.body.classList.add('tag-style-plain');
+                document.body.classList.remove('tag-style-highlighted');
+            }
+            switchToCustomMode();
+        });
+
+        document.getElementById('toggle-indicators').addEventListener('change', function(e) {
+            document.body.classList.toggle('show-indicators', e.target.checked);
+            switchToCustomMode();
+        });
+
+        document.getElementById('toggle-highlight-markers').addEventListener('change', function(e) {
+            document.body.classList.toggle('show-highlight-markers', e.target.checked);
+            switchToCustomMode();
+        });
+
+        document.getElementById('toggle-note-markers').addEventListener('change', function(e) {
+            document.body.classList.toggle('show-note-markers', e.target.checked);
+            switchToCustomMode();
+        });
+
+        document.getElementById('toggle-tag-markers').addEventListener('change', function(e) {
+            document.body.classList.toggle('show-tag-markers', e.target.checked);
+            switchToCustomMode();
+        });
+
+        document.getElementById('toggle-full-highlight').addEventListener('change', function(e) {
+            if (e.target.checked) {
+                document.body.classList.add('highlight-mode-full');
+                document.body.classList.remove('highlight-mode-margin');
+            } else {
+                document.body.classList.add('highlight-mode-margin');
+                document.body.classList.remove('highlight-mode-full');
+            }
+            switchToCustomMode();
+        });
+
+        // Parser
+        function parseVerseReference(ref) {
+            // Returns array of verse numbers
+            // Handles: "9", "9-12", "9,12", "3:12-4:5"
+            if (!ref) return null;
+
+            if (ref.includes(':')) {
+                // Cross-chapter reference - for now, return as-is
+                return { type: 'cross-chapter', ref };
+            }
+
+            if (ref.includes(',')) {
+                return { type: 'multiple', verses: ref.split(',').map(v => parseInt(v.trim())) };
+            }
+
+            if (ref.includes('-')) {
+                const [start, end] = ref.split('-').map(v => parseInt(v.trim()));
+                return { type: 'range', start, end };
+            }
+
+            return { type: 'single', verse: parseInt(ref) };
+        }
+
+        function renderMarkdown() {
+            const input = document.getElementById('markdown-input').value;
+            const lines = input.split('\n');
+            let html = '';
+            let currentVerse = null;
+            let verseNotes = {}; // Track which verses have notes
+            let verseTags = {}; // Track which verses have tags
+            let verseHighlights = {}; // Track which verses have highlights
+
+            // First pass - identify verses with notes, tags, and highlights
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+
+                // Check verse headers to track current verse
+                if (line.startsWith('###### ')) {
+                    currentVerse = line.substring(7).trim();
+                }
+
+                // Check if verse text (next line after ######) has highlights
+                if (currentVerse && line.startsWith('###### ')) {
+                    if (i + 1 < lines.length) {
+                        const nextLine = lines[i + 1].trim();
+                        // Check if line contains highlight syntax ±1{...} through ±6{...}
+                        if (/±[1-6]\d*{.+?}/.test(nextLine)) {
+                            verseHighlights[parseInt(currentVerse)] = true;
+                        }
+                    }
+                }
+
+                // Match notes: ±nVERSES{content}
+                const noteMatch = line.match(/^±n(\d+(?:-\d+)?(?:,\d+)*|\d+:\d+(?:-\d+:\d+)?)?{(.+?)}$/);
+                if (noteMatch) {
+                    const verseRef = noteMatch[1] || currentVerse;
+                    if (verseRef) {
+                        const parsed = parseVerseReference(verseRef);
+                        if (parsed) {
+                            if (parsed.type === 'single') {
+                                verseNotes[parsed.verse] = true;
+                            } else if (parsed.type === 'range') {
+                                for (let v = parsed.start; v <= parsed.end; v++) {
+                                    verseNotes[v] = true;
+                                }
+                            } else if (parsed.type === 'multiple') {
+                                parsed.verses.forEach(v => verseNotes[v] = true);
+                            }
+                        }
+                    }
+                }
+
+                // Match tags: ±tVERSES{content}
+                const tagMatch = line.match(/^±t(\d+(?:-\d+)?(?:,\d+)*)?{(.+?)}$/);
+                if (tagMatch) {
+                    const verseRef = tagMatch[1] || currentVerse;
+                    if (verseRef) {
+                        const parsed = parseVerseReference(verseRef);
+                        if (parsed) {
+                            if (parsed.type === 'single') {
+                                verseTags[parsed.verse] = true;
+                            } else if (parsed.type === 'range') {
+                                for (let v = parsed.start; v <= parsed.end; v++) {
+                                    verseTags[v] = true;
+                                }
+                            } else if (parsed.type === 'multiple') {
+                                parsed.verses.forEach(v => verseTags[v] = true);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Second pass - render
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+
+                if (!line) continue;
+
+                // Title (H1)
+                if (line.startsWith('# ') && !line.startsWith('##')) {
+                    html += `<h1>${line.substring(2)}</h1>`;
+                    continue;
+                }
+
+                // Navigation links
+                if (line.includes('[[') && line.includes('center-me')) {
+                    const navText = line.replace(/<span class="center-me">|<\/span>/g, '');
+                    html += `<div class="center-me">${navText}</div>`;
+                    continue;
+                }
+
+                // Verse (H6)
+                if (line.startsWith('###### ')) {
+                    const verseNum = line.substring(7).trim();
+                    currentVerse = verseNum;
+
+                    // Get verse text from next line
+                    let verseText = '';
+                    if (i + 1 < lines.length) {
+                        verseText = lines[i + 1].trim();
+                        i++; // Skip the verse text line
+                    }
+
+                    // Process highlights in verse text
+                    verseText = processHighlights(verseText, currentVerse);
+
+                    // Check if this verse has highlights/notes/tags
+                    const hasHighlight = verseHighlights[parseInt(currentVerse)];
+                    const hasNote = verseNotes[parseInt(currentVerse)];
+                    const hasTag = verseTags[parseInt(currentVerse)];
+
+                    // Build indicators
+                    let indicators = '';
+                    if (hasNote || hasTag) {
+                        indicators = '<span class="verse-indicators">';
+                        if (hasNote) indicators += '<span class="indicator-note">ⓝ</span>';
+                        if (hasTag) indicators += '<span class="indicator-tag">ⓣ</span>';
+                        indicators += '</span>';
+                    }
+
+                    let classes = 'verse-text';
+                    if (hasHighlight) classes += ' has-highlight';
+                    if (hasNote) classes += ' has-note';
+                    if (hasTag) classes += ' has-tag';
+
+                    html += `
+                        <div class="verse-container">
+                            <div class="verse-number">${verseNum}</div>
+                            <div class="${classes}">${verseText}${indicators}</div>
+                        </div>
+                    `;
+                    continue;
+                }
+
+                // Notes: ±nVERSES{content} or ±n{content}
+                const noteMatch = line.match(/^±n(\d+(?:-\d+)?(?:,\d+)*|\d+:\d+(?:-\d+:\d+)?)?{(.+?)}$/);
+                if (noteMatch) {
+                    const verseRef = noteMatch[1] || currentVerse;
+                    const content = noteMatch[2];
+                    let verseLabel = '';
+
+                    if (verseRef) {
+                        const parsed = parseVerseReference(verseRef);
+                        if (parsed) {
+                            if (parsed.type === 'single') {
+                                verseLabel = `Verse ${parsed.verse}`;
+                            } else if (parsed.type === 'range') {
+                                verseLabel = `Verses ${parsed.start}-${parsed.end}`;
+                            } else if (parsed.type === 'multiple') {
+                                verseLabel = `Verses ${parsed.verses.join(', ')}`;
+                            } else if (parsed.type === 'cross-chapter') {
+                                verseLabel = parsed.ref;
+                            }
+                        }
+                    }
+
+                    html += `
+                        <div class="note">
+                            ${verseLabel ? `<div class="note-verses">${verseLabel}</div>` : ''}
+                            ${processWikiLinks(content)}
+                        </div>
+                    `;
+                    continue;
+                }
+
+                // Tags: ±tVERSES{content} or ±t{content}
+                const tagMatch = line.match(/^±t(\d+(?:-\d+)?(?:,\d+)*)?{(.+?)}$/);
+                if (tagMatch) {
+                    const verseRef = tagMatch[1] || currentVerse;
+                    const tagContent = tagMatch[2];
+                    const tags = tagContent.split(/\s+/).filter(t => t.startsWith('#'));
+
+                    html += `
+                        <div class="tags">
+                            ${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    `;
+                    continue;
+                }
+            }
+
+            document.getElementById('output').innerHTML = html;
+        }
+
+        function processHighlights(text, verseNum) {
+            // Match: ±1VERSES{content} or ±1{content}
+            const regex = /±(\d)(\d+(?:-\d+)?(?:,\d+)*)?{(.+?)}/g;
+
+            return text.replace(regex, (match, color, verses, content) => {
+                return `<span class="highlight-${color}">${content}</span>`;
+            });
+        }
+
+        function processWikiLinks(text) {
+            // Convert [[Link|Display]] or [[Link]] to clickable links
+            return text.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, function(match, link, display) {
+                const displayText = display || link;
+                // For now, make them clickable but show alert (Phase 2 will add actual navigation)
+                return `<a href="#" class="wikilink" data-link="${link}" onclick="handleWikiLink('${link}', event); return false;">${displayText}</a>`;
+            });
+        }
+
+        function handleWikiLink(link, event) {
+            event.preventDefault();
+            alert('WikiLink navigation coming in Phase 2!\n\nLink to: ' + link);
+            // Phase 2: Load the actual file based on link
+        }
+
+        // Sample data
+        const sampleMarkdown = `# 1 Peter 2
+<span class="center-me">[[1 Peter 1| ← Previous]] | [[Scripture/🎚 A Faithful Version/046 - 1 Peter/1 Peter|1 Peter]] | [[1 Peter 3| Next →]]</span>
+
+###### 1
+Therefore, having put away all ±1{wickedness}, and all deceit, and hypocrisies and jealousies, and all slanders,
+±n1{Important - this is a call to put away sin actively, not passively wait for sanctification}
+±t1{#holiness #sanctification #action}
+
+###### 2
+As newborn babes, yearn after the pure spiritual milk, that by it you may grow,
+
+###### 3
+If you yourselves have indeed tasted that the ±2{Lord is gracious}.
+±n3{Cross-reference to Psalm 34:8 "taste and see that the LORD is good"}
+±t3{#grace #tasting}
+
+###### 4
+To Whom coming, as to a ±24{living Stone}, rejected indeed by men, but chosen by God, and precious,
+±n4{Jesus as the living Stone - cornerstone metaphor throughout Scripture}
+±t4{#Jesus #cornerstone #metaphor}
+
+###### 5
+You also, as living stones, are being built up a spiritual house, a holy priesthood, to offer up spiritual sacrifices acceptable to God through Jesus Christ.
+±n5-6{The church as spiritual temple - we are living stones built on Christ the cornerstone. Compare to [[Ephesians 2:19-22]]}
+
+###### 6
+For this reason, it is contained in the Scripture: "Behold, I place in Zion a chief Cornerstone, chosen, precious; and the one who believes in Him shall never be ashamed."`;
+
+        // Load sample on page load
+        document.getElementById('markdown-input').value = sampleMarkdown;
+        renderMarkdown();
+
+        // Initialize with Study mode
+        applyViewMode('study');
+    </script>
+</body>
+</html>
