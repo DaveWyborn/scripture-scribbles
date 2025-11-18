@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripture Scribbles - Theme Tester</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        /* Design System: CSS Variables for Theming */
+        :root {
+            /* Clean Theme (Default Light) */
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #EFEFF4;
+            --text-primary: #000000;
+            --text-secondary: #282828;
+            --text-tertiary: #939393;
+            --accent-primary: #FFAD26;
+            --accent-positive: #ACE5CB;
+            --accent-negative: #FC4F59;
+            --accent-info: #7AC7CC;
+            --border: #EFEFF4;
+            --stroke: rgba(0,0,0,0.1);
+
+            /* Annotation colours */
+            --highlight-yellow: #FFD93D;
+            --highlight-green: #6BCF7F;
+            --highlight-blue: #4A90E2;
+            --highlight-purple: #9B6BDB;
+            --highlight-orange: #FF8C42;
+            --highlight-pink: #FF6B9D;
+
+            /* Typography */
+            --font-primary: 'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+            /* Spacing */
+            --space-xs: 4px;
+            --space-s: 8px;
+            --space-m: 16px;
+            --space-l: 24px;
+            --space-xl: 32px;
+
+            /* Border radius */
+            --radius-s: 4px;
+            --radius-m: 8px;
+            --radius-l: 12px;
+
+            /* Transitions */
+            --transition-normal: 250ms ease-in-out;
+        }
+
+        /* Warm Theme */
+        [data-theme="warm"] {
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #F5E6D3;
+            --text-primary: #2C1810;
+            --text-secondary: #5C3D2E;
+            --accent-primary: #D4843E;
+            --accent-positive: #8FBE9F;
+            --accent-negative: #D9534F;
+            --accent-info: #6AA9AE;
+
+            --highlight-yellow: #F4A261;
+            --highlight-green: #84A98C;
+            --highlight-blue: #8FA7D4;
+            --highlight-purple: #B29BD3;
+            --highlight-orange: #E76F51;
+            --highlight-pink: #DE7C93;
+        }
+
+        /* Dyslexia Light Theme */
+        [data-theme="dyslexia-light"] {
+            --bg-primary: #FFFACD;
+            --bg-secondary: #F0E68C;
+            --text-primary: #000000;
+            --text-secondary: #2C2C2C;
+            --accent-primary: #FF9500;
+            --accent-positive: #00C853;
+            --accent-negative: #E53935;
+            --accent-info: #039BE5;
+
+            --highlight-yellow: #FFEB3B;
+            --highlight-green: #4CAF50;
+            --highlight-blue: #2196F3;
+            --highlight-purple: #9C27B0;
+            --highlight-orange: #FF6F00;
+            --highlight-pink: #E91E63;
+        }
+
+        /* True Dark Theme */
+        [data-theme="true-dark"] {
+            --bg-primary: #000000;
+            --bg-secondary: #1A1A1A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #E0E0E0;
+            --text-tertiary: #939393;
+            --accent-primary: #FFAD26;
+            --accent-positive: #ACE5CB;
+            --accent-negative: #FC4F59;
+            --accent-info: #7AC7CC;
+            --border: #2C2C2C;
+            --stroke: rgba(255,255,255,0.1);
+
+            --highlight-yellow: #FFD93D;
+            --highlight-green: #6BCF7F;
+            --highlight-blue: #4A90E2;
+            --highlight-purple: #9B6BDB;
+            --highlight-orange: #FF8C42;
+            --highlight-pink: #FF6B9D;
+        }
+
+        /* Slate Theme */
+        [data-theme="slate"] {
+            --bg-primary: #1E1E1E;
+            --bg-secondary: #2D2D2D;
+            --text-primary: #E8E8E8;
+            --text-secondary: #C8C8C8;
+            --accent-primary: #FFAD26;
+            --accent-positive: #8FBE9F;
+            --accent-negative: #E86B6B;
+            --accent-info: #6AA9AE;
+            --border: #3C3C3C;
+
+            --highlight-yellow: #D4AF37;
+            --highlight-green: #5FA67F;
+            --highlight-blue: #5B7C99;
+            --highlight-purple: #8B7BA8;
+            --highlight-orange: #D17948;
+            --highlight-pink: #C56B80;
+        }
+
+        /* Dyslexia Dark Theme */
+        [data-theme="dyslexia-dark"] {
+            --bg-primary: #1A1A2E;
+            --bg-secondary: #16213E;
+            --text-primary: #FFFACD;
+            --text-secondary: #F0E68C;
+            --accent-primary: #FFB84D;
+            --accent-positive: #4ADE80;
+            --accent-negative: #FB5A5A;
+            --accent-info: #38BDF8;
+            --border: #2C3E50;
+
+            --highlight-yellow: #FDE047;
+            --highlight-green: #86EFAC;
+            --highlight-blue: #60A5FA;
+            --highlight-purple: #C084FC;
+            --highlight-orange: #FDBA74;
+            --highlight-pink: #F472B6;
+        }
+
+        /* Nord Theme */
+        [data-theme="nord"] {
+            --bg-primary: #2E3440;
+            --bg-secondary: #3B4252;
+            --text-primary: #ECEFF4;
+            --text-secondary: #D8DEE9;
+            --text-tertiary: #4C566A;
+            --accent-primary: #88C0D0;
+            --accent-positive: #A3BE8C;
+            --accent-negative: #BF616A;
+            --accent-info: #81A1C1;
+            --border: #4C566A;
+            --stroke: rgba(255,255,255,0.1);
+
+            --highlight-yellow: #EBCB8B;
+            --highlight-green: #A3BE8C;
+            --highlight-blue: #81A1C1;
+            --highlight-purple: #B48EAD;
+            --highlight-orange: #D08770;
+            --highlight-pink: #BF616A;
+        }
+
+        [data-theme="nord"] .btn.secondary,
+        [data-theme="nord"] .btn.tertiary {
+            color: var(--text-primary);
+        }
+
+        [data-theme="nord"] .highlight-yellow,
+        [data-theme="nord"] .highlight-green {
+            color: var(--bg-primary);
+        }
+
+        /* Solarized Light Theme */
+        [data-theme="solarized-light"] {
+            --bg-primary: #FDF6E3;
+            --bg-secondary: #EEE8D5;
+            --text-primary: #657B83;
+            --text-secondary: #586E75;
+            --text-tertiary: #93A1A1;
+            --accent-primary: #268BD2;
+            --accent-positive: #859900;
+            --accent-negative: #DC322F;
+            --accent-info: #2AA198;
+            --border: #EEE8D5;
+            --stroke: rgba(0,0,0,0.1);
+
+            --highlight-yellow: #B58900;
+            --highlight-green: #859900;
+            --highlight-blue: #268BD2;
+            --highlight-purple: #D33682;
+            --highlight-orange: #CB4B16;
+            --highlight-pink: #6C71C4;
+        }
+
+        [data-theme="solarized-light"] .alert.success,
+        [data-theme="solarized-light"] .alert.info {
+            color: var(--bg-primary);
+        }
+
+        [data-theme="solarized-light"] .highlight-yellow,
+        [data-theme="solarized-light"] .highlight-green,
+        [data-theme="solarized-light"] .highlight-blue,
+        [data-theme="solarized-light"] .highlight-purple,
+        [data-theme="solarized-light"] .highlight-orange,
+        [data-theme="solarized-light"] .highlight-pink {
+            color: var(--bg-primary);
+        }
+
+        /* Solarized Dark Theme */
+        [data-theme="solarized-dark"] {
+            --bg-primary: #002B36;
+            --bg-secondary: #073642;
+            --text-primary: #839496;
+            --text-secondary: #93A1A1;
+            --text-tertiary: #586E75;
+            --accent-primary: #268BD2;
+            --accent-positive: #859900;
+            --accent-negative: #DC322F;
+            --accent-info: #2AA198;
+            --border: #073642;
+            --stroke: rgba(255,255,255,0.1);
+
+            --highlight-yellow: #B58900;
+            --highlight-green: #859900;
+            --highlight-blue: #268BD2;
+            --highlight-purple: #D33682;
+            --highlight-orange: #CB4B16;
+            --highlight-pink: #6C71C4;
+        }
+
+        [data-theme="solarized-dark"] .highlight-yellow,
+        [data-theme="solarized-dark"] .highlight-green,
+        [data-theme="solarized-dark"] .highlight-blue,
+        [data-theme="solarized-dark"] .highlight-purple,
+        [data-theme="solarized-dark"] .highlight-orange,
+        [data-theme="solarized-dark"] .highlight-pink {
+            color: var(--bg-primary);
+        }
+
+        /* Dracula Theme */
+        [data-theme="dracula"] {
+            --bg-primary: #282A36;
+            --bg-secondary: #383A59;
+            --text-primary: #F8F8F2;
+            --text-secondary: #BD93F9;
+            --text-tertiary: #6272A4;
+            --accent-primary: #FFB86C;
+            --accent-positive: #50FA7B;
+            --accent-negative: #FF5555;
+            --accent-info: #8BE9FD;
+            --border: #44475A;
+            --stroke: rgba(255,255,255,0.1);
+
+            --highlight-yellow: #F1FA8C;
+            --highlight-green: #50FA7B;
+            --highlight-blue: #8BE9FD;
+            --highlight-purple: #BD93F9;
+            --highlight-orange: #FFB86C;
+            --highlight-pink: #FF79C6;
+        }
+
+        [data-theme="dracula"] .highlight-yellow,
+        [data-theme="dracula"] .highlight-green,
+        [data-theme="dracula"] .highlight-blue,
+        [data-theme="dracula"] .highlight-purple,
+        [data-theme="dracula"] .highlight-orange,
+        [data-theme="dracula"] .highlight-pink {
+            color: var(--bg-primary);
+        }
+
+        /* Gruvbox Light Theme */
+        [data-theme="gruvbox-light"] {
+            --bg-primary: #FBF1C7;
+            --bg-secondary: #EBDBB2;
+            --text-primary: #3C3836;
+            --text-secondary: #504945;
+            --text-tertiary: #928374;
+            --accent-primary: #D65D0E;
+            --accent-positive: #98971A;
+            --accent-negative: #CC241D;
+            --accent-info: #458588;
+            --border: #D5C4A1;
+            --stroke: rgba(0,0,0,0.1);
+
+            --highlight-yellow: #FABD2F;
+            --highlight-green: #B8BB26;
+            --highlight-blue: #83A598;
+            --highlight-purple: #D3869B;
+            --highlight-orange: #FE8019;
+            --highlight-pink: #B16286;
+        }
+
+        [data-theme="gruvbox-light"] .highlight-yellow,
+        [data-theme="gruvbox-light"] .highlight-green,
+        [data-theme="gruvbox-light"] .highlight-blue,
+        [data-theme="gruvbox-light"] .highlight-purple,
+        [data-theme="gruvbox-light"] .highlight-orange,
+        [data-theme="gruvbox-light"] .highlight-pink {
+            color: var(--text-primary);
+        }
+
+        /* Gruvbox Dark Theme */
+        [data-theme="gruvbox-dark"] {
+            --bg-primary: #282828;
+            --bg-secondary: #3C3836;
+            --text-primary: #EBDBB2;
+            --text-secondary: #D5C4A1;
+            --text-tertiary: #928374;
+            --accent-primary: #FE8019;
+            --accent-positive: #B8BB26;
+            --accent-negative: #FB4934;
+            --accent-info: #83A598;
+            --border: #504945;
+            --stroke: rgba(255,255,255,0.1);
+
+            --highlight-yellow: #FABD2F;
+            --highlight-green: #B8BB26;
+            --highlight-blue: #83A598;
+            --highlight-purple: #D3869B;
+            --highlight-orange: #FE8019;
+            --highlight-pink: #B16286;
+        }
+
+        [data-theme="gruvbox-dark"] .highlight-yellow,
+        [data-theme="gruvbox-dark"] .highlight-green,
+        [data-theme="gruvbox-dark"] .highlight-blue {
+            color: var(--bg-primary);
+        }
+
+        /* Monokai Theme */
+        [data-theme="monokai"] {
+            --bg-primary: #272822;
+            --bg-secondary: #3E3D32;
+            --text-primary: #F8F8F2;
+            --text-secondary: #A6E22E;
+            --text-tertiary: #75715E;
+            --accent-primary: #FFAD26;
+            --accent-positive: #A6E22E;
+            --accent-negative: #F92672;
+            --accent-info: #66D9EF;
+            --border: #49483E;
+            --stroke: rgba(255,255,255,0.1);
+
+            --highlight-yellow: #E6DB74;
+            --highlight-green: #A6E22E;
+            --highlight-blue: #66D9EF;
+            --highlight-purple: #AE81FF;
+            --highlight-orange: #FD971F;
+            --highlight-pink: #F92672;
+        }
+
+        [data-theme="monokai"] .highlight-yellow,
+        [data-theme="monokai"] .highlight-green,
+        [data-theme="monokai"] .highlight-blue {
+            color: var(--bg-primary);
+        }
+
+        /* Github Light Theme */
+        [data-theme="github-light"] {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F6F8FA;
+            --text-primary: #24292E;
+            --text-secondary: #586069;
+            --text-tertiary: #6A737D;
+            --accent-primary: #0366D6;
+            --accent-positive: #28A745;
+            --accent-negative: #D73A49;
+            --accent-info: #005CC5;
+            --border: #E1E4E8;
+            --stroke: rgba(0,0,0,0.1);
+
+            --highlight-yellow: #FFD33D;
+            --highlight-green: #85E89D;
+            --highlight-blue: #79B8FF;
+            --highlight-purple: #B392F0;
+            --highlight-orange: #FFAB70;
+            --highlight-pink: #F97583;
+        }
+
+        [data-theme="github-light"] .alert.info {
+            color: var(--bg-primary);
+        }
+
+        /* Github Dark Theme */
+        [data-theme="github-dark"] {
+            --bg-primary: #0D1117;
+            --bg-secondary: #161B22;
+            --text-primary: #C9D1D9;
+            --text-secondary: #8B949E;
+            --text-tertiary: #8B949E;
+            --accent-primary: #58A6FF;
+            --accent-positive: #3FB950;
+            --accent-negative: #F85149;
+            --accent-info: #388BFD;
+            --border: #30363D;
+            --stroke: rgba(255,255,255,0.1);
+
+            --highlight-yellow: #D29922;
+            --highlight-green: #3FB950;
+            --highlight-blue: #58A6FF;
+            --highlight-purple: #BC8CFF;
+            --highlight-orange: #FFA657;
+            --highlight-pink: #FF7B72;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            transition: background var(--transition-normal), color var(--transition-normal);
+            padding: var(--space-l);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            padding: var(--space-xl);
+            border-radius: var(--radius-l);
+        }
+
+        .header {
+            background: var(--text-secondary);
+            color: var(--bg-primary);
+            padding: var(--space-l);
+            border-radius: var(--radius-m);
+            margin-bottom: var(--space-xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.8em;
+            color: var(--bg-primary);
+        }
+
+        h2 {
+            color: var(--text-primary);
+            margin: var(--space-xl) 0 var(--space-m) 0;
+            border-bottom: 2px solid var(--accent-primary);
+            padding-bottom: var(--space-s);
+        }
+
+        h3 {
+            color: var(--text-secondary);
+            margin: var(--space-l) 0 var(--space-s) 0;
+        }
+
+        .theme-switcher {
+            display: flex;
+            gap: var(--space-s);
+            align-items: center;
+        }
+
+        select {
+            padding: var(--space-s) var(--space-m);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-m);
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: var(--space-s) var(--space-m);
+            background: var(--accent-primary);
+            border: none;
+            color: var(--bg-primary);
+            border-radius: var(--radius-m);
+            cursor: pointer;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: var(--space-s);
+        }
+
+        .btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn.danger {
+            background: var(--accent-negative);
+        }
+
+        .btn.positive {
+            background: var(--accent-positive);
+        }
+
+        .btn.secondary {
+            background: var(--text-tertiary);
+        }
+
+        .verse {
+            margin-bottom: var(--space-m);
+            padding: var(--space-s);
+            border-radius: var(--radius-s);
+            transition: background var(--transition-normal);
+            display: flex;
+            gap: var(--space-s);
+            align-items: baseline;
+        }
+
+        .verse:hover {
+            background: var(--bg-secondary);
+        }
+
+        .verse-left {
+            display: flex;
+            gap: var(--space-xs);
+            align-items: center;
+        }
+
+        .margin-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .margin-icon i {
+            font-size: 16px;
+        }
+
+        .margin-icon.note {
+            background: var(--accent-info);
+            color: var(--text-primary);
+        }
+
+        .verse-number {
+            font-weight: 600;
+            color: var(--text-tertiary);
+            min-width: 24px;
+            font-size: 0.75em;
+            text-align: right;
+        }
+
+        .verse-text {
+            flex: 1;
+            color: var(--text-primary);
+        }
+
+        .highlight-yellow { background: var(--highlight-yellow); }
+        .highlight-green { background: var(--highlight-green); }
+        .highlight-blue { background: var(--highlight-blue); }
+        .highlight-pink { background: var(--highlight-pink); }
+        .highlight-purple { background: var(--highlight-purple); }
+        .highlight-orange { background: var(--highlight-orange); }
+
+        .color-swatches {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: var(--space-m);
+            margin: var(--space-m) 0;
+        }
+
+        .color-swatch {
+            height: 60px;
+            border-radius: var(--radius-m);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: 600;
+            border: 1px solid var(--border);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: var(--space-xs) var(--space-s);
+            border-radius: var(--radius-s);
+            font-size: 0.85em;
+            margin-right: var(--space-s);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            padding: var(--space-l);
+            border-radius: var(--radius-m);
+            margin: var(--space-m) 0;
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-m);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-xs);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: var(--space-m);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-m);
+            font-family: inherit;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border: 2px solid var(--accent-primary);
+        }
+
+        .alert {
+            padding: var(--space-m);
+            border-radius: var(--radius-m);
+            margin: var(--space-m) 0;
+        }
+
+        .alert.error {
+            background: var(--accent-negative);
+            color: var(--bg-primary);
+        }
+
+        .alert.success {
+            background: var(--accent-positive);
+            color: var(--text-primary);
+        }
+
+        .alert.info {
+            background: var(--accent-info);
+            color: var(--text-primary);
+        }
+
+        .notes-section {
+            background: var(--bg-secondary);
+            padding: var(--space-s);
+            border-left: 3px solid var(--accent-info);
+            margin-top: var(--space-s);
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Scripture Scribbles Theme Tester</h1>
+            <div class="theme-switcher">
+                <label for="theme-select" style="color: var(--bg-primary);">Theme:</label>
+                <select id="theme-select">
+                    <option value="clean">Clean</option>
+                    <option value="warm">Warm</option>
+                    <option value="dyslexia-light">Dyslexia Light</option>
+                    <option value="true-dark">True Dark</option>
+                    <option value="slate">Slate</option>
+                    <option value="dyslexia-dark">Dyslexia Dark</option>
+                    <option value="nord">Nord</option>
+                    <option value="solarized-light">Solarized Light</option>
+                    <option value="solarized-dark">Solarized Dark</option>
+                    <option value="dracula">Dracula</option>
+                    <option value="gruvbox-light">Gruvbox Light</option>
+                    <option value="gruvbox-dark">Gruvbox Dark</option>
+                    <option value="monokai">Monokai</option>
+                    <option value="github-light">Github Light</option>
+                    <option value="github-dark">Github Dark</option>
+                </select>
+            </div>
+        </div>
+
+        <h2>Buttons</h2>
+        <div>
+            <button class="btn">Primary Button</button>
+            <button class="btn danger">Danger Button</button>
+            <button class="btn positive">Positive Button</button>
+            <button class="btn secondary">Secondary Button</button>
+        </div>
+
+        <h2>Colour Palette</h2>
+        <h3>Accent Colours</h3>
+        <div class="color-swatches">
+            <div class="color-swatch" style="background: var(--accent-primary); color: var(--bg-primary);">Primary</div>
+            <div class="color-swatch" style="background: var(--accent-positive); color: var(--text-primary);">Positive</div>
+            <div class="color-swatch" style="background: var(--accent-negative); color: var(--bg-primary);">Negative</div>
+            <div class="color-swatch" style="background: var(--accent-info); color: var(--text-primary);">Info</div>
+            <div class="color-swatch" style="background: var(--text-tertiary); color: var(--bg-primary);">Tertiary</div>
+            <div class="color-swatch" style="background: var(--border); color: var(--text-primary);">Border</div>
+        </div>
+
+        <h3>Highlight Colours</h3>
+        <div class="color-swatches">
+            <div class="color-swatch highlight-yellow">Yellow</div>
+            <div class="color-swatch highlight-green">Green</div>
+            <div class="color-swatch highlight-blue">Blue</div>
+            <div class="color-swatch highlight-pink">Pink</div>
+            <div class="color-swatch highlight-purple">Purple</div>
+            <div class="color-swatch highlight-orange">Orange</div>
+        </div>
+
+        <h2>Bible Verses</h2>
+        <div class="verse">
+            <div class="verse-left">
+                <div class="margin-icon note"><i class="ph ph-note-pencil"></i></div>
+                <span class="verse-number">1</span>
+            </div>
+            <div class="verse-text">In the beginning God created the heavens and the earth.</div>
+        </div>
+
+        <div class="verse highlight-yellow">
+            <div class="verse-left">
+                <div class="margin-icon" style="background: #FFE4E1;"><i class="ph ph-tag"></i></div>
+                <div class="margin-icon" style="background: #E1F5FF;"><i class="ph ph-tag"></i></div>
+                <span class="verse-number">2</span>
+            </div>
+            <div class="verse-text">The earth was formless and empty. Darkness was on the surface of the deep and God's Spirit was hovering over the surface of the waters.</div>
+        </div>
+
+        <div class="verse highlight-green">
+            <div class="verse-left">
+                <span class="verse-number">3</span>
+            </div>
+            <div class="verse-text">God said, "Let there be light," and there was light.</div>
+        </div>
+
+        <h2>Tags</h2>
+        <div>
+            <span class="tag" style="background: #FFE4E1;">Creation</span>
+            <span class="tag" style="background: #E1F5FF;">Faith</span>
+            <span class="tag" style="background: #E8F5E9;">Prayer</span>
+            <span class="tag" style="background: #FFF9C4;">Hope</span>
+            <span class="tag" style="background: #F3E5F5;">Love</span>
+        </div>
+
+        <h2>Forms</h2>
+        <div class="card">
+            <div class="form-group">
+                <label>Note</label>
+                <textarea placeholder="Add your thoughts, insights, or questions..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Tags</label>
+                <input type="text" placeholder="Add tag...">
+            </div>
+
+            <button class="btn">Save Annotation</button>
+        </div>
+
+        <h2>Alerts</h2>
+        <div class="alert error">
+            Error: Failed to save annotation. Please try again.
+        </div>
+        <div class="alert success">
+            Success! Your annotation has been saved.
+        </div>
+        <div class="alert info">
+            Tip: Click a verse to see your notes and tags.
+        </div>
+
+        <h2>Notes Display</h2>
+        <div class="verse">
+            <div class="verse-left">
+                <span class="verse-number">7</span>
+            </div>
+            <div class="verse-text">
+                Yahweh God formed man from the dust of the ground, and breathed into his nostrils the breath of life; and man became a living soul.
+                <div class="notes-section">
+                    This verse shows God's intimate involvement in creation. The word "formed" suggests careful crafting, like a potter shaping clay.
+                </div>
+            </div>
+        </div>
+
+        <h2>Colour Variable Reference</h2>
+        <div class="card">
+            <p style="margin-bottom: var(--space-m);"><strong>Edit the CSS variables at the top of this file to test different colour combinations.</strong></p>
+            <ul style="line-height: 2; color: var(--text-secondary);">
+                <li><code>--bg-primary</code>: Main background colour</li>
+                <li><code>--bg-secondary</code>: Secondary background (cards, hover states)</li>
+                <li><code>--text-primary</code>: Main text colour</li>
+                <li><code>--text-secondary</code>: Secondary text (labels, notes)</li>
+                <li><code>--text-tertiary</code>: Tertiary text (verse numbers, disabled)</li>
+                <li><code>--accent-primary</code>: Primary action colour (orange in Cava)</li>
+                <li><code>--accent-positive</code>: Success/positive actions</li>
+                <li><code>--accent-negative</code>: Errors/warnings</li>
+                <li><code>--accent-info</code>: Info/notes</li>
+                <li><code>--highlight-*</code>: Six verse highlight colours</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Theme switcher
+        const themeSelect = document.getElementById('theme-select');
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme-tester') || 'clean';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            themeSelect.value = savedTheme;
+        }
+
+        function changeTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme-tester', theme);
+        }
+
+        themeSelect.addEventListener('change', (e) => {
+            changeTheme(e.target.value);
+        });
+
+        loadTheme();
+    </script>
+</body>
+</html>

@@ -261,3 +261,4 @@ Total time: ~15-20 minutes
 **First paid tier:** $25/month (starts at 100K MAU)
 
 You're safe on free tier for a long time!
+

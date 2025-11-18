@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Connection Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+        .test-item {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #ddd;
+            background: #f9f9f9;
+        }
+        .test-item.success {
+            border-left-color: #4caf50;
+            background: #f1f8f4;
+        }
+        .test-item.error {
+            border-left-color: #f44336;
+            background: #fef1f0;
+        }
+        .test-item h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+        .test-item pre {
+            margin: 10px 0 0 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 10px 10px 0;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Supabase Connection Test</h1>
+        <p>Testing connection to Scripture Scribbles database...</p>
+
+        <button onclick="runTests()">Run Tests</button>
+        <button onclick="clearResults()">Clear Results</button>
+
+        <div id="results"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://qzenmfbqjmraknmakgel.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6ZW5tZmJxam1yYWtubWFrZ2VsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzOTE0MDEsImV4cCI6MjA3ODk2NzQwMX0.76cmKHheDBoUk1rMwOV0EypQ1TVdJDN8nPsTrERwMdg';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function addResult(title, success, message, data = null) {
+            const resultsDiv = document.getElementById('results');
+            const testItem = document.createElement('div');
+            testItem.className = `test-item ${success ? 'success' : 'error'}`;
+
+            let html = `<h3>${success ? '✅' : '❌'} ${title}</h3><p>${message}</p>`;
+
+            if (data) {
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+
+            testItem.innerHTML = html;
+            resultsDiv.appendChild(testItem);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        async function runTests() {
+            clearResults();
+
+            // Test 1: Connection
+            addResult('Connection', true, 'Supabase client initialised successfully', {
+                url: SUPABASE_URL,
+                keyPrefix: SUPABASE_ANON_KEY.substring(0, 20) + '...'
+            });
+
+            // Test 2: Check annotations table exists
+            try {
+                const { data, error } = await supabase
+                    .from('annotations')
+                    .select('*')
+                    .limit(1);
+
+                if (error) {
+                    addResult('Annotations Table', false, `Error accessing annotations table: ${error.message}`, error);
+                } else {
+                    addResult('Annotations Table', true, 'Annotations table exists and is accessible', {
+                        rowCount: data.length,
+                        note: 'Table is empty (expected for new setup)'
+                    });
+                }
+            } catch (err) {
+                addResult('Annotations Table', false, `Exception: ${err.message}`, err);
+            }
+
+            // Test 3: Check sermons table exists
+            try {
+                const { data, error } = await supabase
+                    .from('sermons')
+                    .select('*')
+                    .limit(1);
+
+                if (error) {
+                    addResult('Sermons Table', false, `Error accessing sermons table: ${error.message}`, error);
+                } else {
+                    addResult('Sermons Table', true, 'Sermons table exists and is accessible', {
+                        rowCount: data.length,
+                        note: 'Table is empty (expected for new setup)'
+                    });
+                }
+            } catch (err) {
+                addResult('Sermons Table', false, `Exception: ${err.message}`, err);
+            }
+
+            // Test 4: Anonymous user check (should not be able to insert without auth)
+            try {
+                const { data, error } = await supabase
+                    .from('annotations')
+                    .insert({
+                        bible_version: 'WEB',
+                        annotation_set: 'Test',
+                        book_id: 'matthew',
+                        data: { test: true }
+                    })
+                    .select();
+
+                if (error) {
+                    if (error.message.includes('violates row-level security') ||
+                        error.message.includes('new row violates') ||
+                        error.code === '42501') {
+                        addResult('Row Level Security', true, 'RLS is working correctly - anonymous users cannot insert data', {
+                            expectedBehavior: 'Users must be authenticated to insert annotations',
+                            errorCode: error.code
+                        });
+                    } else {
+                        addResult('Row Level Security', false, `Unexpected error: ${error.message}`, error);
+                    }
+                } else {
+                    addResult('Row Level Security', false, 'WARNING: Anonymous user was able to insert data! RLS may not be configured correctly.', data);
+                }
+            } catch (err) {
+                addResult('Row Level Security', false, `Exception: ${err.message}`, err);
+            }
+
+            // Test 5: Auth configuration check
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                addResult('Authentication Status', true, session ? 'User is signed in' : 'No user signed in (expected)', {
+                    session: session ? 'Active' : 'None',
+                    note: 'Auth system is accessible'
+                });
+            } catch (err) {
+                addResult('Authentication Status', false, `Error checking auth: ${err.message}`, err);
+            }
+
+            addResult('Tests Complete', true, 'All tests finished. Check results above.', {
+                timestamp: new Date().toISOString()
+            });
+        }
+
+        // Auto-run tests on load
+        window.addEventListener('load', () => {
+            setTimeout(runTests, 500);
+        });
+    </script>
+</body>
+</html>
