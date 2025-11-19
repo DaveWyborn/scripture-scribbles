@@ -1641,14 +1641,11 @@
 
             // Listen for auth changes
             supabase.auth.onAuthStateChange(async (event, session) => {
-                console.log('Auth state change:', event, { hasCurrentUser: !!currentUser });
                 if (event === 'SIGNED_IN' && session && !currentUser) {
-                    // Only handle if we don't already have a user (avoid duplicate loads on session refresh)
                     await handleAuthSuccess(session.user);
                 } else if (event === 'SIGNED_OUT') {
                     handleSignOut();
                 }
-                // Ignore TOKEN_REFRESHED and other events when user is already logged in
             });
 
             setupEventListeners();
@@ -2220,8 +2217,6 @@
 
         // Bible display functions
         function displayChapter() {
-            console.log('displayChapter called', { currentBook, currentChapter, hasBibleData: !!bibleData });
-
             if (!bibleData || !bibleData.books) {
                 console.error('Bible data not loaded!');
                 return;
@@ -2239,12 +2234,9 @@
                 return;
             }
 
-            console.log('Book/chapter found:', { book: book.name, chapter: chapter.number, verseCount: chapter.verses.length });
-
             document.getElementById('chapter-info').textContent = `${book.name} ${currentChapter}`;
 
             const contentEl = document.getElementById('content');
-            console.log('Content element:', contentEl);
 
             let html = `<div class="chapter-title">${book.name} ${currentChapter}</div>`;
 
@@ -2325,7 +2317,6 @@
             `;
 
             contentEl.innerHTML = html;
-            console.log('Content updated, HTML length:', html.length);
 
             // Add click handlers to verses
             document.querySelectorAll('.verse').forEach(el => {
@@ -2369,17 +2360,11 @@
 
         let isNavigating = false;
         async function navigateChapter(delta) {
-            console.log('navigateChapter called', { delta, isNavigating, currentChapter });
-            if (isNavigating) {
-                console.log('Navigation already in progress, ignoring');
-                return;
-            }
+            if (isNavigating) return;
             isNavigating = true;
             try {
                 currentChapter += delta;
-                console.log('About to load annotations for chapter', currentChapter);
                 await loadAnnotations();
-                console.log('Annotations loaded, calling displayChapter');
                 displayChapter();
             } catch (error) {
                 console.error('Error in navigateChapter:', error);
@@ -2394,9 +2379,7 @@
 
             try {
                 const bookId = `${currentBook}-${currentChapter}`;
-                console.log('Loading annotations for:', bookId);
 
-                // Use maybeSingle() instead of single() to avoid 406 errors when no rows found
                 // Add timeout to prevent hung requests
                 const timeoutPromise = new Promise((_, reject) =>
                     setTimeout(() => reject(new Error('Request timeout')), 5000)
@@ -2418,7 +2401,6 @@
                 }
 
                 currentAnnotations = data ? data.data : {};
-                console.log('Loaded annotations:', currentAnnotations);
             } catch (error) {
                 console.error('Error loading annotations:', error);
                 currentAnnotations = {};
@@ -2616,14 +2598,8 @@
         // Refresh Supabase session when tab regains focus
         document.addEventListener('visibilitychange', async () => {
             if (document.visibilityState === 'visible' && currentUser) {
-                console.log('Tab visible, refreshing Supabase session...');
                 try {
-                    const { data: { session }, error } = await supabase.auth.getSession();
-                    if (error) {
-                        console.warn('Session refresh error:', error);
-                    } else if (session) {
-                        console.log('Session refreshed successfully');
-                    }
+                    await supabase.auth.getSession();
                 } catch (e) {
                     console.error('Failed to refresh session:', e);
                 }
