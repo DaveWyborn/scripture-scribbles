@@ -29,6 +29,17 @@
                 <i class="ph ph-palette"></i>
                 <span>Choose Theme</span>
             </a>
+            <div class="settings-item settings-toggle">
+                <div>
+                    <i class="ph ph-eye"></i>
+                    <span>Annotations</span>
+                </div>
+                <select id="annotation-mode" class="annotation-mode-select">
+                    <option value="on">On</option>
+                    <option value="subtle">Subtle</option>
+                    <option value="off">Off</option>
+                </select>
+            </div>
             <a href="https://github.com/DaveWyborn/scripture-scribbles/issues" target="_blank" class="settings-item">
                 <i class="ph ph-bug"></i>
                 <span>Report a Bug</span>
@@ -233,6 +244,9 @@
             // Load theme preference
             loadTheme();
 
+            // Load annotation visibility mode
+            loadAnnotationMode();
+
             // Load Bible data
             await loadBibleData();
 
@@ -273,6 +287,21 @@
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('theme', theme);
             setTimeout(applyAutoContrast, 50);
+        }
+
+        // Annotation visibility functions
+        function loadAnnotationMode() {
+            const savedMode = localStorage.getItem('annotationMode') || 'on';
+            setAnnotationMode(savedMode);
+            const select = document.getElementById('annotation-mode');
+            if (select) select.value = savedMode;
+        }
+
+        function setAnnotationMode(mode) {
+            const content = document.getElementById('content');
+            content.classList.remove('annotation-mode-on', 'annotation-mode-subtle', 'annotation-mode-off');
+            content.classList.add(`annotation-mode-${mode}`);
+            localStorage.setItem('annotationMode', mode);
         }
 
         // Auto-contrast functions
@@ -683,6 +712,14 @@
                     menu.classList.remove('open');
                 }
             });
+
+            // Annotation mode selector
+            const annotationModeSelect = document.getElementById('annotation-mode');
+            if (annotationModeSelect) {
+                annotationModeSelect.addEventListener('change', (e) => {
+                    setAnnotationMode(e.target.value);
+                });
+            }
 
             // Auth buttons
             const signInBtn = document.getElementById('sign-in-btn');

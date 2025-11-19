@@ -568,6 +568,64 @@ body {
     margin: var(--space-s) 0;
 }
 
+.settings-item.settings-toggle {
+    justify-content: space-between;
+    cursor: default;
+}
+
+.settings-item.settings-toggle:hover {
+    background: transparent;
+}
+
+.annotation-mode-select {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-s);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+/* Annotation Visibility Modes */
+.annotation-mode-subtle .verse.highlight-yellow,
+.annotation-mode-subtle .verse.highlight-green,
+.annotation-mode-subtle .verse.highlight-blue,
+.annotation-mode-subtle .verse.highlight-pink,
+.annotation-mode-subtle .verse.highlight-purple,
+.annotation-mode-subtle .verse.highlight-orange {
+    background: transparent !important;
+}
+
+.annotation-mode-subtle .verse-indicators .indicator-icon {
+    color: var(--text-tertiary) !important;
+    opacity: 0.5;
+}
+
+.annotation-mode-off .verse.highlight-yellow,
+.annotation-mode-off .verse.highlight-green,
+.annotation-mode-off .verse.highlight-blue,
+.annotation-mode-off .verse.highlight-pink,
+.annotation-mode-off .verse.highlight-purple,
+.annotation-mode-off .verse.highlight-orange,
+.annotation-mode-off .verse.underline-yellow,
+.annotation-mode-off .verse.underline-green,
+.annotation-mode-off .verse.underline-blue,
+.annotation-mode-off .verse.underline-pink,
+.annotation-mode-off .verse.underline-purple,
+.annotation-mode-off .verse.underline-orange {
+    background: transparent !important;
+    text-decoration: none !important;
+}
+
+.annotation-mode-off .verse-indicators {
+    display: none !important;
+}
+
+.annotation-mode-off .inline-menu {
+    display: none !important;
+}
+
 .settings-item.user-section {
     flex-direction: column;
     align-items: flex-start;
