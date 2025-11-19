@@ -2609,6 +2609,23 @@
                 }
             }
         });
+
+        // Refresh Supabase session when tab regains focus
+        document.addEventListener('visibilitychange', async () => {
+            if (document.visibilityState === 'visible' && currentUser) {
+                console.log('Tab visible, refreshing Supabase session...');
+                try {
+                    const { data: { session }, error } = await supabase.auth.getSession();
+                    if (error) {
+                        console.warn('Session refresh error:', error);
+                    } else if (session) {
+                        console.log('Session refreshed successfully');
+                    }
+                } catch (e) {
+                    console.error('Failed to refresh session:', e);
+                }
+            }
+        });
     </script>
 </body>
 </html>
