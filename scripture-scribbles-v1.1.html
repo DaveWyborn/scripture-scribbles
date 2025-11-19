@@ -1641,15 +1641,14 @@
 
             // Listen for auth changes
             supabase.auth.onAuthStateChange(async (event, session) => {
-                console.log('Auth state change:', event);
-                if (event === 'SIGNED_IN' && session) {
+                console.log('Auth state change:', event, { hasCurrentUser: !!currentUser });
+                if (event === 'SIGNED_IN' && session && !currentUser) {
                     // Only handle if we don't already have a user (avoid duplicate loads on session refresh)
-                    if (!currentUser) {
-                        await handleAuthSuccess(session.user);
-                    }
+                    await handleAuthSuccess(session.user);
                 } else if (event === 'SIGNED_OUT') {
                     handleSignOut();
                 }
+                // Ignore TOKEN_REFRESHED and other events when user is already logged in
             });
 
             setupEventListeners();
