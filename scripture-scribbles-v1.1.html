@@ -510,35 +510,80 @@
             color: var(--bg-primary);
         }
 
-        .theme-selector {
-            display: flex;
-            align-items: center;
-            gap: var(--space-s);
-            font-size: 0.9em;
-        }
-
-        .theme-selector select {
-            padding: var(--space-s) var(--space-m);
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-s);
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .auth-section {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .user-info {
-            font-size: 0.9em;
+        .menu-btn {
+            background: none;
+            border: none;
             color: var(--bg-primary);
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: var(--space-s);
+            border-radius: var(--radius-m);
+            transition: background var(--transition-fast);
+        }
+
+        .menu-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Settings Menu */
+        .settings-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: var(--space-m);
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-m);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 220px;
+            z-index: 1000;
+        }
+
+        .settings-menu.open {
+            display: block;
+        }
+
+        .settings-item {
             display: flex;
             align-items: center;
             gap: var(--space-s);
+            padding: var(--space-m);
+            color: var(--text-primary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+
+        .settings-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .settings-item i {
+            font-size: 1.2em;
+            color: var(--text-secondary);
+        }
+
+        .settings-divider {
+            height: 1px;
+            background: var(--border);
+            margin: var(--space-s) 0;
+        }
+
+        .settings-item.user-section {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--space-s);
+        }
+
+        .settings-user-label {
+            font-size: 0.8em;
+            color: var(--text-tertiary);
+        }
+
+        .settings-user-email {
+            font-size: 0.9em;
+            color: var(--text-primary);
+            word-break: break-all;
         }
 
         .btn {
@@ -582,11 +627,9 @@
         /* Navigation */
         .navigation {
             display: flex;
-            gap: var(--space-m);
+            gap: var(--space-s);
             align-items: center;
-            padding-bottom: var(--space-m);
-            border-bottom: 1px solid var(--border);
-            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .nav-btn {
@@ -601,6 +644,12 @@
             transition: background var(--transition-fast);
         }
 
+        .nav-btn.nav-arrow {
+            padding: var(--space-s) var(--space-m);
+            font-size: 1.1em;
+            min-width: 44px;
+        }
+
         .nav-btn:hover:not(:disabled) {
             filter: brightness(1.1);
         }
@@ -612,11 +661,21 @@
         }
 
         .chapter-info {
-            flex: 1;
-            text-align: center;
+            background: transparent;
+            border: 2px solid var(--accent-primary);
+            color: var(--bg-primary);
+            padding: var(--space-s) var(--space-m);
+            border-radius: var(--radius-m);
             font-size: 1.1em;
             font-weight: 500;
-            color: var(--bg-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .chapter-info:hover {
+            background: var(--accent-primary);
         }
 
         /* Content area */
@@ -1352,54 +1411,36 @@
         <div class="toolbar">
             <div class="toolbar-top">
                 <h1>Scripture Scribbles</h1>
-                <div class="auth-section">
-                    <div class="theme-selector">
-                        <label for="theme-select" style="color: var(--bg-primary);">Theme:</label>
-                        <select id="theme-select">
-                            <optgroup label="High Contrast (WCAG AAA)">
-                                <option value="high-contrast-light">High Contrast Light</option>
-                                <option value="high-contrast-dark">High Contrast Dark</option>
-                            </optgroup>
-                            <optgroup label="Accessibility Focused">
-                                <option value="dyslexia-light">Dyslexia Light</option>
-                                <option value="dyslexia-dark">Dyslexia Dark</option>
-                                <option value="github-light">Github Light</option>
-                                <option value="github-dark">Github Dark</option>
-                                <option value="paper">Paper</option>
-                            </optgroup>
-                            <optgroup label="Light Themes">
-                                <option value="clean">Clean</option>
-                                <option value="warm">Warm</option>
-                                <option value="gruvbox-light">Gruvbox Light</option>
-                            </optgroup>
-                            <optgroup label="Dark Themes">
-                                <option value="true-dark">True Dark</option>
-                                <option value="slate">Slate</option>
-                                <option value="nord">Nord</option>
-                                <option value="gruvbox-dark">Gruvbox Dark</option>
-                                <option value="monokai">Monokai</option>
-                                <option value="ocean-deep">Ocean Deep</option>
-                                <option value="twilight">Twilight</option>
-                                <option value="sunset">Sunset</option>
-                                <option value="luxury">Luxury</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <div class="user-info" id="user-info" style="display: none;">
-                        <span id="user-email"></span>
-                        <button class="btn danger" id="sign-out-btn">Sign Out</button>
-                    </div>
-                    <div id="guest-buttons">
-                        <button class="btn primary" id="sign-in-btn">Sign In</button>
-                        <button class="btn" id="sign-up-btn">Sign Up</button>
-                    </div>
-                </div>
+                <button class="menu-btn" id="menu-btn" aria-label="Settings menu">
+                    <i class="ph ph-list"></i>
+                </button>
             </div>
             <div class="navigation" id="navigation" style="display: none;">
-                <button class="nav-btn" id="open-nav-modal"><i class="ph ph-book-open"></i> Navigate</button>
-                <button class="nav-btn" id="prev-chapter">← Previous</button>
-                <div class="chapter-info" id="chapter-info">Genesis 1</div>
-                <button class="nav-btn" id="next-chapter">Next →</button>
+                <button class="nav-btn nav-arrow" id="prev-chapter" aria-label="Previous chapter">←</button>
+                <button class="chapter-info" id="chapter-info">Genesis 1</button>
+                <button class="nav-btn nav-arrow" id="next-chapter" aria-label="Next chapter">→</button>
+            </div>
+        </div>
+
+        <!-- Settings Menu -->
+        <div class="settings-menu" id="settings-menu">
+            <a href="themes.html" class="settings-item">
+                <i class="ph ph-palette"></i>
+                <span>Choose Theme</span>
+            </a>
+            <a href="https://github.com/DaveWyborn/scripture-scribbles/issues" target="_blank" class="settings-item">
+                <i class="ph ph-bug"></i>
+                <span>Report a Bug</span>
+            </a>
+            <div class="settings-divider"></div>
+            <div class="settings-item user-section" id="settings-user-info" style="display: none;">
+                <div class="settings-user-label">Logged in as:</div>
+                <div class="settings-user-email" id="settings-user-email"></div>
+                <button class="btn danger" id="sign-out-btn">Sign Out</button>
+            </div>
+            <div class="settings-item" id="settings-guest-buttons">
+                <button class="btn primary" id="sign-in-btn">Sign In</button>
+                <button class="btn" id="sign-up-btn">Sign Up</button>
             </div>
         </div>
 
@@ -1615,12 +1656,15 @@
             setupEventListeners();
         }
 
+        // Settings menu
+        function toggleSettingsMenu() {
+            document.getElementById('settings-menu').classList.toggle('open');
+        }
+
         // Theme functions
         function loadTheme() {
             const savedTheme = localStorage.getItem('theme') || 'clean';
             document.documentElement.setAttribute('data-theme', savedTheme);
-            const themeSelect = document.getElementById('theme-select');
-            if (themeSelect) themeSelect.value = savedTheme;
             setTimeout(applyAutoContrast, 50);
         }
 
@@ -2002,9 +2046,16 @@
         function setupEventListeners() {
             console.log('Setting up event listeners...');
 
-            // Theme switcher
-            document.getElementById('theme-select').addEventListener('change', (e) => {
-                changeTheme(e.target.value);
+            // Settings menu toggle
+            document.getElementById('menu-btn').addEventListener('click', toggleSettingsMenu);
+
+            // Close settings menu when clicking outside
+            document.addEventListener('click', (e) => {
+                const menu = document.getElementById('settings-menu');
+                const btn = document.getElementById('menu-btn');
+                if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                    menu.classList.remove('open');
+                }
             });
 
             // Auth buttons
@@ -2031,8 +2082,8 @@
             document.getElementById('auth-form').addEventListener('submit', handleAuth);
             document.getElementById('auth-toggle-link').addEventListener('click', toggleAuthMode);
 
-            // Navigation
-            document.getElementById('open-nav-modal').addEventListener('click', openNavModal);
+            // Navigation - chapter-info now opens nav modal
+            document.getElementById('chapter-info').addEventListener('click', openNavModal);
             document.getElementById('close-nav-modal').addEventListener('click', closeNavModal);
             document.getElementById('nav-tab-book').addEventListener('click', () => showNavTab('book'));
             document.getElementById('nav-tab-chapter').addEventListener('click', () => showNavTab('chapter'));
@@ -2118,9 +2169,9 @@
 
         async function handleAuthSuccess(user) {
             currentUser = user;
-            document.getElementById('user-email').textContent = user.email;
-            document.getElementById('user-info').style.display = 'flex';
-            document.getElementById('guest-buttons').style.display = 'none';
+            document.getElementById('settings-user-email').textContent = user.email;
+            document.getElementById('settings-user-info').style.display = 'flex';
+            document.getElementById('settings-guest-buttons').style.display = 'none';
             document.getElementById('navigation').style.display = 'flex';
 
             // Load annotations
@@ -2134,8 +2185,8 @@
         function handleSignOut() {
             currentUser = null;
             currentAnnotations = {};
-            document.getElementById('user-info').style.display = 'none';
-            document.getElementById('guest-buttons').style.display = 'flex';
+            document.getElementById('settings-user-info').style.display = 'none';
+            document.getElementById('settings-guest-buttons').style.display = 'flex';
             document.getElementById('navigation').style.display = 'none';
 
             // Show welcome screen

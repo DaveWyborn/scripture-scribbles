@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Theme - Scripture Scribbles</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        :root {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #EFEFF4;
+            --text-primary: #000000;
+            --text-secondary: #282828;
+            --text-tertiary: #939393;
+            --accent-primary: #FFAD26;
+            --border: #EFEFF4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn:hover {
+            background: var(--bg-secondary);
+        }
+
+        h1 {
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .current-theme {
+            font-size: 0.9em;
+            color: var(--text-tertiary);
+            margin-bottom: 24px;
+        }
+
+        .theme-group {
+            margin-bottom: 24px;
+        }
+
+        .theme-group h2 {
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .theme-card {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .theme-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .theme-card.active {
+            border-color: var(--accent-primary);
+            background: var(--bg-secondary);
+        }
+
+        .theme-card.active::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-preview {
+            height: 60px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .theme-name {
+            font-size: 0.85em;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Theme previews */
+        .preview-clean { background: #FFFFFF; color: #000000; border: 1px solid #EFEFF4; }
+        .preview-warm { background: #FFF8F0; color: #2C1810; }
+        .preview-gruvbox-light { background: #FBF1C7; color: #3C3836; }
+        .preview-true-dark { background: #000000; color: #FFFFFF; }
+        .preview-slate { background: #1E1E1E; color: #E8E8E8; }
+        .preview-nord { background: #2E3440; color: #ECEFF4; }
+        .preview-gruvbox-dark { background: #282828; color: #EBDBB2; }
+        .preview-monokai { background: #272822; color: #F8F8F2; }
+        .preview-ocean-deep { background: #0D1B2A; color: #E0E1DD; }
+        .preview-twilight { background: #1E1F29; color: #F8F8F2; }
+        .preview-sunset { background: #1A1423; color: #F5E6E8; }
+        .preview-luxury { background: #1C1C1C; color: #D4AF37; }
+        .preview-high-contrast-light { background: #FFFFFF; color: #000000; border: 2px solid #000000; }
+        .preview-high-contrast-dark { background: #0A0A0A; color: #FFFFFF; border: 2px solid #FFFFFF; }
+        .preview-dyslexia-light { background: #FFF8F0; color: #1A1A1A; }
+        .preview-dyslexia-dark { background: #1A1A2E; color: #FFFACD; }
+        .preview-github-light { background: #FFFFFF; color: #24292F; border: 1px solid #D0D7DE; }
+        .preview-github-dark { background: #0D1117; color: #C9D1D9; }
+        .preview-paper { background: #F5F5DC; color: #333333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" onclick="goBack()" aria-label="Go back">
+                <i class="ph ph-arrow-left"></i>
+            </button>
+            <h1>Choose Theme</h1>
+        </div>
+
+        <p class="current-theme">Current theme: <strong id="current-theme-name">Clean</strong></p>
+
+        <div class="theme-group">
+            <h2>High Contrast (WCAG AAA)</h2>
+            <div class="theme-grid">
+                <div class="theme-card" data-theme="high-contrast-light">
+                    <div class="theme-preview preview-high-contrast-light">Aa</div>
+                    <div class="theme-name">High Contrast Light</div>
+                </div>
+                <div class="theme-card" data-theme="high-contrast-dark">
+                    <div class="theme-preview preview-high-contrast-dark">Aa</div>
+                    <div class="theme-name">High Contrast Dark</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="theme-group">
+            <h2>Accessibility Focused</h2>
+            <div class="theme-grid">
+                <div class="theme-card" data-theme="dyslexia-light">
+                    <div class="theme-preview preview-dyslexia-light">Aa</div>
+                    <div class="theme-name">Dyslexia Light</div>
+                </div>
+                <div class="theme-card" data-theme="dyslexia-dark">
+                    <div class="theme-preview preview-dyslexia-dark">Aa</div>
+                    <div class="theme-name">Dyslexia Dark</div>
+                </div>
+                <div class="theme-card" data-theme="github-light">
+                    <div class="theme-preview preview-github-light">Aa</div>
+                    <div class="theme-name">Github Light</div>
+                </div>
+                <div class="theme-card" data-theme="github-dark">
+                    <div class="theme-preview preview-github-dark">Aa</div>
+                    <div class="theme-name">Github Dark</div>
+                </div>
+                <div class="theme-card" data-theme="paper">
+                    <div class="theme-preview preview-paper">Aa</div>
+                    <div class="theme-name">Paper</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="theme-group">
+            <h2>Light Themes</h2>
+            <div class="theme-grid">
+                <div class="theme-card" data-theme="clean">
+                    <div class="theme-preview preview-clean">Aa</div>
+                    <div class="theme-name">Clean</div>
+                </div>
+                <div class="theme-card" data-theme="warm">
+                    <div class="theme-preview preview-warm">Aa</div>
+                    <div class="theme-name">Warm</div>
+                </div>
+                <div class="theme-card" data-theme="gruvbox-light">
+                    <div class="theme-preview preview-gruvbox-light">Aa</div>
+                    <div class="theme-name">Gruvbox Light</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="theme-group">
+            <h2>Dark Themes</h2>
+            <div class="theme-grid">
+                <div class="theme-card" data-theme="true-dark">
+                    <div class="theme-preview preview-true-dark">Aa</div>
+                    <div class="theme-name">True Dark</div>
+                </div>
+                <div class="theme-card" data-theme="slate">
+                    <div class="theme-preview preview-slate">Aa</div>
+                    <div class="theme-name">Slate</div>
+                </div>
+                <div class="theme-card" data-theme="nord">
+                    <div class="theme-preview preview-nord">Aa</div>
+                    <div class="theme-name">Nord</div>
+                </div>
+                <div class="theme-card" data-theme="gruvbox-dark">
+                    <div class="theme-preview preview-gruvbox-dark">Aa</div>
+                    <div class="theme-name">Gruvbox Dark</div>
+                </div>
+                <div class="theme-card" data-theme="monokai">
+                    <div class="theme-preview preview-monokai">Aa</div>
+                    <div class="theme-name">Monokai</div>
+                </div>
+                <div class="theme-card" data-theme="ocean-deep">
+                    <div class="theme-preview preview-ocean-deep">Aa</div>
+                    <div class="theme-name">Ocean Deep</div>
+                </div>
+                <div class="theme-card" data-theme="twilight">
+                    <div class="theme-preview preview-twilight">Aa</div>
+                    <div class="theme-name">Twilight</div>
+                </div>
+                <div class="theme-card" data-theme="sunset">
+                    <div class="theme-preview preview-sunset">Aa</div>
+                    <div class="theme-name">Sunset</div>
+                </div>
+                <div class="theme-card" data-theme="luxury">
+                    <div class="theme-preview preview-luxury">Aa</div>
+                    <div class="theme-name">Luxury</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme names for display
+        const themeNames = {
+            'clean': 'Clean',
+            'warm': 'Warm',
+            'gruvbox-light': 'Gruvbox Light',
+            'true-dark': 'True Dark',
+            'slate': 'Slate',
+            'nord': 'Nord',
+            'gruvbox-dark': 'Gruvbox Dark',
+            'monokai': 'Monokai',
+            'ocean-deep': 'Ocean Deep',
+            'twilight': 'Twilight',
+            'sunset': 'Sunset',
+            'luxury': 'Luxury',
+            'high-contrast-light': 'High Contrast Light',
+            'high-contrast-dark': 'High Contrast Dark',
+            'dyslexia-light': 'Dyslexia Light',
+            'dyslexia-dark': 'Dyslexia Dark',
+            'github-light': 'Github Light',
+            'github-dark': 'Github Dark',
+            'paper': 'Paper'
+        };
+
+        // Load current theme
+        function loadCurrentTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'clean';
+            updateActiveTheme(savedTheme);
+            document.getElementById('current-theme-name').textContent = themeNames[savedTheme] || savedTheme;
+        }
+
+        // Update active state
+        function updateActiveTheme(theme) {
+            document.querySelectorAll('.theme-card').forEach(card => {
+                card.classList.remove('active');
+                if (card.dataset.theme === theme) {
+                    card.classList.add('active');
+                }
+            });
+        }
+
+        // Select theme
+        function selectTheme(theme) {
+            localStorage.setItem('theme', theme);
+            updateActiveTheme(theme);
+            document.getElementById('current-theme-name').textContent = themeNames[theme] || theme;
+        }
+
+        // Go back
+        function goBack() {
+            // Check if we came from preview or main
+            const referrer = document.referrer;
+            if (referrer.includes('preview')) {
+                window.location.href = 'index.html';
+            } else if (referrer) {
+                window.history.back();
+            } else {
+                window.location.href = 'scripture-scribbles-v1.1.html';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCurrentTheme();
+
+            // Add click handlers to theme cards
+            document.querySelectorAll('.theme-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    selectTheme(card.dataset.theme);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
