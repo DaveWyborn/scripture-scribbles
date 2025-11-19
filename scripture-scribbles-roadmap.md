@@ -25,12 +25,11 @@
 
 ### v1.1.0 Prototype (In Progress)
 - ✅ Supabase authentication
-- ✅ Embedded WEB Bible (Genesis 1-3)
+- ✅ Embedded WEB Bible (all 66 books)
 - ✅ Annotations sync to cloud
 - ✅ Works on all devices (mobile + desktop)
 - ✅ Zero setup required
-- ⏳ Need remaining 63 books
-- ⏳ Need visual navigation
+- ✅ Visual navigation (modal with book/chapter grids)
 - ⏳ Need full feature set from v1.0.0
 
 ---
@@ -45,17 +44,17 @@
 - [x] Embedded WEB Bible (all 66 books)
 - [x] Cloud sync for annotations
 - [x] Mobile support (iOS, Android)
-- [ ] Visual navigation (grid book/chapter selector - from ideas.md)
-- [ ] Annotation display modes: On / Subtle / Off (from ideas.md)
-- [ ] Basic annotation features:
+- [x] Visual navigation (modal with book/chapter grids)
+- [x] Basic annotation features:
   - [x] Verse highlights (6 colors)
+  - [x] Verse underlines (6 colors - bonus)
   - [x] Notes
   - [x] Tags with colors
-  - [ ] Word-level highlighting (from ideas.md)
-- [ ] Settings panel:
-  - [ ] Dark mode toggle
-  - [ ] Font size controls
-  - [ ] Theme selector (start with 1 light, 1 dark)
+  - [x] Inline annotation menu
+  - [x] Copy verse to clipboard
+- [x] Settings panel:
+  - [x] Theme selector (24 themes - exceeded plan)
+- [ ] Annotation display modes: On / Subtle / Off
 - [ ] Multiple annotation sets (Study, Church, Personal)
 - [ ] Export annotations (JSON download)
 
