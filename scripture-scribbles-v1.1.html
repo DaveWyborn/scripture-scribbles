@@ -1641,8 +1641,12 @@
 
             // Listen for auth changes
             supabase.auth.onAuthStateChange(async (event, session) => {
+                console.log('Auth state change:', event);
                 if (event === 'SIGNED_IN' && session) {
-                    await handleAuthSuccess(session.user);
+                    // Only handle if we don't already have a user (avoid duplicate loads on session refresh)
+                    if (!currentUser) {
+                        await handleAuthSuccess(session.user);
+                    }
                 } else if (event === 'SIGNED_OUT') {
                     handleSignOut();
                 }
