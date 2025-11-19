@@ -2217,10 +2217,16 @@
 
         // Bible display functions
         function displayChapter() {
+            console.log('displayChapter called', { currentBook, currentChapter });
             const book = bibleData.books.find(b => b.id === currentBook);
             const chapter = book.chapters.find(c => c.number === currentChapter);
 
+            console.log('Book/chapter found:', { book: book?.name, chapter: chapter?.number, verseCount: chapter?.verses?.length });
+
             document.getElementById('chapter-info').textContent = `${book.name} ${currentChapter}`;
+
+            const contentEl = document.getElementById('content');
+            console.log('Content element:', contentEl);
 
             let html = `<div class="chapter-title">${book.name} ${currentChapter}</div>`;
 
@@ -2300,7 +2306,8 @@
                 </div>
             `;
 
-            document.getElementById('content').innerHTML = html;
+            contentEl.innerHTML = html;
+            console.log('Content updated, HTML length:', html.length);
 
             // Add click handlers to verses
             document.querySelectorAll('.verse').forEach(el => {
