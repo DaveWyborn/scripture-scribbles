@@ -2521,7 +2521,7 @@
                     .eq('bible_version', 'WEB')
                     .eq('annotation_set', 'Study')
                     .eq('book_id', bookId)
-                    .single();
+                    .maybeSingle();
 
                 if (existing) {
                     // Update existing
