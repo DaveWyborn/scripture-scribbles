@@ -513,9 +513,14 @@ body {
     padding: var(--space-s);
     border-radius: var(--radius-m);
     transition: background var(--transition-fast);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 101;
 }
 
-.toolbar-menu-btn:hover {
+.toolbar-menu-btn:hover,
+.toolbar-menu-btn:active {
     background: rgba(255,255,255,0.1);
 }
 

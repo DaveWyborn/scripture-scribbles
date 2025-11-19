@@ -662,8 +662,18 @@
         function setupEventListeners() {
             console.log('Setting up event listeners...');
 
-            // Settings menu toggle
-            document.getElementById('menu-btn').addEventListener('click', toggleSettingsMenu);
+            // Settings menu toggle - add both click and touchend for mobile
+            const menuBtn = document.getElementById('menu-btn');
+            menuBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleSettingsMenu();
+            });
+            menuBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleSettingsMenu();
+            });
 
             // Close settings menu when clicking outside
             document.addEventListener('click', (e) => {
