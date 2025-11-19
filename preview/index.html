@@ -2363,6 +2363,7 @@
                 const bookId = `${currentBook}-${currentChapter}`;
                 console.log('Loading annotations for:', bookId);
 
+                // Use maybeSingle() instead of single() to avoid 406 errors when no rows found
                 const { data, error } = await supabase
                     .from('annotations')
                     .select('*')
@@ -2370,11 +2371,9 @@
                     .eq('bible_version', 'WEB')
                     .eq('annotation_set', 'Study')
                     .eq('book_id', bookId)
-                    .single();
+                    .maybeSingle();
 
-                // PGRST116 = no rows found (expected for chapters without annotations)
-                // 406 = Not Acceptable (can happen with .single() when no/multiple rows)
-                if (error && error.code !== 'PGRST116' && error.code !== 'PGRST406') {
+                if (error) {
                     console.warn('Annotation load error:', error.code, error.message);
                 }
 
