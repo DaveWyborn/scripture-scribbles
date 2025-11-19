@@ -2553,6 +2553,17 @@
 
         // Start the app
         initApp();
+
+        // Handle bfcache (back-forward cache) restoration
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                // Page was restored from bfcache, refresh display
+                console.log('Page restored from bfcache, refreshing...');
+                if (currentUser && bibleData) {
+                    displayChapter();
+                }
+            }
+        });
     </script>
 </body>
 </html>
