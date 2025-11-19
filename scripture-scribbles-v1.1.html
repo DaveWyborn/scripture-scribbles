@@ -2366,6 +2366,7 @@
 
         let isNavigating = false;
         async function navigateChapter(delta) {
+            console.log('navigateChapter called', { delta, isNavigating, currentChapter });
             if (isNavigating) {
                 console.log('Navigation already in progress, ignoring');
                 return;
@@ -2373,8 +2374,12 @@
             isNavigating = true;
             try {
                 currentChapter += delta;
+                console.log('About to load annotations for chapter', currentChapter);
                 await loadAnnotations();
+                console.log('Annotations loaded, calling displayChapter');
                 displayChapter();
+            } catch (error) {
+                console.error('Error in navigateChapter:', error);
             } finally {
                 isNavigating = false;
             }
