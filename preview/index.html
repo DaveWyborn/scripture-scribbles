@@ -2394,7 +2394,12 @@
                 console.log('Loading annotations for:', bookId);
 
                 // Use maybeSingle() instead of single() to avoid 406 errors when no rows found
-                const { data, error } = await supabase
+                // Add timeout to prevent hung requests
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Request timeout')), 5000)
+                );
+
+                const queryPromise = supabase
                     .from('annotations')
                     .select('*')
                     .eq('user_id', currentUser.id)
@@ -2402,6 +2407,8 @@
                     .eq('annotation_set', 'Study')
                     .eq('book_id', bookId)
                     .maybeSingle();
+
+                const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
 
                 if (error) {
                     console.warn('Annotation load error:', error.code, error.message);
