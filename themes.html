@@ -171,6 +171,37 @@
             border: 1px solid rgba(0,0,0,0.1);
         }
 
+        .preview-verses {
+            margin-bottom: 12px;
+        }
+
+        .preview-verse {
+            display: flex;
+            gap: 8px;
+            padding: 6px 0;
+            font-size: 0.8em;
+            line-height: 1.4;
+        }
+
+        .preview-verse-num {
+            font-weight: 600;
+            opacity: 0.6;
+            flex-shrink: 0;
+            width: 16px;
+        }
+
+        .preview-verse-text {
+            flex: 1;
+        }
+
+        .preview-verse-tag {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.75em;
+            margin-left: 6px;
+            white-space: nowrap;
+        }
+
         @media (max-width: 600px) {
             .preview-highlights,
             .preview-highlights-row2 {
@@ -402,6 +433,20 @@
                         <div class="theme-check"><i class="ph ph-check"></i></div>
                     </div>
                     <div class="theme-preview" style="background: ${theme.bg}">
+                        <div class="preview-verses">
+                            <div class="preview-verse" style="background: ${highlights[0]}; color: ${getContrastText(highlights[0])}; padding: 6px 8px; border-radius: 4px;">
+                                <span class="preview-verse-num">1</span>
+                                <span class="preview-verse-text">In the beginning God created the heavens and the earth.</span>
+                            </div>
+                            <div class="preview-verse" style="color: ${theme.text}">
+                                <span class="preview-verse-num">2</span>
+                                <span class="preview-verse-text">The earth was formless and empty.<span class="preview-verse-tag" style="background: ${tags[1]}; color: ${getContrastText(tags[1])}">Creation</span></span>
+                            </div>
+                            <div class="preview-verse" style="color: ${theme.text}">
+                                <span class="preview-verse-num">3</span>
+                                <span class="preview-verse-text">God said, "Let there be light," and there was light.</span>
+                            </div>
+                        </div>
                         <div class="preview-highlights">
                             <div class="preview-highlight" style="background: ${highlights[0]}; color: ${getContrastText(highlights[0])}">H1</div>
                             <div class="preview-highlight" style="background: ${highlights[1]}; color: ${getContrastText(highlights[1])}">H2</div>
