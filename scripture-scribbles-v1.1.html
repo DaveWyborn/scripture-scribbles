@@ -2364,10 +2364,20 @@
             setTimeout(applyAutoContrast, 50);
         }
 
+        let isNavigating = false;
         async function navigateChapter(delta) {
-            currentChapter += delta;
-            await loadAnnotations();
-            displayChapter();
+            if (isNavigating) {
+                console.log('Navigation already in progress, ignoring');
+                return;
+            }
+            isNavigating = true;
+            try {
+                currentChapter += delta;
+                await loadAnnotations();
+                displayChapter();
+            } finally {
+                isNavigating = false;
+            }
         }
 
         // Annotation functions
