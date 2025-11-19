@@ -2372,8 +2372,10 @@
                     .eq('book_id', bookId)
                     .single();
 
-                if (error && error.code !== 'PGRST116') { // PGRST116 = no rows
-                    throw error;
+                // PGRST116 = no rows found (expected for chapters without annotations)
+                // 406 = Not Acceptable (can happen with .single() when no/multiple rows)
+                if (error && error.code !== 'PGRST116' && error.code !== 'PGRST406') {
+                    console.warn('Annotation load error:', error.code, error.message);
                 }
 
                 currentAnnotations = data ? data.data : {};
