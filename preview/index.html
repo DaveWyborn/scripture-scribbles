@@ -2217,11 +2217,26 @@
 
         // Bible display functions
         function displayChapter() {
-            console.log('displayChapter called', { currentBook, currentChapter });
-            const book = bibleData.books.find(b => b.id === currentBook);
-            const chapter = book.chapters.find(c => c.number === currentChapter);
+            console.log('displayChapter called', { currentBook, currentChapter, hasBibleData: !!bibleData });
 
-            console.log('Book/chapter found:', { book: book?.name, chapter: chapter?.number, verseCount: chapter?.verses?.length });
+            if (!bibleData || !bibleData.books) {
+                console.error('Bible data not loaded!');
+                return;
+            }
+
+            const book = bibleData.books.find(b => b.id === currentBook);
+            if (!book) {
+                console.error('Book not found:', currentBook);
+                return;
+            }
+
+            const chapter = book.chapters.find(c => c.number === currentChapter);
+            if (!chapter) {
+                console.error('Chapter not found:', currentChapter);
+                return;
+            }
+
+            console.log('Book/chapter found:', { book: book.name, chapter: chapter.number, verseCount: chapter.verses.length });
 
             document.getElementById('chapter-info').textContent = `${book.name} ${currentChapter}`;
 
