@@ -1047,6 +1047,10 @@
 
             contentEl.innerHTML = html;
 
+            // Re-apply annotation mode class (innerHTML wipes classes)
+            const annotationMode = localStorage.getItem('annotationMode') || 'on';
+            contentEl.classList.add(`annotation-mode-${annotationMode}`);
+
             // Add click handlers to verses
             document.querySelectorAll('.verse').forEach(el => {
                 // Single click: select/deselect verse (show/hide inline menu)
