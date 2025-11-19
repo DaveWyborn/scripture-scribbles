@@ -165,6 +165,12 @@ He opened his mouth and taught them, saying,
 - Auto-deploy on push to main
 - Cloudflare DNS
 
+**Release Workflow:**
+- Preview: scripturescribbles.co.uk/preview (redirects to current test version)
+- Update `preview.html` to point to new test file (e.g., `scripture-scribbles-v1.2.html`)
+- Once bug-free, promote to live by updating `index.html` or main entry point
+- Archive previous live version before overwriting
+
 **Testing:**
 - Manual testing on Chrome, Firefox, Safari
 - Mobile testing on iOS Safari, Android Chrome

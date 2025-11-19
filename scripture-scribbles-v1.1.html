@@ -1668,8 +1668,9 @@
         // Handle bfcache (back-forward cache) restoration
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) {
-                // Page was restored from bfcache, refresh display
+                // Page was restored from bfcache, refresh display and theme
                 console.log('Page restored from bfcache, refreshing...');
+                loadTheme();
                 if (currentUser && bibleData) {
                     displayChapter();
                 }

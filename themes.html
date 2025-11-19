@@ -14,24 +14,14 @@
 
         body {
             font-family: 'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            background: #f5f5f5;
+            color: #333;
             min-height: 100vh;
-            transition: all 0.3s ease;
-        }
-
-        :root {
-            --bg-primary: #FFFFFF;
-            --bg-secondary: #EFEFF4;
-            --text-primary: #000000;
-            --text-secondary: #282828;
-            --text-tertiary: #939393;
-            --accent-primary: #FFAD26;
-            --border: #EFEFF4;
+            padding-bottom: 40px;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -42,13 +32,13 @@
             gap: 16px;
             margin-bottom: 24px;
             padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #ddd;
         }
 
         .back-btn {
             background: none;
             border: none;
-            color: var(--text-primary);
+            color: #333;
             font-size: 1.5em;
             cursor: pointer;
             padding: 8px;
@@ -59,7 +49,7 @@
         }
 
         .back-btn:hover {
-            background: var(--bg-secondary);
+            background: #e0e0e0;
         }
 
         h1 {
@@ -69,98 +59,124 @@
 
         .current-theme {
             font-size: 0.9em;
-            color: var(--text-tertiary);
+            color: #666;
             margin-bottom: 24px;
         }
 
         .theme-group {
-            margin-bottom: 24px;
+            margin-bottom: 32px;
         }
 
         .theme-group h2 {
             font-size: 0.85em;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--text-tertiary);
-            margin-bottom: 12px;
+            color: #666;
+            margin-bottom: 16px;
         }
 
-        .theme-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 12px;
+        .theme-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
         .theme-card {
-            border: 2px solid var(--border);
+            border: 2px solid #ddd;
             border-radius: 12px;
-            padding: 12px;
+            overflow: hidden;
             cursor: pointer;
             transition: all 0.2s ease;
-            position: relative;
+            background: white;
         }
 
         .theme-card:hover {
-            border-color: var(--accent-primary);
+            border-color: #FFAD26;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .theme-card.active {
-            border-color: var(--accent-primary);
-            background: var(--bg-secondary);
+            border-color: #FFAD26;
+            border-width: 3px;
         }
 
-        .theme-card.active::after {
-            content: '';
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 20px;
-            height: 20px;
-            background: var(--accent-primary);
-            border-radius: 50%;
+        .theme-header {
+            padding: 12px 16px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-        }
-
-        .theme-preview {
-            height: 60px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8em;
-            font-weight: 500;
+            border-bottom: 1px solid #eee;
         }
 
         .theme-name {
-            font-size: 0.85em;
-            font-weight: 500;
-            text-align: center;
+            font-weight: 600;
+            font-size: 1em;
         }
 
-        /* Theme previews */
-        .preview-clean { background: #FFFFFF; color: #000000; border: 1px solid #EFEFF4; }
-        .preview-warm { background: #FFF8F0; color: #2C1810; }
-        .preview-gruvbox-light { background: #FBF1C7; color: #3C3836; }
-        .preview-true-dark { background: #000000; color: #FFFFFF; }
-        .preview-slate { background: #1E1E1E; color: #E8E8E8; }
-        .preview-nord { background: #2E3440; color: #ECEFF4; }
-        .preview-gruvbox-dark { background: #282828; color: #EBDBB2; }
-        .preview-monokai { background: #272822; color: #F8F8F2; }
-        .preview-ocean-deep { background: #0D1B2A; color: #E0E1DD; }
-        .preview-twilight { background: #1E1F29; color: #F8F8F2; }
-        .preview-sunset { background: #1A1423; color: #F5E6E8; }
-        .preview-luxury { background: #1C1C1C; color: #D4AF37; }
-        .preview-high-contrast-light { background: #FFFFFF; color: #000000; border: 2px solid #000000; }
-        .preview-high-contrast-dark { background: #0A0A0A; color: #FFFFFF; border: 2px solid #FFFFFF; }
-        .preview-dyslexia-light { background: #FFF8F0; color: #1A1A1A; }
-        .preview-dyslexia-dark { background: #1A1A2E; color: #FFFACD; }
-        .preview-github-light { background: #FFFFFF; color: #24292F; border: 1px solid #D0D7DE; }
-        .preview-github-dark { background: #0D1117; color: #C9D1D9; }
-        .preview-paper { background: #F5F5DC; color: #333333; }
+        .theme-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #FFAD26;
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .theme-card.active .theme-check {
+            display: flex;
+        }
+
+        .theme-preview {
+            padding: 16px;
+        }
+
+        /* Preview elements */
+        .preview-highlights {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .preview-highlight {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            font-weight: 500;
+            text-align: center;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .preview-highlights-row2 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .preview-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .preview-tag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 600px) {
+            .preview-highlights,
+            .preview-highlights-row2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
@@ -174,136 +190,273 @@
 
         <p class="current-theme">Current theme: <strong id="current-theme-name">Clean</strong></p>
 
-        <div class="theme-group">
-            <h2>High Contrast (WCAG AAA)</h2>
-            <div class="theme-grid">
-                <div class="theme-card" data-theme="high-contrast-light">
-                    <div class="theme-preview preview-high-contrast-light">Aa</div>
-                    <div class="theme-name">High Contrast Light</div>
-                </div>
-                <div class="theme-card" data-theme="high-contrast-dark">
-                    <div class="theme-preview preview-high-contrast-dark">Aa</div>
-                    <div class="theme-name">High Contrast Dark</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="theme-group">
-            <h2>Accessibility Focused</h2>
-            <div class="theme-grid">
-                <div class="theme-card" data-theme="dyslexia-light">
-                    <div class="theme-preview preview-dyslexia-light">Aa</div>
-                    <div class="theme-name">Dyslexia Light</div>
-                </div>
-                <div class="theme-card" data-theme="dyslexia-dark">
-                    <div class="theme-preview preview-dyslexia-dark">Aa</div>
-                    <div class="theme-name">Dyslexia Dark</div>
-                </div>
-                <div class="theme-card" data-theme="github-light">
-                    <div class="theme-preview preview-github-light">Aa</div>
-                    <div class="theme-name">Github Light</div>
-                </div>
-                <div class="theme-card" data-theme="github-dark">
-                    <div class="theme-preview preview-github-dark">Aa</div>
-                    <div class="theme-name">Github Dark</div>
-                </div>
-                <div class="theme-card" data-theme="paper">
-                    <div class="theme-preview preview-paper">Aa</div>
-                    <div class="theme-name">Paper</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="theme-group">
-            <h2>Light Themes</h2>
-            <div class="theme-grid">
-                <div class="theme-card" data-theme="clean">
-                    <div class="theme-preview preview-clean">Aa</div>
-                    <div class="theme-name">Clean</div>
-                </div>
-                <div class="theme-card" data-theme="warm">
-                    <div class="theme-preview preview-warm">Aa</div>
-                    <div class="theme-name">Warm</div>
-                </div>
-                <div class="theme-card" data-theme="gruvbox-light">
-                    <div class="theme-preview preview-gruvbox-light">Aa</div>
-                    <div class="theme-name">Gruvbox Light</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="theme-group">
-            <h2>Dark Themes</h2>
-            <div class="theme-grid">
-                <div class="theme-card" data-theme="true-dark">
-                    <div class="theme-preview preview-true-dark">Aa</div>
-                    <div class="theme-name">True Dark</div>
-                </div>
-                <div class="theme-card" data-theme="slate">
-                    <div class="theme-preview preview-slate">Aa</div>
-                    <div class="theme-name">Slate</div>
-                </div>
-                <div class="theme-card" data-theme="nord">
-                    <div class="theme-preview preview-nord">Aa</div>
-                    <div class="theme-name">Nord</div>
-                </div>
-                <div class="theme-card" data-theme="gruvbox-dark">
-                    <div class="theme-preview preview-gruvbox-dark">Aa</div>
-                    <div class="theme-name">Gruvbox Dark</div>
-                </div>
-                <div class="theme-card" data-theme="monokai">
-                    <div class="theme-preview preview-monokai">Aa</div>
-                    <div class="theme-name">Monokai</div>
-                </div>
-                <div class="theme-card" data-theme="ocean-deep">
-                    <div class="theme-preview preview-ocean-deep">Aa</div>
-                    <div class="theme-name">Ocean Deep</div>
-                </div>
-                <div class="theme-card" data-theme="twilight">
-                    <div class="theme-preview preview-twilight">Aa</div>
-                    <div class="theme-name">Twilight</div>
-                </div>
-                <div class="theme-card" data-theme="sunset">
-                    <div class="theme-preview preview-sunset">Aa</div>
-                    <div class="theme-name">Sunset</div>
-                </div>
-                <div class="theme-card" data-theme="luxury">
-                    <div class="theme-preview preview-luxury">Aa</div>
-                    <div class="theme-name">Luxury</div>
-                </div>
-            </div>
-        </div>
+        <div id="theme-container"></div>
     </div>
 
     <script>
-        // Theme names for display
-        const themeNames = {
-            'clean': 'Clean',
-            'warm': 'Warm',
-            'gruvbox-light': 'Gruvbox Light',
-            'true-dark': 'True Dark',
-            'slate': 'Slate',
-            'nord': 'Nord',
-            'gruvbox-dark': 'Gruvbox Dark',
-            'monokai': 'Monokai',
-            'ocean-deep': 'Ocean Deep',
-            'twilight': 'Twilight',
-            'sunset': 'Sunset',
-            'luxury': 'Luxury',
-            'high-contrast-light': 'High Contrast Light',
-            'high-contrast-dark': 'High Contrast Dark',
-            'dyslexia-light': 'Dyslexia Light',
-            'dyslexia-dark': 'Dyslexia Dark',
-            'github-light': 'Github Light',
-            'github-dark': 'Github Dark',
-            'paper': 'Paper'
+        // Theme definitions with all colours
+        const themes = {
+            // WCAG AAA
+            'high-contrast-light': {
+                name: 'High Contrast Light',
+                group: 'wcag',
+                bg: '#FFFFFF',
+                bgSecondary: '#F5F5F5',
+                text: '#000000',
+                highlights: ['#0052CC', '#006644', '#CC0000', '#5243AA', '#B35900', '#A3006B'],
+                tags: ['#0052CC', '#006644', '#CC0000', '#5243AA', '#B35900', '#A3006B']
+            },
+            'high-contrast-dark': {
+                name: 'High Contrast Dark',
+                group: 'wcag',
+                bg: '#0A0A0A',
+                bgSecondary: '#1A1A1A',
+                text: '#FFFFFF',
+                highlights: ['#4DA6FF', '#4ADE80', '#FF6B6B', '#A78BFA', '#FFB347', '#FF8FAB'],
+                tags: ['#4DA6FF', '#4ADE80', '#FF6B6B', '#A78BFA', '#FFB347', '#FF8FAB']
+            },
+            // Accessibility
+            'dyslexia-light': {
+                name: 'Dyslexia Light',
+                group: 'accessibility',
+                bg: '#FFF8F0',
+                bgSecondary: '#F5EDE3',
+                text: '#1A1A1A',
+                highlights: ['#0077B6', '#2D6A4F', '#C1121F', '#7B2CBF', '#F77F00', '#D62828'],
+                tags: ['#0077B6', '#2D6A4F', '#C1121F', '#7B2CBF', '#F77F00', '#D62828']
+            },
+            'dyslexia-dark': {
+                name: 'Dyslexia Dark',
+                group: 'accessibility',
+                bg: '#1A1A2E',
+                bgSecondary: '#16213E',
+                text: '#FFFACD',
+                highlights: ['#FDE047', '#86EFAC', '#60A5FA', '#C084FC', '#FDBA74', '#F472B6'],
+                tags: ['#FDE047', '#86EFAC', '#60A5FA', '#C084FC', '#FDBA74', '#F472B6']
+            },
+            'github-light': {
+                name: 'Github Light',
+                group: 'accessibility',
+                bg: '#FFFFFF',
+                bgSecondary: '#F6F8FA',
+                text: '#24292E',
+                highlights: ['#0366D6', '#28A745', '#D73A49', '#005CC5', '#FFAB70', '#F97583'],
+                tags: ['#0366D6', '#28A745', '#D73A49', '#005CC5', '#FFAB70', '#F97583']
+            },
+            'github-dark': {
+                name: 'Github Dark',
+                group: 'accessibility',
+                bg: '#0D1117',
+                bgSecondary: '#161B22',
+                text: '#C9D1D9',
+                highlights: ['#58A6FF', '#3FB950', '#F85149', '#388BFD', '#FFA657', '#FF7B72'],
+                tags: ['#58A6FF', '#3FB950', '#F85149', '#388BFD', '#FFA657', '#FF7B72']
+            },
+            'paper': {
+                name: 'Paper',
+                group: 'accessibility',
+                bg: '#FDFCFB',
+                bgSecondary: '#F5F3F0',
+                text: '#2D2D2D',
+                highlights: ['#1E3A5F', '#2E7D32', '#C62828', '#6A1B9A', '#E65100', '#AD1457'],
+                tags: ['#1E3A5F', '#2E7D32', '#C62828', '#6A1B9A', '#E65100', '#AD1457']
+            },
+            // Light
+            'clean': {
+                name: 'Clean',
+                group: 'light',
+                bg: '#FFFFFF',
+                bgSecondary: '#EFEFF4',
+                text: '#000000',
+                highlights: ['#FFD93D', '#6BCF7F', '#4A90E2', '#FF6B9D', '#9B6BDB', '#FF8C42'],
+                tags: ['#FFD93D', '#6BCF7F', '#4A90E2', '#FF6B9D', '#9B6BDB', '#FF8C42']
+            },
+            'warm': {
+                name: 'Warm',
+                group: 'light',
+                bg: '#FFF8F0',
+                bgSecondary: '#F5E6D3',
+                text: '#2C1810',
+                highlights: ['#F4A261', '#84A98C', '#8FA7D4', '#DE7C93', '#B29BD3', '#E76F51'],
+                tags: ['#F4A261', '#84A98C', '#8FA7D4', '#DE7C93', '#B29BD3', '#E76F51']
+            },
+            'gruvbox-light': {
+                name: 'Gruvbox Light',
+                group: 'light',
+                bg: '#F9F5E8',
+                bgSecondary: '#F2EBD9',
+                text: '#3C3836',
+                highlights: ['#D65D0E', '#98971A', '#CC241D', '#458588', '#FE8019', '#B16286'],
+                tags: ['#D65D0E', '#98971A', '#CC241D', '#458588', '#FE8019', '#B16286']
+            },
+            // Dark
+            'true-dark': {
+                name: 'True Dark',
+                group: 'dark',
+                bg: '#000000',
+                bgSecondary: '#1A1A1A',
+                text: '#FFFFFF',
+                highlights: ['#FFD93D', '#6BCF7F', '#4A90E2', '#FF6B9D', '#9B6BDB', '#FF8C42'],
+                tags: ['#FFD93D', '#6BCF7F', '#4A90E2', '#FF6B9D', '#9B6BDB', '#FF8C42']
+            },
+            'slate': {
+                name: 'Slate',
+                group: 'dark',
+                bg: '#1E1E1E',
+                bgSecondary: '#2D2D2D',
+                text: '#E8E8E8',
+                highlights: ['#D4AF37', '#5FA67F', '#5B7C99', '#C56B80', '#8B7BA8', '#D17948'],
+                tags: ['#D4AF37', '#5FA67F', '#5B7C99', '#C56B80', '#8B7BA8', '#D17948']
+            },
+            'nord': {
+                name: 'Nord',
+                group: 'dark',
+                bg: '#2E3440',
+                bgSecondary: '#3B4252',
+                text: '#ECEFF4',
+                highlights: ['#88C0D0', '#A3BE8C', '#BF616A', '#81A1C1', '#D08770', '#BF616A'],
+                tags: ['#88C0D0', '#A3BE8C', '#BF616A', '#81A1C1', '#D08770', '#BF616A']
+            },
+            'gruvbox-dark': {
+                name: 'Gruvbox Dark',
+                group: 'dark',
+                bg: '#282828',
+                bgSecondary: '#3C3836',
+                text: '#EBDBB2',
+                highlights: ['#FABD2F', '#8EC07C', '#FB4934', '#83A598', '#D3869B', '#B16286'],
+                tags: ['#FABD2F', '#8EC07C', '#FB4934', '#83A598', '#D3869B', '#B16286']
+            },
+            'monokai': {
+                name: 'Monokai',
+                group: 'dark',
+                bg: '#272822',
+                bgSecondary: '#3E3D32',
+                text: '#F8F8F2',
+                highlights: ['#AE81FF', '#A6E22E', '#F92672', '#66D9EF', '#FD971F', '#F92672'],
+                tags: ['#AE81FF', '#A6E22E', '#F92672', '#66D9EF', '#FD971F', '#F92672']
+            },
+            'ocean-deep': {
+                name: 'Ocean Deep',
+                group: 'dark',
+                bg: '#0B1C2A',
+                bgSecondary: '#1A2B3A',
+                text: '#E0F4FF',
+                highlights: ['#38BDF8', '#34D399', '#F87171', '#C084FC', '#FBBF24', '#EC4899'],
+                tags: ['#38BDF8', '#34D399', '#F87171', '#C084FC', '#FBBF24', '#EC4899']
+            },
+            'twilight': {
+                name: 'Twilight',
+                group: 'dark',
+                bg: '#282A36',
+                bgSecondary: '#383A59',
+                text: '#F8F8F2',
+                highlights: ['#BD93F9', '#50FA7B', '#FF5555', '#8BE9FD', '#FFB86C', '#FF79C6'],
+                tags: ['#BD93F9', '#50FA7B', '#FF5555', '#8BE9FD', '#FFB86C', '#FF79C6']
+            },
+            'sunset': {
+                name: 'Sunset',
+                group: 'dark',
+                bg: '#2C203D',
+                bgSecondary: '#3E2D54',
+                text: '#FDE2E4',
+                highlights: ['#FF8C42', '#A06CD5', '#F45B69', '#FFD166', '#FFB4A2', '#D8A4E2'],
+                tags: ['#FF8C42', '#A06CD5', '#F45B69', '#FFD166', '#FFB4A2', '#D8A4E2']
+            },
+            'luxury': {
+                name: 'Luxury',
+                group: 'dark',
+                bg: '#1A1A1A',
+                bgSecondary: '#2A2A2A',
+                text: '#EAEAEA',
+                highlights: ['#D4AF37', '#C0C0C0', '#A42A2A', '#8A7967', '#B48A3A', '#A44A4A'],
+                tags: ['#D4AF37', '#C0C0C0', '#A42A2A', '#8A7967', '#B48A3A', '#A44A4A']
+            }
         };
+
+        const groups = {
+            'wcag': 'High Contrast (WCAG AAA)',
+            'accessibility': 'Accessibility Focused',
+            'light': 'Light Themes',
+            'dark': 'Dark Themes'
+        };
+
+        // Get contrasting text colour
+        function getContrastText(bgColor) {
+            const hex = bgColor.replace('#', '');
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            return luminance > 0.5 ? '#000000' : '#FFFFFF';
+        }
+
+        // Render theme card
+        function renderThemeCard(id, theme) {
+            const highlights = theme.highlights;
+            const tags = theme.tags;
+
+            return `
+                <div class="theme-card" data-theme="${id}">
+                    <div class="theme-header">
+                        <span class="theme-name">${theme.name}</span>
+                        <div class="theme-check"><i class="ph ph-check"></i></div>
+                    </div>
+                    <div class="theme-preview" style="background: ${theme.bg}">
+                        <div class="preview-highlights">
+                            <div class="preview-highlight" style="background: ${highlights[0]}; color: ${getContrastText(highlights[0])}">H1</div>
+                            <div class="preview-highlight" style="background: ${highlights[1]}; color: ${getContrastText(highlights[1])}">H2</div>
+                            <div class="preview-highlight" style="background: ${highlights[2]}; color: ${getContrastText(highlights[2])}">H3</div>
+                            <div class="preview-highlight" style="background: ${highlights[3]}; color: ${getContrastText(highlights[3])}">H4</div>
+                        </div>
+                        <div class="preview-highlights-row2">
+                            <div class="preview-highlight" style="background: ${highlights[4]}; color: ${getContrastText(highlights[4])}">H5</div>
+                            <div class="preview-highlight" style="background: ${highlights[5]}; color: ${getContrastText(highlights[5])}">H6</div>
+                            <div class="preview-highlight" style="background: ${theme.bgSecondary}; color: ${theme.text}">Text</div>
+                            <div class="preview-highlight" style="background: ${theme.bgSecondary}; color: ${theme.text}">Text</div>
+                        </div>
+                        <div class="preview-tags">
+                            ${tags.map(color => `<div class="preview-tag" style="background: ${color}; color: ${getContrastText(color)}">Tag</div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render all themes
+        function renderThemes() {
+            const container = document.getElementById('theme-container');
+            let html = '';
+
+            // Group themes
+            const grouped = {};
+            for (const [id, theme] of Object.entries(themes)) {
+                if (!grouped[theme.group]) grouped[theme.group] = [];
+                grouped[theme.group].push({ id, ...theme });
+            }
+
+            // Render groups
+            for (const [groupId, groupName] of Object.entries(groups)) {
+                if (grouped[groupId] && grouped[groupId].length > 0) {
+                    html += `
+                        <div class="theme-group">
+                            <h2>${groupName}</h2>
+                            <div class="theme-list">
+                                ${grouped[groupId].map(t => renderThemeCard(t.id, t)).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            container.innerHTML = html;
+        }
 
         // Load current theme
         function loadCurrentTheme() {
             const savedTheme = localStorage.getItem('theme') || 'clean';
             updateActiveTheme(savedTheme);
-            document.getElementById('current-theme-name').textContent = themeNames[savedTheme] || savedTheme;
+            const theme = themes[savedTheme];
+            document.getElementById('current-theme-name').textContent = theme ? theme.name : savedTheme;
         }
 
         // Update active state
@@ -320,16 +473,14 @@
         function selectTheme(theme) {
             localStorage.setItem('theme', theme);
             updateActiveTheme(theme);
-            document.getElementById('current-theme-name').textContent = themeNames[theme] || theme;
+            const themeData = themes[theme];
+            document.getElementById('current-theme-name').textContent = themeData ? themeData.name : theme;
         }
 
         // Go back
         function goBack() {
-            // Check if we came from preview or main
             const referrer = document.referrer;
-            if (referrer.includes('preview')) {
-                window.location.href = 'index.html';
-            } else if (referrer) {
+            if (referrer && (referrer.includes('scripture-scribbles') || referrer.includes('preview'))) {
                 window.history.back();
             } else {
                 window.location.href = 'scripture-scribbles-v1.1.html';
@@ -338,13 +489,15 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            renderThemes();
             loadCurrentTheme();
 
             // Add click handlers to theme cards
-            document.querySelectorAll('.theme-card').forEach(card => {
-                card.addEventListener('click', () => {
+            document.addEventListener('click', (e) => {
+                const card = e.target.closest('.theme-card');
+                if (card) {
                     selectTheme(card.dataset.theme);
-                });
+                }
             });
         });
     </script>
