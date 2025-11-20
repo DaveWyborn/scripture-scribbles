@@ -1187,7 +1187,7 @@
                                 <div class="tag-section-title">New tag</div>
                                 <div class="new-tag-row">
                                     <input type="text" id="new-tag-input-${verse.number}" placeholder="Tag name...">
-                                    <div class="new-tag-color" id="new-tag-color-${verse.number}" style="background: #ACE5CB" onclick="showInlineColorPicker(${verse.number})"></div>
+                                    <div class="new-tag-color" id="new-tag-color-${verse.number}" style="background: #ACE5CB" onclick="event.stopPropagation(); showInlineColorPicker(${verse.number})"></div>
                                     <button class="new-tag-add" onclick="addNewTag(${verse.number})">Add</button>
                                 </div>
                             </div>
@@ -1715,7 +1715,7 @@
 
             let html = '<div class="color-picker-grid">';
             colors.forEach(color => {
-                html += `<div class="color-picker-option" style="background: ${color}" onclick="selectInlineTagColor(${verseNum}, '${color}')"></div>`;
+                html += `<div class="color-picker-option" style="background: ${color}" onclick="event.stopPropagation(); selectInlineTagColor(${verseNum}, '${color}')"></div>`;
             });
             html += '</div>';
 
