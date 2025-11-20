@@ -2,75 +2,98 @@
 
 ## Vision
 
-**Dyslexia-friendly Bible study tool** with rich annotations, sermon notes, and fair pricing.
+**Dyslexia-friendly Bible study tool** with rich annotations, sermon notes, fair pricing, and a mission to fund Bible translation.
 
 **Core values:**
 - Accessibility first (designed for dyslexia)
-- Fair pricing (auto-downgrade, Christian values)
+- Beautiful reading experience (natural, fluid, calming)
+- Fair pricing (transparent, charitable)
+- Mission-driven (supporting Bible translation)
 - Privacy-respecting where possible
-- Beautiful, modern design (Cava-inspired)
 
 ---
 
 ## Current Status
 
-### v1.0.0 (Live)
-- ✅ File System Access API (Chrome desktop only)
-- ✅ Local Bible markdown files
-- ✅ Basic annotations (highlights, notes, tags)
-- ✅ Dark mode
-- ✅ Font size controls
-- ❌ Limited to desktop Chrome users
-- ❌ High barrier to entry (folder setup)
-
-### v1.1.0 Prototype (In Progress)
+### v1.1.0 (LIVE) ✅
 - ✅ Supabase authentication
 - ✅ Embedded WEB Bible (all 66 books)
-- ✅ Annotations sync to cloud
+- ✅ Cloud sync for annotations
 - ✅ Works on all devices (mobile + desktop)
 - ✅ Zero setup required
 - ✅ Visual navigation (modal with book/chapter grids)
-- ⏳ Need full feature set from v1.0.0
+- ✅ Basic annotation features:
+  - ✅ Verse highlights (6 colours)
+  - ✅ Verse underlines (6 colours)
+  - ✅ Notes
+  - ✅ Tags with custom colours
+  - ✅ Inline annotation menu
+  - ✅ Copy verse to clipboard
+- ✅ Settings panel with 24 themes
+- ✅ Annotation display modes (On / Subtle / Off)
+- ✅ Multiple annotation sets (Study, Church, Personal)
+- ✅ Export annotations (Markdown + JSON)
+- ✅ Interactive roadmap with voting
+- ✅ "Why We Exist" page
 
 ---
 
 ## Version Roadmap
 
-### v1.1.0 - Public Launch (Core Features)
-**Goal:** "Open and use instantly on any device"
+### v1.2.0 - Beautiful Reading Experience & Multiple Bibles
+**Goal:** "Natural, fluid reading with multiple Bible versions"
 
-**Must have:**
-- [x] Supabase auth (sign up, sign in, sign out)
-- [x] Embedded WEB Bible (all 66 books)
-- [x] Cloud sync for annotations
-- [x] Mobile support (iOS, Android)
-- [x] Visual navigation (modal with book/chapter grids)
-- [x] Basic annotation features:
-  - [x] Verse highlights (6 colors)
-  - [x] Verse underlines (6 colors - bonus)
-  - [x] Notes
-  - [x] Tags with colors
-  - [x] Inline annotation menu
-  - [x] Copy verse to clipboard
-- [x] Settings panel:
-  - [x] Theme selector (24 themes - exceeded plan)
-- [ ] Annotation display modes: On / Subtle / Off
-- [ ] Multiple annotation sets (Study, Church, Personal)
-- [ ] Export annotations (JSON download)
+**Reading Experience:**
+- [ ] Fluid reading mode (USFM with paragraphs and headings)
+  - [ ] Convert WEB, ASV, KJV from USFM to enhanced JSON
+  - [ ] Section headings (styled, toggleable)
+  - [ ] Natural paragraph flow
+  - [ ] Verse numbers in margin or superscript (toggleable)
+- [ ] Beautiful animations
+  - [ ] Smooth page transitions
+  - [ ] Gentle fade-ins for text
+  - [ ] Subtle scroll animations
+  - [ ] Progress indicators
+- [ ] Focus mode enhancements
+  - [ ] Optional background focus music (ambient, instrumental)
+  - [ ] Distraction-free reading
+  - [ ] Reading timer/progress
+  - [ ] "Deep focus" mode (minimal UI)
 
-**Nice to have:**
-- [ ] PWA installation (works offline)
-- [ ] Welcome tutorial overlay
-- [ ] Keyboard shortcuts
+**Multiple Bible Versions (Public Domain):**
+- [ ] Add American Standard Version (ASV 1901)
+- [ ] Add King James Version (KJV)
+- [ ] Bible version selector in settings
+- [ ] Annotations tied to version (cross-compatible)
+- [ ] All versions support fluid reading mode
 
-**Timeline:** 2-3 weeks
+**Technical:**
+- [ ] USFM → Enhanced JSON converter script
+- [ ] Enhanced JSON structure:
+  ```json
+  {
+    "type": "heading|paragraph",
+    "level": 1,
+    "text": "...",
+    "verses": [...]
+  }
+  ```
+- [ ] Rendering engine for paragraphs + headings
+- [ ] Toggle: Verse-by-verse vs Reading mode
+
+**Maintain Existing Features:**
+- ✅ Verse highlights still work (in both modes)
+- ✅ Notes and tags still work
+- ✅ All annotation features preserved
+
+**Timeline:** 3-4 weeks
 
 ---
 
-### v1.2.0 - Dyslexia Features
+### v1.3.0 - Dyslexia Features
 **Goal:** "Make Bible reading accessible for dyslexia"
 
-**Typography features (from ideas.md):**
+**Typography features:**
 - [ ] Font selection (4-5 options):
   - [ ] OpenDyslexic (primary)
   - [ ] Atkinson Hyperlegible
@@ -82,80 +105,55 @@
   - [ ] Line height adjustment
   - [ ] Letter spacing adjustment
 
-**Color features (from ideas.md):**
-- [ ] Full color customization:
-  - [ ] Background color picker
-  - [ ] Text color picker
-  - [ ] Annotation color picker
-- [ ] 6 built-in themes:
-  - [ ] 3 light themes (High Contrast, Cream, Sepia)
-  - [ ] 3 dark themes (True Black, Dark Grey, Blue-Black)
-- [ ] Dyslexia-optimized themes:
+**Colour features:**
+- [ ] Full colour customisation:
+  - [ ] Background colour picker
+  - [ ] Text colour picker
+  - [ ] Annotation colour picker
+- [ ] Dyslexia-optimised themes:
   - [ ] Yellow on black
   - [ ] Cream on dark blue
-- [ ] Consider Catppuccin palette
-
-**Annotation improvements (from ideas.md):**
-- [ ] Margin icons for notes/tags (collapsed view)
-- [ ] Click verse to expand notes/tags below
-- [ ] Edit/delete icons on hover
-- [ ] Annotation visibility modes:
-  - [ ] On: Full color in margins
-  - [ ] Subtle: Greyscale, highlights → underlines
-  - [ ] Off: Hidden entirely
+  - [ ] High contrast options
 
 **Timeline:** 2-3 weeks
 
 ---
 
-### v1.3.0 - Sermon Notes
+### v1.4.0 - Sermon Notes
 **Goal:** "Capture sermon notes alongside Bible reading"
 
-**Sermon notes features (from ideas.md):**
+**Sermon notes features:**
 - [ ] Side-by-side view (desktop: Bible + Notes)
 - [ ] Swipe left/right (mobile: switch Bible ↔ Notes)
 - [ ] Large clean text editor
-- [ ] Markdown toolbar:
-  - [ ] Headers (#, ##, ###)
-  - [ ] Links ([[]])
-  - [ ] Lists, bold, italic
-- [ ] Sermon templates with YAML:
+- [ ] Markdown toolbar (headers, links, lists, bold, italic)
+- [ ] Sermon templates with metadata:
   - [ ] Speaker, date, location, series
   - [ ] Passage reference
 - [ ] Quick add verse:
   - [ ] Select verse(s) in Bible
   - [ ] Click "Add to Notes"
   - [ ] Inserts formatted verse
-- [ ] Verse formatting styles (user selectable):
-  ```
-  Style 1:
-  Rom 1:6 (WEB)
-  "In Whom you also are called of Jesus Christ:"
-
-  Style 2:
-  "In Whom you also are called of Jesus Christ:"
-  Rom 1:6 (WEB)
-  ```
-- [ ] Continuous scroll navigation:
-  - [ ] Scroll past bottom → loads next chapter
-  - [ ] Prevents confusion with swipe gesture
+- [ ] Verse formatting styles (user selectable)
+- [ ] Continuous scroll navigation (auto-load next chapter)
+- [ ] Export sermon notes to Markdown
 
 **Timeline:** 3-4 weeks
 
 ---
 
-### v1.4.0 - Advanced Highlighting
+### v1.5.0 - Word-Level Highlighting
 **Goal:** "Flexible word + verse highlighting with smart merging"
 
-**Word-level highlighting (from ideas.md):**
+**Word-level highlighting:**
 - [ ] Select individual words to highlight
-- [ ] 6+ colors available
+- [ ] 6+ colours available
 - [ ] Smart merge rules:
-  - [ ] Word highlight + verse highlight (different colors) → both remain
-  - [ ] Word highlight + verse highlight (same color) → merge into verse
+  - [ ] Word highlight + verse highlight (different colours) → both remain
+  - [ ] Word highlight + verse highlight (same colour) → merge into verse
   - [ ] Clear verse → word highlights remain
   - [ ] Clear word → adopts verse highlight if exists
-- [ ] Clear behavior:
+- [ ] Clear behaviour:
   - [ ] "Clear verse highlight" with only word highlights → clears words
   - [ ] "Clear verse highlight" with both → clears verse only (click again for words)
 
@@ -163,134 +161,93 @@
 
 ---
 
-### v1.5.0 - Audio Reader (Premium Feature)
-**Goal:** "Listen to Bible with AI voice"
-
-**Audio features (from ideas.md):**
-- [ ] High-quality AI voice API integration
-- [ ] Playback controls (play, pause, speed)
-- [ ] Follow along (auto-scroll with audio)
-- [ ] Verse-level navigation
-
-**Pricing tiers (from ideas.md):**
-- [ ] Free tier:
-  - [ ] Basic voice quality
-  - [ ] 30 min/day average
-  - [ ] Flexible limit (can go to 45 min some days)
-  - [ ] Smart cutoff (finish chapter, not mid-verse)
-- [ ] Premium tiers:
-  - [ ] 45 min/day
-  - [ ] 60 min/day
-  - [ ] Unlimited
-
-**Fair pricing implementation (from ideas.md):**
-- [ ] Rolling 7-day average (not hard daily limit)
-- [ ] Upgrade prompts when averaging over limit:
-  ```
-  "You're averaging 45 minutes per day. Current plan: 30 minutes. Upgrade?"
-  - For today only
-  - For this week
-  - Permanent upgrade
-  - No thank you
-  ```
-- [ ] Auto-downgrade after 3 months low usage:
-  ```
-  "Your usage has dropped to 10 min/day average.
-   We're downgrading you from 45 min to 30 min plan.
-   You'll save $X/month. Notify us if you disagree."
-  ```
-- [ ] Auto-pause after 3 months inactive:
-  ```
-  "You haven't used the app in 3 months.
-   We're pausing your subscription to save you money.
-   Restart anytime with one click."
-  ```
-
-**Timeline:** 3-4 weeks
-
----
-
 ### v1.6.0 - Multiple Bible Versions & Paid Tier
-**Goal:** "Access multiple Bible translations with fair pricing"
+**Goal:** "Access multiple translations with fair pricing"
 
-**Public Domain Bibles (Free):**
-- [ ] Add support for multiple public domain versions:
-  - [ ] American Standard Version (ASV)
-  - [ ] King James Version (KJV)
-  - [ ] Young's Literal Translation (YLT)
-  - [ ] Darby Translation (DARBY)
-  - [ ] Basic English Bible (BBE)
-  - [ ] Webster's Bible (WEB)
-- [ ] Version selector in settings
-- [ ] Annotations tied to Bible version
-- [ ] Export format includes version reference
-- [ ] Free users: unlimited verses from public domain Bibles
+**Free Tier (Public Domain Bibles - Local):**
+- ✅ World English Bible (WEB)
+- ✅ American Standard Version (ASV)
+- ✅ King James Version (KJV)
+- ✅ All with USFM paragraphs and headings
+- ✅ Bundled locally (~21 MB)
+- ✅ Always instant, works offline
+- ✅ Unlimited annotations and exports
 
-**Premium Licensed Bibles (Paid Tier):**
-- [ ] API integration for licensed versions:
-  - [ ] NIV (via API.Bible or similar)
-  - [ ] ESV (via ESV API)
-  - [ ] NASB, NKJV, NLT, etc.
-- [ ] Per-user API key management
-- [ ] Usage tracking per version
-- [ ] Fallback to public domain if API fails
+**Premium Tier (Licensed Bibles - API):**
+- [ ] API integration (API.Bible or ESV API):
+  - [ ] New International Version (NIV)
+  - [ ] English Standard Version (ESV)
+  - [ ] New American Standard Bible (NASB)
+  - [ ] New Living Translation (NLT)
+- [ ] Smart 500-verse rolling cache (license-compliant)
+- [ ] Pre-fetch next chapters while reading
+- [ ] Cache clears every 14 days (automatic)
+- [ ] **Fallback to WEB** (critical for sermon use case):
+  ```
+  Loading Obadiah 1 (NIV)...
+  [━━━━━━━━        ] 2s
 
-**Paid Tier Features:**
-- [ ] Subscription tiers:
-  - [ ] Free: Public domain Bibles only, 250 verse export limit
-  - [ ] Premium: £5/month or £50/year
-    - [ ] Access to all licensed Bibles (NIV, ESV, etc.)
-    - [ ] 500 verse export limit (max under most licenses)
-    - [ ] User-to-user sharing enabled
-- [ ] Stripe integration for payments
-- [ ] Grace period (14 days after subscription lapses)
-- [ ] Auto-downgrade to public domain if cancelled
+  Connection slow?
+  [Switch to WEB (instant) →]
+  ```
 
-**User-to-User Sharing (Premium Feature):**
-- [ ] Make annotation sets public:
-  - [ ] User clicks "Make Public" on annotation set
-  - [ ] Generates shareable link
-  - [ ] Set appears in community library
-- [ ] Import other users' notes:
-  - [ ] Browse public annotation sets
-  - [ ] Preview before import
-  - [ ] One-click import to your account
-- [ ] License handling for imports:
-  - [ ] Premium user imports premium notes → works as-is
-  - [ ] Free user imports premium notes → auto-convert to public domain Bible
-  - [ ] Show warning: "This uses NIV. Converting to WEB for free tier."
-- [ ] Attribution:
-  - [ ] Original author credited
-  - [ ] "Imported from @username" tag
-  - [ ] Link back to original if public
+**Pricing:**
+- [ ] £5/month or £50/year
+- [ ] 7-day free trial
+- [ ] Stripe integration
+- [ ] Subscription management
 
-**Export License Compliance:**
-- [ ] Update export modal to show:
-  - [ ] Current Bible version
-  - [ ] Verse limit for that version (250/500)
-  - [ ] License warning for commercial versions
-  - [ ] "Switch to WEB" for unlimited export
-- [ ] Premium users:
-  - [ ] 500 verse limit for NIV/ESV/etc.
-  - [ ] Unlimited for public domain
-- [ ] Free users:
-  - [ ] 250 verse limit (prepare for future premium versions)
-  - [ ] Unlimited for public domain
+**Export Compliance:**
+- [ ] Show Bible version in export
+- [ ] Enforce verse limits per version (250 for WEB, 500 for licensed)
+- [ ] License warnings for commercial versions
+- [ ] "Switch to public domain" option for unlimited export
 
-**Technical Implementation:**
-- [ ] Version field in annotations table (already exists: `bible_version`)
-- [ ] User subscription table (tier, status, start_date, end_date)
-- [ ] API key storage (encrypted, per-version)
-- [ ] Usage tracking (API calls per version per user)
-- [ ] Public sets table (user_id, set_name, version, description, downloads)
-- [ ] Import history (who imported what, when)
+**Technical:**
+- [ ] Subscription table (tier, status, dates)
+- [ ] API key management
+- [ ] Usage tracking
+- [ ] 500-verse cache with rolling window
+- [ ] Pre-fetch logic
+- [ ] Fallback modal UI
 
 **Timeline:** 4-5 weeks
 
 ---
 
-### v1.7.0 - Home Screen & Tag Management
-**Goal:** "Clear, simple navigation and management"
+### v1.7.0 - Audio Reader (Premium Feature)
+**Goal:** "Listen to Bible with AI voice"
+
+**Audio features:**
+- [ ] High-quality AI voice API integration
+- [ ] Playback controls (play, pause, speed)
+- [ ] Follow along (auto-scroll with audio)
+- [ ] Verse-level navigation
+- [ ] Background playback (mobile)
+
+**Pricing tiers:**
+- [ ] Free tier:
+  - [ ] Basic voice quality
+  - [ ] 30 min/day average (rolling 7-day)
+  - [ ] Flexible limit (can go to 45 min some days)
+  - [ ] Smart cutoff (finish chapter, not mid-verse)
+- [ ] Premium tiers:
+  - [ ] 45 min/day (£3/month)
+  - [ ] 60 min/day (£5/month)
+  - [ ] Unlimited (£10/month)
+
+**Fair pricing implementation:**
+- [ ] Rolling 7-day average (not hard daily limit)
+- [ ] Upgrade prompts when averaging over limit
+- [ ] Auto-downgrade after 3 months low usage
+- [ ] Auto-pause after 3 months inactive
+
+**Timeline:** 3-4 weeks
+
+---
+
+### v1.8.0 - Home Screen & Tag Management
+**Goal:** "Organised home screen with tag manager"
 
 **Home screen:**
 - [ ] Clean layout with main options:
@@ -303,11 +260,11 @@
     - [ ] New sermon note
     - [ ] Open existing
     - [ ] Load template
-  - [ ] Community (browse public sets)
+  - [ ] Community (browse public sets - if charity)
 
 **Tag Manager:**
 - [ ] View all tags across all sets
-- [ ] Edit tag colors globally
+- [ ] Edit tag colours globally
 - [ ] Merge duplicate tags
 - [ ] Delete unused tags
 - [ ] Tag usage statistics
@@ -316,7 +273,110 @@
 
 ---
 
-### General Improvements (Ongoing)
+### v2.0.0 - Charity Transition (When 10,000+ Users)
+**Goal:** "Become a registered charity funding Bible translation"
+
+**Charity Registration:**
+- [ ] Recruit 2-3 trustees:
+  - [ ] Church leader/theological advisor
+  - [ ] Accessibility/dyslexia expert
+  - [ ] Finance/business person
+- [ ] Draft charity constitution
+- [ ] Define charitable aims:
+  - [ ] Make Bible accessible for dyslexic readers
+  - [ ] Fund Bible translation through Wycliffe
+  - [ ] Provide free access to Scripture
+- [ ] Apply for CIO (Charitable Incorporated Organisation)
+- [ ] Receive charity registration number
+- [ ] Open charity bank account
+- [ ] Set up charity accounting
+
+**Wycliffe Partnership:**
+- [ ] Contact Wycliffe Bible Translators
+- [ ] Establish partnership agreement
+- [ ] Choose partnership model:
+  - [ ] Option 1: Direct donation (40% of revenue)
+  - [ ] Option 2: Designated fund
+  - [ ] Option 3: Sponsor specific translation project (recommended)
+- [ ] Set up regular donations
+- [ ] Receive impact reports for users
+
+**Website Updates:**
+- [ ] Add charity registration number
+- [ ] Mission statement update:
+  > "UK charity making Bible accessible for dyslexic readers while funding Bible translation for unreached people groups"
+- [ ] Impact counter:
+  - [ ] Users helped
+  - [ ] Bible versions available
+  - [ ] Amount donated to Wycliffe
+  - [ ] Languages supported
+- [ ] Donation options:
+  - [ ] One-time donations
+  - [ ] Monthly supporters (£3, £5, £10, £25/month)
+  - [ ] Gift Aid checkbox (UK taxpayers +25%)
+- [ ] Transparent reporting:
+  - [ ] Quarterly impact reports
+  - [ ] Published accounts
+  - [ ] Clear breakdown of revenue allocation
+
+**Premium Messaging Update:**
+```
+Premium: £5/month
+
+✓ Modern Bible translations (NIV, ESV, NASB)
+✓ Sermon notes and advanced features
+✓ Cloud sync across all devices
+
+40% of your subscription funds Bible translation through Wycliffe.
+
+[Start 7-Day Free Trial]
+```
+
+**Publisher Approach (As Charity):**
+- [ ] Contact Crossway (ESV)
+- [ ] Contact Biblica (NIV)
+- [ ] Contact Lockman Foundation (NASB)
+- [ ] Present charity credentials:
+  - [ ] Registered charity number
+  - [ ] Mission statement
+  - [ ] Wycliffe partnership
+  - [ ] User numbers and growth
+  - [ ] Financial transparency
+- [ ] Request charitable licensing terms
+- [ ] Negotiate better rates (like YouVersion)
+- [ ] Potential for free/subsidized licensing
+
+**Revenue Allocation (Example):**
+- 40% → Wycliffe Bible Translators (Bible translation)
+- 20% → Operations (API costs, hosting, accounting)
+- 25% → Development (features, maintenance, salary)
+- 10% → Marketing (growth, reach more people)
+- 5% → Reserves (emergency fund, sustainability)
+
+**New Revenue Streams:**
+- [ ] Grant applications:
+  - [ ] Dyslexia-focused charities
+  - [ ] Christian foundations
+  - [ ] Technology for good initiatives
+- [ ] Church partnerships:
+  - [ ] Churches sponsor free premium for members
+  - [ ] £50-500/month per church
+- [ ] Corporate sponsorship:
+  - [ ] Christian businesses support mission
+  - [ ] £1,000-10,000/year
+- [ ] Crowdfunding campaigns (for specific features)
+
+**Timeline:** 3-6 months (registration process)
+
+**Prerequisites:**
+- ✅ 10,000+ active users (proves sustainability)
+- ✅ £2,000+/month revenue (proves viability)
+- ✅ 6-12 months track record (proves commitment)
+- ✅ Clear mission impact (users helped, stories)
+
+---
+
+## General Improvements (Ongoing)
 **Goal:** "Polish and professionalism"
 
 **Branding:**
@@ -352,7 +412,7 @@
 **Performance:**
 - [ ] Code splitting
 - [ ] Lazy loading
-- [ ] Image optimization
+- [ ] Image optimisation
 - [ ] Bundle size reduction
 - [ ] Performance monitoring
 
@@ -362,27 +422,44 @@
 
 ## Technical Priorities
 
-### Immediate (v1.1.0)
-1. Convert all 66 books to JSON
-2. Build visual navigation (grid book/chapter selector)
-3. Port all v1.0.0 features to v1.1.0
-4. Add multiple annotation sets
+### Immediate (v1.2.0)
+1. Download WEB, ASV, KJV in USFM format
+2. Write USFM → Enhanced JSON converter
+3. Implement paragraph/heading rendering
+4. Add reading mode toggle
+5. Integrate background focus music
+6. Polish animations and transitions
 
-### Short-term (v1.2.0 - v1.3.0)
-1. Implement theme system
-2. Add font/color controls
-3. Build sermon notes editor
+### Short-term (v1.3.0 - v1.5.0)
+1. Implement dyslexia typography features
+2. Build sermon notes editor
+3. Add word-level highlighting engine
 4. Margin annotation layout
 
-### Long-term (v1.4.0+)
-1. Word-level highlighting engine
-2. Audio API integration
-3. Subscription/billing system
-4. Tag management system
+### Medium-term (v1.6.0 - v1.7.0)
+1. API integration for licensed Bibles
+2. Smart caching + fallback system
+3. Subscription/billing system (Stripe)
+4. Audio API integration
+5. Usage tracking and limits
+
+### Long-term (v2.0.0+)
+1. Charity registration process
+2. Wycliffe partnership establishment
+3. Publisher negotiations (charitable licensing)
+4. Grant applications
+5. Church/corporate partnerships
 
 ---
 
 ## Design Philosophy
+
+**Reading Experience:**
+- Beautiful, natural, fluid
+- Animations feel gentle and purposeful
+- Focus mode eliminates distractions
+- Optional ambient music enhances concentration
+- Reading should feel like a peaceful retreat
 
 **From ideas.md:**
 - **Dyslexia-first:** Every design decision considers text processing difficulty
@@ -392,52 +469,133 @@
 - **Margin annotations:** Keep text clean, expand on demand
 - **Flexible & forgiving:** Users can experiment without commitment
 
+**Charity values (v2.0.0+):**
+- **Mission-driven:** Making Bible accessible + funding translation
+- **Transparent:** Published accounts, clear revenue allocation
+- **Generous:** Free tier is genuinely useful, premium is optional
+- **Impactful:** Every subscription serves readers here AND translators there
+
 **Design system:**
 - Cava-inspired (clean, modern, accessible)
-- 6 themes (3 light, 3 dark)
-- Consistent spacing, typography, colors
+- 24+ themes (light, dark, dyslexia-optimised)
+- Consistent spacing, typography, colours
 - Mobile-first, responsive
+- Smooth animations, gentle transitions
 
 ---
 
 ## Success Metrics
 
-**v1.1.0 launch:**
-- [ ] 1000+ users in first month
-- [ ] 50%+ mobile users (proves accessibility)
-- [ ] <5% support requests (proves intuitive)
+**v1.2.0 launch (Reading Experience):**
+- [ ] 80%+ users try reading mode
+- [ ] 50%+ prefer reading mode over verse-by-verse
+- [ ] <5% support requests about reading mode
 
-**v1.3.0 (sermon notes):**
-- [ ] 30%+ users create sermon notes
-- [ ] Average 2+ sermons per active user
+**v1.6.0 (Paid Tier):**
+- [ ] 5% conversion to premium (industry standard)
+- [ ] 1,000 free users → 50 premium users
+- [ ] £250/month revenue
+- [ ] <2% churn rate
 
-**v1.5.0 (audio):**
-- [ ] 10%+ conversion to premium
-- [ ] Revenue covers API costs + 20% margin
-- [ ] 5%+ donated to charity
+**6-Month Goals (Towards Charity):**
+- [ ] 10,000 free users
+- [ ] 500 premium users (5% conversion)
+- [ ] £2,500/month revenue (£30k/year)
+- [ ] Track record for charity application
+
+**12-Month Goals:**
+- [ ] 50,000 free users
+- [ ] 2,500 premium users
+- [ ] £12,500/month revenue (£150k/year)
+- [ ] Charity registration complete
+
+**v2.0.0 Goals (As Charity):**
+- [ ] 100,000 free users
+- [ ] 5,000 premium users
+- [ ] £25,000/month revenue (£300k/year)
+- [ ] £120,000/year donated to Wycliffe (40%)
+- [ ] Charitable licensing terms negotiated
+- [ ] 10+ church partnerships
+- [ ] 3+ grants awarded
 
 ---
 
 ## Open Questions
 
-1. **Bible versions:** Should we add more translations? (NIV, ESV cost money)
-2. **Collaboration:** Should users share notes/studies? (privacy concern)
-3. **Obsidian export:** Still relevant with cloud sync?
-4. **Native apps:** Or is PWA enough?
-5. **Offline mode:** Essential or nice-to-have?
+1. **Bible Versions:** ✅ RESOLVED
+   - Free tier: WEB, ASV, KJV (public domain, local)
+   - Premium tier: NIV, ESV, NASB, NLT (API with fallback)
+   - Charity model enables better publisher terms long-term
+
+2. **Pricing Model:** ✅ RESOLVED
+   - £5/month or £50/year (premium tier)
+   - Multiple donation tiers (when charity)
+   - Church partnerships (when charity)
+
+3. **API Costs:** ✅ RESOLVED
+   - API.Bible or ESV API
+   - 500-verse cache limit (license-compliant)
+   - Fallback to WEB (solves sermon problem)
+
+4. **Collaboration:** ✅ RESOLVED
+   - User-to-user sharing as premium feature (v1.6.0+)
+   - Auto-conversion for free users
+   - Attribution system
+   - Community library
+
+5. **Offline Mode:** 🤔 ONGOING
+   - Free tier: Full offline (public domain Bibles bundled)
+   - Premium tier: Partial offline (500-verse cache)
+   - PWA: Medium priority (v1.8.0+)
+
+6. **Native Apps:** 🤔 ONGOING
+   - PWA works on iOS/Android
+   - Wait for user demand
+   - Priority: Low (PWA sufficient for now)
+
+7. **Charity Trustees:** 🤔 NEW
+   - Who to recruit? (church leader, dyslexia expert, finance)
+   - When to start recruiting? (Q1 2025)
+   - How to compensate? (unpaid, but can employ founder with approval)
+
+8. **Wycliffe Partnership Model:** 🤔 NEW
+   - Which option? (Sponsor specific project recommended)
+   - When to contact? (Q1 2025, before charity registration)
+   - What percentage? (40% of revenue suggested)
 
 ---
 
 ## Next Actions
 
-**For v1.1.0 completion:**
-1. Convert WEB Bible (all 66 books) to JSON
-2. Build visual navigation UI
-3. Add annotation visibility modes (On/Subtle/Off)
-4. Implement multiple annotation sets
-5. Port settings from v1.0.0
-6. Add export feature
-7. Test on mobile devices
-8. Deploy to scripturescribbles.co.uk
+**For v1.2.0 completion (Beautiful Reading Experience):**
+1. Download USFM files for WEB, ASV, KJV from ebible.org
+2. Write USFM → Enhanced JSON converter script (Node.js)
+3. Convert all three Bibles with paragraphs and headings
+4. Update rendering engine to display paragraphs and headings
+5. Add reading mode toggle (verse-by-verse vs reading mode)
+6. Implement smooth animations and transitions
+7. Add optional background focus music player
+8. Test on mobile devices
+9. Update roadmap page with new features
 
-**Estimated:** 2-3 weeks to complete v1.1.0
+**For v1.6.0 planning (Premium Tier):**
+1. Sign up for API.Bible and ESV API
+2. Review terms and conditions (500-verse limit)
+3. Test API integration
+4. Design fallback UI ("Switch to WEB")
+5. Plan Stripe integration
+
+**For v2.0.0 preparation (Charity):**
+1. Document finances meticulously
+2. Track user growth and impact
+3. Start thinking about trustee candidates
+4. Research Wycliffe partnership options
+5. Plan charity constitution
+
+**Estimated:** v1.2.0 in 3-4 weeks, then proceed with roadmap
+
+---
+
+**Made with ❤️ for the body of Christ**
+
+*Long-term vision: UK registered charity funding Bible translation through Wycliffe Bible Translators*
