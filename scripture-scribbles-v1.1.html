@@ -90,9 +90,9 @@
         </div>
 
         <div class="content" id="content">
-            <div class="welcome">
+            <div class="welcome" style="display: none;">
                 <h2>Welcome to Scripture Scribbles</h2>
-                <p>Your dyslexia-friendly Bible study companion with rich annotations and sermon notes.</p>
+                <p>Your Bible study companion with rich annotations and cloud sync.</p>
 
                 <div class="features">
                     <div class="feature">
@@ -101,15 +101,15 @@
                     </div>
                     <div class="feature">
                         <h3>✨ Beautiful Annotations</h3>
-                        <p>Highlight verses, add notes, and organize your studies.</p>
+                        <p>Highlight verses, add notes, and organise your studies.</p>
                     </div>
                     <div class="feature">
                         <h3>☁️ Sync Everywhere</h3>
                         <p>Your notes sync across all your devices automatically.</p>
                     </div>
                     <div class="feature">
-                        <h3>♿ Accessible</h3>
-                        <p>Designed for people with dyslexia. Clean, customizable, readable.</p>
+                        <h3>♿ Coming Soon: Dyslexia Features</h3>
+                        <p>Font options, colour customisation, and audio reader in development.</p>
                     </div>
                 </div>
 
@@ -945,7 +945,9 @@
             });
             if (getStartedBtn) getStartedBtn.addEventListener('click', () => {
                 console.log('Get started clicked');
-                showAuthModal(true);
+                localStorage.setItem('hasSeenWelcome', 'true');
+                document.querySelector('.welcome').style.display = 'none';
+                displayChapter();
             });
             document.getElementById('sign-out-btn').addEventListener('click', signOut);
             document.getElementById('auth-cancel').addEventListener('click', hideAuthModal);
@@ -1061,8 +1063,18 @@
             // Load annotations
             await loadAnnotations();
 
-            // Display chapter
-            displayChapter();
+            // Check if first visit
+            const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+            if (!hasSeenWelcome) {
+                // Show welcome screen for first-time users
+                const welcomeEl = document.querySelector('.welcome');
+                if (welcomeEl) {
+                    welcomeEl.style.display = 'flex';
+                }
+            } else {
+                // Display chapter for returning users
+                displayChapter();
+            }
         }
 
 
