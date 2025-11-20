@@ -231,6 +231,8 @@
         let currentChapter = 1;
         let currentAnnotations = {};
         let selectedVerse = null;
+        let currentAnnotationSet = 'Study'; // Default annotation set
+        let userAnnotationSets = ['Study', 'Church', 'Personal']; // Default sets
         let isSignUp = false;
         let knownTags = {}; // { tagName: color } - persisted to localStorage
         let currentTags = []; // Tags being edited in annotation panel
@@ -271,6 +273,9 @@
 
             // Load annotation visibility mode
             loadAnnotationMode();
+
+            // Load annotation sets
+            loadAnnotationSets();
 
             // Load Bible data
             await loadBibleData();
@@ -327,6 +332,133 @@
             content.classList.remove('annotation-mode-on', 'annotation-mode-subtle', 'annotation-mode-off');
             content.classList.add(`annotation-mode-${mode}`);
             localStorage.setItem('annotationMode', mode);
+        }
+
+        // Annotation Set functions
+        function loadAnnotationSets() {
+            const saved = localStorage.getItem('annotationSets');
+            if (saved) {
+                userAnnotationSets = JSON.parse(saved);
+            }
+            const savedCurrent = localStorage.getItem('currentAnnotationSet');
+            if (savedCurrent && userAnnotationSets.includes(savedCurrent)) {
+                currentAnnotationSet = savedCurrent;
+            }
+            updateSetSwitcherUI();
+        }
+
+        function saveAnnotationSets() {
+            localStorage.setItem('annotationSets', JSON.stringify(userAnnotationSets));
+            localStorage.setItem('currentAnnotationSet', currentAnnotationSet);
+        }
+
+        function updateSetSwitcherUI() {
+            const setNameEl = document.getElementById('current-set-name');
+            if (setNameEl) setNameEl.textContent = currentAnnotationSet;
+        }
+
+        function openSetModal() {
+            const modal = document.getElementById('set-modal');
+            modal.classList.add('active');
+            renderSetList();
+        }
+
+        function closeSetModal() {
+            const modal = document.getElementById('set-modal');
+            modal.classList.remove('active');
+        }
+
+        function renderSetList() {
+            const listEl = document.getElementById('set-list');
+            let html = '';
+
+            userAnnotationSets.forEach(setName => {
+                const isActive = setName === currentAnnotationSet;
+                html += `
+                    <div class="set-item ${isActive ? 'active' : ''}" onclick="switchAnnotationSet('${setName}')">
+                        <span class="set-item-name">${setName}</span>
+                        <div class="set-item-actions" onclick="event.stopPropagation()">
+                            ${userAnnotationSets.length > 1 ? `<button onclick="deleteSet('${setName}')" title="Delete set"><i class="ph ph-trash"></i></button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            listEl.innerHTML = html;
+        }
+
+        async function switchAnnotationSet(setName) {
+            if (setName === currentAnnotationSet) {
+                closeSetModal();
+                return;
+            }
+
+            currentAnnotationSet = setName;
+            saveAnnotationSets();
+            updateSetSwitcherUI();
+            closeSetModal();
+
+            // Reload annotations for new set
+            if (currentUser && bibleData) {
+                await loadAnnotations();
+                displayChapter();
+            }
+        }
+
+        async function createSet() {
+            const input = document.getElementById('new-set-name');
+            const setName = input.value.trim();
+
+            if (!setName) {
+                alert('Please enter a set name');
+                return;
+            }
+
+            if (userAnnotationSets.includes(setName)) {
+                alert('A set with this name already exists');
+                return;
+            }
+
+            userAnnotationSets.push(setName);
+            saveAnnotationSets();
+            input.value = '';
+            renderSetList();
+        }
+
+        async function deleteSet(setName) {
+            if (userAnnotationSets.length === 1) {
+                alert('Cannot delete the last annotation set');
+                return;
+            }
+
+            if (!confirm(`Delete annotation set "${setName}"? This will delete all annotations in this set.`)) {
+                return;
+            }
+
+            // Delete from Supabase if user is logged in
+            if (currentUser) {
+                try {
+                    await supabase
+                        .from('annotations')
+                        .delete()
+                        .eq('user_id', currentUser.id)
+                        .eq('annotation_set', setName);
+                } catch (error) {
+                    console.error('Error deleting set from Supabase:', error);
+                }
+            }
+
+            // Remove from local list
+            userAnnotationSets = userAnnotationSets.filter(s => s !== setName);
+
+            // Switch to first set if we deleted the current one
+            if (setName === currentAnnotationSet) {
+                currentAnnotationSet = userAnnotationSets[0];
+                await switchAnnotationSet(currentAnnotationSet);
+            }
+
+            saveAnnotationSets();
+            renderSetList();
         }
 
         // Auto-contrast functions
@@ -775,6 +907,9 @@
             document.getElementById('close-nav-modal').addEventListener('click', closeNavModal);
             document.getElementById('nav-tab-book').addEventListener('click', () => showNavTab('book'));
             document.getElementById('nav-tab-chapter').addEventListener('click', () => showNavTab('chapter'));
+
+            // Annotation set switcher
+            document.getElementById('set-switcher-btn').addEventListener('click', openSetModal);
             document.getElementById('prev-chapter').addEventListener('click', () => navigateChapter(-1));
             document.getElementById('next-chapter').addEventListener('click', () => navigateChapter(1));
 
@@ -1146,7 +1281,7 @@
                     .select('*')
                     .eq('user_id', currentUser.id)
                     .eq('bible_version', 'WEB')
-                    .eq('annotation_set', 'Study')
+                    .eq('annotation_set', currentAnnotationSet)
                     .eq('book_id', bookId)
                     .maybeSingle();
 
@@ -1297,7 +1432,7 @@
                     .select('id')
                     .eq('user_id', currentUser.id)
                     .eq('bible_version', 'WEB')
-                    .eq('annotation_set', 'Study')
+                    .eq('annotation_set', currentAnnotationSet)
                     .eq('book_id', bookId)
                     .maybeSingle();
 
@@ -1318,7 +1453,7 @@
                         .insert({
                             user_id: currentUser.id,
                             bible_version: 'WEB',
-                            annotation_set: 'Study',
+                            annotation_set: currentAnnotationSet,
                             book_id: bookId,
                             data: currentAnnotations
                         });
@@ -1626,7 +1761,7 @@
                     .select('id')
                     .eq('user_id', currentUser.id)
                     .eq('bible_version', 'WEB')
-                    .eq('annotation_set', 'Study')
+                    .eq('annotation_set', currentAnnotationSet)
                     .eq('book_id', bookId)
                     .maybeSingle();
 
@@ -1645,7 +1780,7 @@
                         .insert({
                             user_id: currentUser.id,
                             bible_version: 'WEB',
-                            annotation_set: 'Study',
+                            annotation_set: currentAnnotationSet,
                             book_id: bookId,
                             data: currentAnnotations
                         });
