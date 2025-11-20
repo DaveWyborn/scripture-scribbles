@@ -341,7 +341,7 @@
                 // No user logged in - show welcome screen
                 const welcomeEl = document.querySelector('.welcome');
                 if (welcomeEl) {
-                    welcomeEl.style.display = 'flex';
+                    welcomeEl.style.display = 'block';
                 }
             }
 
@@ -1082,7 +1082,7 @@
             if (!hasSeenWelcome) {
                 // First-time logged-in user - show welcome screen once
                 if (welcomeEl) {
-                    welcomeEl.style.display = 'flex';
+                    welcomeEl.style.display = 'block';
                 }
             } else {
                 // Returning user - hide welcome and show Bible
