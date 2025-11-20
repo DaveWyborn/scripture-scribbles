@@ -316,6 +316,50 @@
 
 ---
 
+### General Improvements (Ongoing)
+**Goal:** "Polish and professionalism"
+
+**Branding:**
+- [ ] Logo design (icon + wordmark)
+- [ ] Favicon
+- [ ] App icon (PWA)
+- [ ] Social media images (Open Graph)
+- [ ] Email templates branding
+
+**Email System:**
+- [ ] Welcome email (branded)
+- [ ] Email verification template
+- [ ] Password reset template
+- [ ] Subscription confirmation
+- [ ] Payment receipts
+- [ ] Feature announcements
+
+**Design Improvements:**
+- [ ] Loading states (skeletons)
+- [ ] Empty states (no annotations yet)
+- [ ] Error states (failed to load)
+- [ ] Success animations
+- [ ] Micro-interactions
+- [ ] Accessibility audit (WCAG AA)
+
+**Theme Updates:**
+- [ ] Theme preview before selection
+- [ ] Custom theme creator
+- [ ] Import/export themes
+- [ ] Community themes
+- [ ] Seasonal themes (Christmas, Easter)
+
+**Performance:**
+- [ ] Code splitting
+- [ ] Lazy loading
+- [ ] Image optimization
+- [ ] Bundle size reduction
+- [ ] Performance monitoring
+
+**Timeline:** Ongoing, small improvements each release
+
+---
+
 ## Technical Priorities
 
 ### Immediate (v1.1.0)

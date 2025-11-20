@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadmap - Scripture Scribbles</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 60px;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin: 60px 0 40px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .section-header p {
+            font-size: 1.2em;
+            color: #7f8c8d;
+        }
+
+        /* Current Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-card h3 i {
+            font-size: 1.5em;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-card li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .feature-card li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Future Feature Blocks */
+        .future-features {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .feature-block {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .feature-block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .feature-block-title {
+            flex: 1;
+        }
+
+        .feature-block-title h3 {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .feature-block-title .goal {
+            font-size: 1.1em;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .vote-button {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #667eea;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .vote-button:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .vote-button.voted {
+            background: #667eea;
+            color: white;
+        }
+
+        .vote-button i {
+            font-size: 1.3em;
+        }
+
+        .vote-count {
+            background: white;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.9em;
+            color: #667eea;
+        }
+
+        .voted .vote-count {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .feature-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-group h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .feature-group ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-group li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+            color: #555;
+        }
+
+        .feature-group li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+        }
+
+        /* CTA Sections */
+        .cta-section {
+            background: linear-gradient(135deg, #ffa751 0%, #ffe259 100%);
+            padding: 60px 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #2c3e50;
+            color: white;
+            padding: 20px 50px;
+            font-size: 1.3em;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Preview Section */
+        .preview-section {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin: 40px 0;
+            text-align: center;
+            border: 2px dashed #667eea;
+        }
+
+        .preview-section h3 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .preview-section p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .preview-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .preview-buttons a,
+        .preview-buttons button {
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            border: none;
+            font-weight: bold;
+        }
+
+        .preview-buttons .primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .preview-buttons .secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .preview-buttons a:hover,
+        .preview-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-content h3 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .modal-content p {
+            color: #555;
+            margin-bottom: 25px;
+            line-height: 1.8;
+        }
+
+        .modal-content .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-content button,
+        .modal-content a {
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            border: none;
+            font-weight: bold;
+        }
+
+        .modal-content .danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .modal-content .secondary {
+            background: #e9ecef;
+            color: #555;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+            margin-top: 80px;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1.1em;
+            }
+
+            .section-header h2 {
+                font-size: 2em;
+            }
+
+            .feature-block {
+                padding: 25px;
+            }
+
+            .feature-block-header {
+                flex-direction: column;
+            }
+
+            .vote-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .feature-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero -->
+        <div class="hero">
+            <h1>Building a Better Bible Reader for You</h1>
+            <p>Your feedback shapes what we build next. Vote for the features you want most!</p>
+        </div>
+
+        <!-- Section 1: Built and Working -->
+        <div class="section-header">
+            <h2>✅ Built & Working</h2>
+            <p>Features available in the current version</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3><i class="ph ph-cloud"></i> Cloud Sync</h3>
+                <ul>
+                    <li>Works on all devices</li>
+                    <li>Auto-save annotations</li>
+                    <li>Never lose your notes</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><i class="ph ph-palette"></i> 24 Themes</h3>
+                <ul>
+                    <li>High contrast themes</li>
+                    <li>Dyslexia-friendly options</li>
+                    <li>Light and dark modes</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><i class="ph ph-highlighter"></i> Annotations</h3>
+                <ul>
+                    <li>6-color highlights</li>
+                    <li>Verse notes</li>
+                    <li>Custom tags</li>
+                    <li>Multiple annotation sets</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><i class="ph ph-download"></i> Export Notes</h3>
+                <ul>
+                    <li>Markdown format</li>
+                    <li>JSON backup</li>
+                    <li>Share with others</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><i class="ph ph-book-open"></i> Visual Navigation</h3>
+                <ul>
+                    <li>Grid-based book selector</li>
+                    <li>Quick chapter navigation</li>
+                    <li>No typing needed</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><i class="ph ph-eye"></i> Display Modes</h3>
+                <ul>
+                    <li>On: Full annotations</li>
+                    <li>Subtle: Greyscale</li>
+                    <li>Off: Reading mode</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- CTA 1 -->
+        <div class="cta-section">
+            <h2>☕ Support Scripture Scribbles</h2>
+            <p>Help us build these features faster! Your support keeps this project free and accessible for everyone.</p>
+            <a href="https://www.buymeacoffee.com/scripturescribbles" target="_blank" class="cta-button">Buy Us a Coffee</a>
+        </div>
+
+        <!-- Section 2: Future Features -->
+        <div class="section-header">
+            <h2>🚀 What's Next?</h2>
+            <p>Vote for the features you want most!</p>
+        </div>
+
+        <div class="future-features">
+            <!-- Dyslexia Features -->
+            <div class="feature-block" data-feature="dyslexia">
+                <div class="feature-block-header">
+                    <div class="feature-block-title">
+                        <h3>Dyslexia-Friendly Features</h3>
+                        <p class="goal">"Make Bible reading accessible for everyone"</p>
+                    </div>
+                    <button class="vote-button" onclick="vote('dyslexia')">
+                        <i class="ph ph-thumbs-up"></i>
+                        <span>Vote</span>
+                        <span class="vote-count">0</span>
+                    </button>
+                </div>
+                <div class="feature-details">
+                    <div class="feature-group">
+                        <h4>Font Options</h4>
+                        <ul>
+                            <li>OpenDyslexic font</li>
+                            <li>Atkinson Hyperlegible</li>
+                            <li>System fonts</li>
+                        </ul>
+                    </div>
+                    <div class="feature-group">
+                        <h4>Typography Controls</h4>
+                        <ul>
+                            <li>Font size slider</li>
+                            <li>Bold toggle</li>
+                            <li>Line height adjustment</li>
+                            <li>Letter spacing control</li>
+                        </ul>
+                    </div>
+                    <div class="feature-group">
+                        <h4>Color Customization</h4>
+                        <ul>
+                            <li>Background color picker</li>
+                            <li>Text color picker</li>
+                            <li>Custom annotation colors</li>
+                            <li>Dyslexia-optimized presets</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sermon Notes -->
+            <div class="feature-block" data-feature="sermon">
+                <div class="feature-block-header">
+                    <div class="feature-block-title">
+                        <h3>Sermon Notes</h3>
+                        <p class="goal">"Capture insights during sermons"</p>
+                    </div>
+                    <button class="vote-button" onclick="vote('sermon')">
+                        <i class="ph ph-thumbs-up"></i>
+                        <span>Vote</span>
+                        <span class="vote-count">0</span>
+                    </button>
+                </div>
+                <div class="feature-details">
+                    <div class="feature-group">
+                        <h4>Note Taking</h4>
+                        <ul>
+                            <li>Side-by-side Bible + Notes</li>
+                            <li>Markdown editor</li>
+                            <li>Quick verse insertion</li>
+                            <li>Templates (speaker, date, series)</li>
+                        </ul>
+                    </div>
+                    <div class="feature-group">
+                        <h4>Organization</h4>
+                        <ul>
+                            <li>Sermon library</li>
+                            <li>Search notes</li>
+                            <li>Tag sermons</li>
+                            <li>Export to Markdown</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Word Highlighting -->
+            <div class="feature-block" data-feature="wordhl">
+                <div class="feature-block-header">
+                    <div class="feature-block-title">
+                        <h3>Word-Level Highlighting</h3>
+                        <p class="goal">"Highlight individual words, not just verses"</p>
+                    </div>
+                    <button class="vote-button" onclick="vote('wordhl')">
+                        <i class="ph ph-thumbs-up"></i>
+                        <span>Vote</span>
+                        <span class="vote-count">0</span>
+                    </button>
+                </div>
+                <div class="feature-details">
+                    <div class="feature-group">
+                        <h4>Flexible Highlighting</h4>
+                        <ul>
+                            <li>Select individual words</li>
+                            <li>6+ colors available</li>
+                            <li>Word + verse highlights coexist</li>
+                            <li>Smart merging rules</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audio Reader -->
+            <div class="feature-block" data-feature="audio">
+                <div class="feature-block-header">
+                    <div class="feature-block-title">
+                        <h3>Audio Reader</h3>
+                        <p class="goal">"Listen to Scripture with AI voice"</p>
+                    </div>
+                    <button class="vote-button" onclick="vote('audio')">
+                        <i class="ph ph-thumbs-up"></i>
+                        <span>Vote</span>
+                        <span class="vote-count">0</span>
+                    </button>
+                </div>
+                <div class="feature-details">
+                    <div class="feature-group">
+                        <h4>Playback Features</h4>
+                        <ul>
+                            <li>High-quality AI voice</li>
+                            <li>Play, pause, speed control</li>
+                            <li>Auto-scroll with audio</li>
+                            <li>Verse-level navigation</li>
+                        </ul>
+                    </div>
+                    <div class="feature-group">
+                        <h4>Fair Pricing</h4>
+                        <ul>
+                            <li>Free: 30 min/day average</li>
+                            <li>Premium: 45/60/unlimited</li>
+                            <li>Auto-downgrade after low usage</li>
+                            <li>No dark patterns</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multiple Bible Versions -->
+            <div class="feature-block" data-feature="versions">
+                <div class="feature-block-header">
+                    <div class="feature-block-title">
+                        <h3>Multiple Bible Versions</h3>
+                        <p class="goal">"Read your favorite translation"</p>
+                    </div>
+                    <button class="vote-button" onclick="vote('versions')">
+                        <i class="ph ph-thumbs-up"></i>
+                        <span>Vote</span>
+                        <span class="vote-count">0</span>
+                    </button>
+                </div>
+                <div class="feature-details">
+                    <div class="feature-group">
+                        <h4>Free (Public Domain)</h4>
+                        <ul>
+                            <li>ASV, KJV, YLT</li>
+                            <li>Darby, BBE</li>
+                            <li>Unlimited export</li>
+                        </ul>
+                    </div>
+                    <div class="feature-group">
+                        <h4>Premium (Licensed)</h4>
+                        <ul>
+                            <li>NIV, ESV, NASB</li>
+                            <li>NKJV, NLT</li>
+                            <li>£5/month or £50/year</li>
+                            <li>500 verse export limit</li>
+                        </ul>
+                    </div>
+                    <div class="feature-group">
+                        <h4>Community Sharing</h4>
+                        <ul>
+                            <li>Share annotation sets</li>
+                            <li>Browse community library</li>
+                            <li>Import others' notes</li>
+                            <li>Auto-convert for free users</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- General Improvements -->
+            <div class="feature-block" data-feature="polish">
+                <div class="feature-block-header">
+                    <div class="feature-block-title">
+                        <h3>Polish & Professional Design</h3>
+                        <p class="goal">"Make everything look and feel amazing"</p>
+                    </div>
+                    <button class="vote-button" onclick="vote('polish')">
+                        <i class="ph ph-thumbs-up"></i>
+                        <span>Vote</span>
+                        <span class="vote-count">0</span>
+                    </button>
+                </div>
+                <div class="feature-details">
+                    <div class="feature-group">
+                        <h4>Branding</h4>
+                        <ul>
+                            <li>Logo design</li>
+                            <li>App icon</li>
+                            <li>Email templates</li>
+                            <li>Social media graphics</li>
+                        </ul>
+                    </div>
+                    <div class="feature-group">
+                        <h4>UX Improvements</h4>
+                        <ul>
+                            <li>Loading animations</li>
+                            <li>Empty states</li>
+                            <li>Success feedback</li>
+                            <li>Micro-interactions</li>
+                        </ul>
+                    </div>
+                    <div class="feature-group">
+                        <h4>Theme Enhancements</h4>
+                        <ul>
+                            <li>Theme preview</li>
+                            <li>Custom theme creator</li>
+                            <li>Community themes</li>
+                            <li>Seasonal themes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="preview-section">
+            <h3>🧪 Try the Latest Preview Version</h3>
+            <p><strong>Warning:</strong> This is a testing version. It may change frequently and could break without notice. Use with caution!</p>
+            <div class="preview-buttons">
+                <a href="#" class="primary" onclick="openPreviewModal(); return false;">Great! Let's See It</a>
+                <button class="secondary" onclick="this.parentElement.parentElement.style.display='none'">Thanks, Maybe Later</button>
+            </div>
+        </div>
+
+        <!-- CTA 2 -->
+        <div class="cta-section">
+            <h2>💝 Love What We're Building?</h2>
+            <p>Your support helps us dedicate more time to building features you want!</p>
+            <a href="https://www.buymeacoffee.com/scripturescribbles" target="_blank" class="cta-button">Support the Project</a>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Scripture Scribbles v1.1.0</p>
+            <p style="margin-top: 10px;">
+                <a href="index.html">Home</a> •
+                <a href="scripture-scribbles-v1.1.html">Launch App</a> •
+                <a href="https://github.com/DaveWyborn/scripture-scribbles" target="_blank">GitHub</a> •
+                <a href="https://github.com/DaveWyborn/scripture-scribbles/issues" target="_blank">Report Issue</a>
+            </p>
+            <p style="margin-top: 20px; font-size: 0.9em;">
+                Made with ❤️ for the body of Christ
+            </p>
+        </footer>
+    </div>
+
+    <!-- Preview Warning Modal -->
+    <div class="modal" id="preview-modal">
+        <div class="modal-content">
+            <h3>⚠️ Preview Version Warning</h3>
+            <p>
+                This is an <strong>unstable testing version</strong>. Features may be incomplete,
+                data could be lost, and things might break at any time.
+            </p>
+            <p>
+                <strong>Use the stable version for important work!</strong>
+            </p>
+            <div class="buttons">
+                <a href="preview.html" class="danger">I Understand, Continue</a>
+                <button class="secondary" onclick="closePreviewModal()">Take Me Back</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load votes from localStorage
+        const votes = JSON.parse(localStorage.getItem('feature-votes') || '{}');
+
+        // Initialize vote counts
+        document.addEventListener('DOMContentLoaded', () => {
+            Object.keys(votes).forEach(feature => {
+                updateVoteUI(feature, votes[feature]);
+            });
+        });
+
+        function vote(feature) {
+            // Toggle vote
+            if (votes[feature]) {
+                delete votes[feature];
+            } else {
+                votes[feature] = true;
+            }
+
+            // Save to localStorage
+            localStorage.setItem('feature-votes', JSON.stringify(votes));
+
+            // Update UI
+            updateVoteUI(feature, votes[feature]);
+
+            // Track in Supabase (future enhancement)
+            // trackVote(feature, votes[feature]);
+        }
+
+        function updateVoteUI(feature, voted) {
+            const block = document.querySelector(`[data-feature="${feature}"]`);
+            const button = block.querySelector('.vote-button');
+            const count = button.querySelector('.vote-count');
+
+            if (voted) {
+                button.classList.add('voted');
+                button.querySelector('span:nth-child(2)').textContent = 'Voted!';
+            } else {
+                button.classList.remove('voted');
+                button.querySelector('span:nth-child(2)').textContent = 'Vote';
+            }
+
+            // Get total votes (from localStorage for now, will be from Supabase later)
+            const totalVotes = Object.keys(votes).length;
+            count.textContent = voted ? '✓' : '0';
+        }
+
+        function openPreviewModal() {
+            document.getElementById('preview-modal').classList.add('active');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('preview-modal').classList.remove('active');
+        }
+
+        // Close modal on background click
+        document.getElementById('preview-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'preview-modal') {
+                closePreviewModal();
+            }
+        });
+    </script>
+</body>
+</html>
