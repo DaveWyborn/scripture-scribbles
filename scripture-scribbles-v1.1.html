@@ -20,6 +20,31 @@
                 <button class="nav-btn nav-arrow" id="prev-chapter" aria-label="Previous chapter">←</button>
                 <button class="chapter-info" id="chapter-info">Genesis 1</button>
                 <button class="nav-btn nav-arrow" id="next-chapter" aria-label="Next chapter">→</button>
+                <div class="annotation-set-switcher">
+                    <button class="set-switcher-btn" id="set-switcher-btn">
+                        <i class="ph ph-stack"></i>
+                        <span id="current-set-name">Study</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Annotation Set Modal -->
+        <div class="modal" id="set-modal">
+            <div class="modal-content modal-small">
+                <div class="modal-header">
+                    <h2>Annotation Sets</h2>
+                    <button class="modal-close" onclick="closeSetModal()">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="set-list" id="set-list"></div>
+                    <div class="set-actions">
+                        <input type="text" id="new-set-name" placeholder="New set name..." maxlength="50">
+                        <button class="btn primary" onclick="createSet()">Create Set</button>
+                    </div>
+                </div>
             </div>
         </div>
 

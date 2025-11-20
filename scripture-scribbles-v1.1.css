@@ -689,6 +689,33 @@ body {
     gap: var(--space-s);
     align-items: center;
     justify-content: center;
+    flex-wrap: wrap;
+}
+
+.annotation-set-switcher {
+    margin-left: var(--space-m);
+}
+
+.set-switcher-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius-s);
+    color: var(--bg-primary);
+    padding: 4px 12px;
+    font-size: 0.85em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background var(--transition-fast);
+}
+
+.set-switcher-btn:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+.set-switcher-btn i {
+    font-size: 1.1em;
 }
 
 .nav-btn {
@@ -1647,6 +1674,142 @@ body {
 
 .modal-buttons button {
     flex: 1;
+}
+
+/* Annotation Set Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--bg-primary);
+    border-radius: var(--radius-l);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-small {
+    max-width: 400px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-l);
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.3em;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--radius-s);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: var(--bg-secondary);
+}
+
+.modal-body {
+    padding: var(--space-l);
+    overflow-y: auto;
+}
+
+.set-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    margin-bottom: var(--space-l);
+}
+
+.set-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-m);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.set-item:hover {
+    background: var(--bg-secondary);
+}
+
+.set-item.active {
+    border-color: var(--accent-primary);
+    background: var(--bg-secondary);
+}
+
+.set-item-name {
+    font-weight: 500;
+}
+
+.set-item-actions {
+    display: flex;
+    gap: var(--space-s);
+}
+
+.set-item-actions button {
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--radius-s);
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+}
+
+.set-item-actions button:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.set-actions {
+    display: flex;
+    gap: var(--space-s);
+}
+
+.set-actions input {
+    flex: 1;
+    padding: var(--space-s) var(--space-m);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-s);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.9em;
 }
 
 .auth-toggle {
