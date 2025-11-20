@@ -337,6 +337,12 @@
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
                 await handleAuthSuccess(session.user);
+            } else {
+                // No user logged in - show welcome screen
+                const welcomeEl = document.querySelector('.welcome');
+                if (welcomeEl) {
+                    welcomeEl.style.display = 'flex';
+                }
             }
 
             // Listen for auth changes
@@ -945,9 +951,15 @@
             });
             if (getStartedBtn) getStartedBtn.addEventListener('click', () => {
                 console.log('Get started clicked');
-                localStorage.setItem('hasSeenWelcome', 'true');
-                document.querySelector('.welcome').style.display = 'none';
-                displayChapter();
+                if (currentUser) {
+                    // User is logged in, mark welcome as seen and show Bible
+                    localStorage.setItem('hasSeenWelcome', 'true');
+                    document.querySelector('.welcome').style.display = 'none';
+                    displayChapter();
+                } else {
+                    // User not logged in, show sign up modal
+                    showAuthModal(true);
+                }
             });
             document.getElementById('sign-out-btn').addEventListener('click', signOut);
             document.getElementById('auth-cancel').addEventListener('click', hideAuthModal);
@@ -1065,14 +1077,18 @@
 
             // Check if first visit
             const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+            const welcomeEl = document.querySelector('.welcome');
+
             if (!hasSeenWelcome) {
-                // Show welcome screen for first-time users
-                const welcomeEl = document.querySelector('.welcome');
+                // First-time logged-in user - show welcome screen once
                 if (welcomeEl) {
                     welcomeEl.style.display = 'flex';
                 }
             } else {
-                // Display chapter for returning users
+                // Returning user - hide welcome and show Bible
+                if (welcomeEl) {
+                    welcomeEl.style.display = 'none';
+                }
                 displayChapter();
             }
         }
