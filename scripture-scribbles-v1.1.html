@@ -69,6 +69,10 @@
                 <i class="ph ph-bug"></i>
                 <span>Report a Bug</span>
             </a>
+            <div class="settings-item" id="export-notes-btn" style="cursor: pointer;">
+                <i class="ph ph-download"></i>
+                <span>Export Notes</span>
+            </div>
             <div class="settings-divider"></div>
             <div class="settings-item user-section" id="settings-user-info" style="display: none;">
                 <div class="settings-user-label">Logged in as:</div>
@@ -209,6 +213,48 @@
             </form>
             <div class="auth-toggle">
                 <span id="auth-toggle-text">Don't have an account? <a id="auth-toggle-link">Sign up</a></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="export-modal">
+        <div class="modal">
+            <h2>Export Notes</h2>
+            <div id="export-message"></div>
+
+            <div class="form-group">
+                <label>Annotation Set</label>
+                <select id="export-annotation-set">
+                    <!-- Will be populated dynamically -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Select Books to Export</label>
+                <div id="export-verse-count" style="margin-bottom: 10px; font-weight: bold; color: var(--text-secondary);">
+                    Loading annotations...
+                </div>
+                <div id="export-book-list" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); padding: 10px; border-radius: 8px; background: var(--bg-secondary);">
+                    <!-- Book checkboxes will be populated here -->
+                </div>
+            </div>
+
+            <!-- Hidden until we add commercial Bible versions -->
+            <div id="export-limit-warning" style="display: none; background: var(--accent-negative); color: white; padding: 10px; border-radius: 8px; margin: 10px 0;">
+                ⚠️ Selected verses exceed the 250-verse limit for commercial Bible versions. Please reduce selection or switch to WEB.
+            </div>
+
+            <div class="export-disclaimer" style="display: none; background: var(--bg-secondary); padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 0.9em; border-left: 3px solid var(--accent-info);">
+                <strong>⚠️ Important:</strong> Sharing exported notes may be subject to Bible translation copyright. You are responsible for ensuring you have permission to share these notes.
+            </div>
+
+            <div class="modal-buttons" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" class="btn" id="export-cancel">Cancel</button>
+                <!-- Hidden until we add commercial Bible versions -->
+                <button type="button" class="btn" id="export-switch-web" style="display: none; background: var(--accent-info); color: white;">Switch to WEB (No Limits)</button>
+                <button type="button" class="btn primary" id="export-markdown">Export Markdown</button>
+                <button type="button" class="btn" id="export-json" style="background: var(--text-secondary); color: var(--bg-primary);">Backup JSON</button>
             </div>
         </div>
     </div>
@@ -935,6 +981,17 @@
                 }
             });
             document.getElementById('new-tag-color').addEventListener('click', showColorPicker);
+
+            // Export functionality
+            document.getElementById('export-notes-btn').addEventListener('click', openExportModal);
+            document.getElementById('export-cancel').addEventListener('click', hideExportModal);
+            document.getElementById('export-markdown').addEventListener('click', exportMarkdown);
+            document.getElementById('export-json').addEventListener('click', exportJSON);
+            document.getElementById('export-switch-web').addEventListener('click', switchToWebExport);
+            document.getElementById('export-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'export-modal') hideExportModal();
+            });
+            document.getElementById('export-annotation-set').addEventListener('change', loadExportData);
         }
 
         // Auth functions
@@ -1872,6 +1929,344 @@
                 feedback.classList.remove('show');
             }, 2000);
         }
+
+        // Export functions
+        let exportBookData = {}; // Stores {bookId: {bookName, chapterCount, verseCount, chapters: {1: [verses]}}}
+        let exportUseWEB = false;
+
+        // Bible book order (for sorting exports)
+        const BIBLE_BOOK_ORDER = [
+            'genesis', 'exodus', 'leviticus', 'numbers', 'deuteronomy',
+            'joshua', 'judges', 'ruth', '1samuel', '2samuel',
+            '1kings', '2kings', '1chronicles', '2chronicles', 'ezra',
+            'nehemiah', 'esther', 'job', 'psalms', 'proverbs',
+            'ecclesiastes', 'songofsolomon', 'isaiah', 'jeremiah', 'lamentations',
+            'ezekiel', 'daniel', 'hosea', 'joel', 'amos',
+            'obadiah', 'jonah', 'micah', 'nahum', 'habakkuk',
+            'zephaniah', 'haggai', 'zechariah', 'malachi',
+            'matthew', 'mark', 'luke', 'john', 'acts',
+            'romans', '1corinthians', '2corinthians', 'galatians', 'ephesians',
+            'philippians', 'colossians', '1thessalonians', '2thessalonians',
+            '1timothy', '2timothy', 'titus', 'philemon', 'hebrews',
+            'james', '1peter', '2peter', '1john', '2john', '3john',
+            'jude', 'revelation'
+        ];
+
+        async function openExportModal() {
+            if (!currentUser) {
+                alert('Please sign in to export notes');
+                return;
+            }
+
+            // Close settings menu
+            document.getElementById('settings-menu').classList.remove('open');
+
+            // Populate annotation sets
+            const setSelect = document.getElementById('export-annotation-set');
+            setSelect.innerHTML = '';
+            userAnnotationSets.forEach(setName => {
+                const option = document.createElement('option');
+                option.value = setName;
+                option.textContent = setName;
+                if (setName === currentAnnotationSet) option.selected = true;
+                setSelect.appendChild(option);
+            });
+
+            exportUseWEB = false;
+            document.getElementById('export-modal').classList.add('active');
+            await loadExportData();
+        }
+
+        function hideExportModal() {
+            document.getElementById('export-modal').classList.remove('active');
+            exportBookData = {};
+        }
+
+        async function loadExportData() {
+            const setName = document.getElementById('export-annotation-set').value;
+            const verseCountEl = document.getElementById('export-verse-count');
+            const bookListEl = document.getElementById('export-book-list');
+
+            verseCountEl.textContent = 'Loading annotations...';
+            bookListEl.innerHTML = '<div style="text-align: center; padding: 20px;">Loading...</div>';
+
+            try {
+                // Fetch all annotations for this set
+                const { data, error } = await supabase
+                    .from('annotations')
+                    .select('book_id, data')
+                    .eq('user_id', currentUser.id)
+                    .eq('bible_version', 'WEB')
+                    .eq('annotation_set', setName);
+
+                if (error) throw error;
+
+                // Build book data structure
+                exportBookData = {};
+                let totalVerses = 0;
+
+                data.forEach(row => {
+                    const [bookId, chapterNum] = row.book_id.split('-');
+                    const chapter = parseInt(chapterNum);
+
+                    if (!exportBookData[bookId]) {
+                        const book = bibleData.books.find(b => b.id === bookId);
+                        exportBookData[bookId] = {
+                            bookName: book ? book.name : bookId,
+                            chapterCount: 0,
+                            verseCount: 0,
+                            chapters: {},
+                            selected: true
+                        };
+                    }
+
+                    // Count verses in this chapter
+                    const verseNums = Object.keys(row.data || {});
+                    if (verseNums.length > 0) {
+                        exportBookData[bookId].chapters[chapter] = verseNums.map(v => parseInt(v));
+                        exportBookData[bookId].verseCount += verseNums.length;
+                        exportBookData[bookId].chapterCount++;
+                        totalVerses += verseNums.length;
+                    }
+                });
+
+                // Render book checkboxes
+                renderExportBookList();
+                updateExportVerseCount();
+
+            } catch (error) {
+                console.error('Error loading export data:', error);
+                bookListEl.innerHTML = '<div style="color: var(--accent-negative); padding: 20px;">Error loading annotations</div>';
+            }
+        }
+
+        function renderExportBookList() {
+            const bookListEl = document.getElementById('export-book-list');
+
+            if (Object.keys(exportBookData).length === 0) {
+                bookListEl.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-tertiary);">No annotations found in this set</div>';
+                return;
+            }
+
+            let html = '';
+            // Sort by Bible order
+            const sortedBookIds = Object.keys(exportBookData).sort((a, b) => {
+                const indexA = BIBLE_BOOK_ORDER.indexOf(a);
+                const indexB = BIBLE_BOOK_ORDER.indexOf(b);
+                return indexA - indexB;
+            });
+
+            sortedBookIds.forEach(bookId => {
+                const book = exportBookData[bookId];
+                html += `
+                    <div style="padding: 8px; border-bottom: 1px solid var(--border);">
+                        <label style="display: flex; align-items: center; cursor: pointer; gap: 10px;">
+                            <input type="checkbox" class="export-book-checkbox" data-book="${bookId}"
+                                ${book.selected ? 'checked' : ''}
+                                onchange="toggleBookSelection('${bookId}')">
+                            <span style="flex: 1;"><strong>${book.bookName}</strong></span>
+                            <span style="color: var(--text-tertiary); font-size: 0.9em;">
+                                ${book.chapterCount} chapter${book.chapterCount !== 1 ? 's' : ''},
+                                ${book.verseCount} verse${book.verseCount !== 1 ? 's' : ''}
+                            </span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            bookListEl.innerHTML = html;
+        }
+
+        function toggleBookSelection(bookId) {
+            exportBookData[bookId].selected = !exportBookData[bookId].selected;
+            updateExportVerseCount();
+        }
+
+        function updateExportVerseCount() {
+            let selectedVerses = 0;
+            Object.values(exportBookData).forEach(book => {
+                if (book.selected) selectedVerses += book.verseCount;
+            });
+
+            const verseCountEl = document.getElementById('export-verse-count');
+            const warningEl = document.getElementById('export-limit-warning');
+
+            if (selectedVerses === 0) {
+                verseCountEl.innerHTML = '<span style="color: var(--text-tertiary);">No books selected</span>';
+                warningEl.style.display = 'none';
+            } else if (selectedVerses > 250 && !exportUseWEB) {
+                verseCountEl.innerHTML = `<span style="color: var(--accent-negative);">${selectedVerses}/250 verses selected</span>`;
+                warningEl.style.display = 'block';
+            } else {
+                verseCountEl.innerHTML = `<span style="color: var(--accent-positive);">${selectedVerses} verses selected</span> ${exportUseWEB ? '(WEB - No limits)' : ''}`;
+                warningEl.style.display = 'none';
+            }
+        }
+
+        function switchToWebExport() {
+            exportUseWEB = !exportUseWEB;
+            const btn = document.getElementById('export-switch-web');
+            if (exportUseWEB) {
+                btn.textContent = 'Using WEB (No Limits) ✓';
+                btn.style.background = 'var(--accent-positive)';
+            } else {
+                btn.textContent = 'Switch to WEB (No Limits)';
+                btn.style.background = 'var(--accent-info)';
+            }
+            updateExportVerseCount();
+        }
+
+        async function exportMarkdown() {
+            // Check verse limit
+            let selectedVerses = 0;
+            Object.values(exportBookData).forEach(book => {
+                if (book.selected) selectedVerses += book.verseCount;
+            });
+
+            if (selectedVerses === 0) {
+                alert('Please select at least one book to export');
+                return;
+            }
+
+            if (selectedVerses > 250 && !exportUseWEB) {
+                alert('Please reduce selection to 250 verses or switch to WEB version');
+                return;
+            }
+
+            // Build markdown
+            const setName = document.getElementById('export-annotation-set').value;
+            let markdown = `# ${setName} - Annotation Notes\n\n`;
+            markdown += `**Exported:** ${new Date().toLocaleDateString()}\n\n`;
+            markdown += `**Bible Version:** ${exportUseWEB ? 'World English Bible (WEB)' : 'WEB'}\n\n`;
+            markdown += `---\n\n`;
+
+            // Fetch all annotations for selected books (sorted in Bible order)
+            const selectedBooks = Object.keys(exportBookData)
+                .filter(bookId => exportBookData[bookId].selected)
+                .sort((a, b) => {
+                    const indexA = BIBLE_BOOK_ORDER.indexOf(a);
+                    const indexB = BIBLE_BOOK_ORDER.indexOf(b);
+                    return indexA - indexB;
+                });
+
+            for (const bookId of selectedBooks) {
+                const bookData = exportBookData[bookId];
+                markdown += `## ${bookData.bookName}\n\n`;
+
+                // Sort chapters
+                const chapters = Object.keys(bookData.chapters).map(c => parseInt(c)).sort((a, b) => a - b);
+
+                for (const chapterNum of chapters) {
+                    markdown += `### Chapter ${chapterNum}\n\n`;
+
+                    // Fetch annotations for this chapter
+                    const { data, error } = await supabase
+                        .from('annotations')
+                        .select('data')
+                        .eq('user_id', currentUser.id)
+                        .eq('bible_version', 'WEB')
+                        .eq('annotation_set', setName)
+                        .eq('book_id', `${bookId}-${chapterNum}`)
+                        .single();
+
+                    if (error || !data) continue;
+
+                    const annotations = data.data;
+                    const verses = bookData.chapters[chapterNum].sort((a, b) => a - b);
+
+                    for (const verseNum of verses) {
+                        const annotation = annotations[verseNum];
+                        if (!annotation) continue;
+
+                        // Get verse text
+                        const book = bibleData.books.find(b => b.id === bookId);
+                        const chapter = book.chapters.find(c => c.number === chapterNum);
+                        const verse = chapter.verses.find(v => v.number === verseNum);
+
+                        markdown += `**${bookData.bookName} ${chapterNum}:${verseNum}**\n\n`;
+                        markdown += `> ${verse.text}\n\n`;
+
+                        if (annotation.highlight) {
+                            markdown += `**Highlight:** ${annotation.highlight}\n\n`;
+                        }
+
+                        if (annotation.tags && annotation.tags.length > 0) {
+                            const tagNames = annotation.tags.map(t => typeof t === 'string' ? t : t.name).join(', ');
+                            markdown += `**Tags:** ${tagNames}\n\n`;
+                        }
+
+                        if (annotation.note) {
+                            markdown += `**Notes:** ${annotation.note}\n\n`;
+                        }
+
+                        markdown += `---\n\n`;
+                    }
+                }
+            }
+
+            // Download file
+            const blob = new Blob([markdown], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${setName.toLowerCase().replace(/\s+/g, '-')}-notes-${new Date().toISOString().split('T')[0]}.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            hideExportModal();
+            showCopyFeedback('Notes exported successfully!');
+        }
+
+        async function exportJSON() {
+            // Export complete backup - no verse limits
+            const setName = document.getElementById('export-annotation-set').value;
+
+            try {
+                // Fetch ALL annotations for this set
+                const { data, error } = await supabase
+                    .from('annotations')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .eq('bible_version', 'WEB')
+                    .eq('annotation_set', setName);
+
+                if (error) throw error;
+
+                const backup = {
+                    version: '1.1.0',
+                    exportDate: new Date().toISOString(),
+                    annotationSet: setName,
+                    bibleVersion: 'WEB',
+                    annotations: data
+                };
+
+                // Download file
+                const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `scripture-scribbles-backup-${setName.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                hideExportModal();
+                showCopyFeedback('Backup exported successfully!');
+            } catch (error) {
+                console.error('Error exporting backup:', error);
+                alert('Failed to export backup. Please try again.');
+            }
+        }
+
+        // TODO: Review export functionality when adding new Bible versions (beyond WEB)
+        // Currently only WEB is supported. When adding NIV, ESV, etc:
+        // - Update exportMarkdown() to handle version-specific licensing
+        // - Ensure 250-verse limit is enforced for commercial versions
+        // - Add version selector in export modal
+        // - Update "Switch to WEB" logic to support switching between versions
 
         // Start the app
         initApp();

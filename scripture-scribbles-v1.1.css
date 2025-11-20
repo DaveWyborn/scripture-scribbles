@@ -1677,7 +1677,7 @@ body {
 }
 
 /* Annotation Set Modal */
-.modal {
+#set-modal.modal {
     display: none;
     position: fixed;
     top: 0;
@@ -1690,7 +1690,7 @@ body {
     justify-content: center;
 }
 
-.modal.active {
+#set-modal.modal.active {
     display: flex;
 }
 
@@ -1953,4 +1953,19 @@ body {
     .highlight-btn, .underline-btn {
         font-size: 0.6em;
     }
+}
+
+/* Export Modal */
+#export-modal .modal {
+    max-width: 600px;
+}
+
+#export-book-list label {
+    user-select: none;
+}
+
+#export-book-list input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
 }
