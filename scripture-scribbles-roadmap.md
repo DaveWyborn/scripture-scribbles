@@ -210,12 +210,92 @@
 
 ---
 
-### v1.6.0 - Home Screen & Navigation
+### v1.6.0 - Multiple Bible Versions & Paid Tier
+**Goal:** "Access multiple Bible translations with fair pricing"
+
+**Public Domain Bibles (Free):**
+- [ ] Add support for multiple public domain versions:
+  - [ ] American Standard Version (ASV)
+  - [ ] King James Version (KJV)
+  - [ ] Young's Literal Translation (YLT)
+  - [ ] Darby Translation (DARBY)
+  - [ ] Basic English Bible (BBE)
+  - [ ] Webster's Bible (WEB)
+- [ ] Version selector in settings
+- [ ] Annotations tied to Bible version
+- [ ] Export format includes version reference
+- [ ] Free users: unlimited verses from public domain Bibles
+
+**Premium Licensed Bibles (Paid Tier):**
+- [ ] API integration for licensed versions:
+  - [ ] NIV (via API.Bible or similar)
+  - [ ] ESV (via ESV API)
+  - [ ] NASB, NKJV, NLT, etc.
+- [ ] Per-user API key management
+- [ ] Usage tracking per version
+- [ ] Fallback to public domain if API fails
+
+**Paid Tier Features:**
+- [ ] Subscription tiers:
+  - [ ] Free: Public domain Bibles only, 250 verse export limit
+  - [ ] Premium: £5/month or £50/year
+    - [ ] Access to all licensed Bibles (NIV, ESV, etc.)
+    - [ ] 500 verse export limit (max under most licenses)
+    - [ ] User-to-user sharing enabled
+- [ ] Stripe integration for payments
+- [ ] Grace period (14 days after subscription lapses)
+- [ ] Auto-downgrade to public domain if cancelled
+
+**User-to-User Sharing (Premium Feature):**
+- [ ] Make annotation sets public:
+  - [ ] User clicks "Make Public" on annotation set
+  - [ ] Generates shareable link
+  - [ ] Set appears in community library
+- [ ] Import other users' notes:
+  - [ ] Browse public annotation sets
+  - [ ] Preview before import
+  - [ ] One-click import to your account
+- [ ] License handling for imports:
+  - [ ] Premium user imports premium notes → works as-is
+  - [ ] Free user imports premium notes → auto-convert to public domain Bible
+  - [ ] Show warning: "This uses NIV. Converting to WEB for free tier."
+- [ ] Attribution:
+  - [ ] Original author credited
+  - [ ] "Imported from @username" tag
+  - [ ] Link back to original if public
+
+**Export License Compliance:**
+- [ ] Update export modal to show:
+  - [ ] Current Bible version
+  - [ ] Verse limit for that version (250/500)
+  - [ ] License warning for commercial versions
+  - [ ] "Switch to WEB" for unlimited export
+- [ ] Premium users:
+  - [ ] 500 verse limit for NIV/ESV/etc.
+  - [ ] Unlimited for public domain
+- [ ] Free users:
+  - [ ] 250 verse limit (prepare for future premium versions)
+  - [ ] Unlimited for public domain
+
+**Technical Implementation:**
+- [ ] Version field in annotations table (already exists: `bible_version`)
+- [ ] User subscription table (tier, status, start_date, end_date)
+- [ ] API key storage (encrypted, per-version)
+- [ ] Usage tracking (API calls per version per user)
+- [ ] Public sets table (user_id, set_name, version, description, downloads)
+- [ ] Import history (who imported what, when)
+
+**Timeline:** 4-5 weeks
+
+---
+
+### v1.7.0 - Home Screen & Tag Management
 **Goal:** "Clear, simple navigation and management"
 
-**Home screen (from ideas.md):**
+**Home screen:**
 - [ ] Clean layout with main options:
   - [ ] Theme selector
+  - [ ] Bible version selector
   - [ ] Settings
   - [ ] Tags manager (create/edit/delete tags)
   - [ ] Bible Reader
@@ -223,19 +303,14 @@
     - [ ] New sermon note
     - [ ] Open existing
     - [ ] Load template
+  - [ ] Community (browse public sets)
 
-**Visual navigation (from ideas.md - see screenshots):**
-- [ ] Grid-based book selector:
-  - [ ] Old Testament / New Testament sections
-  - [ ] Book cards with:
-    - [ ] Book name
-    - [ ] Number of chapters
-    - [ ] Last read indicator
-- [ ] Chapter selector:
-  - [ ] Grid of chapter numbers
-  - [ ] Visual progress (chapters with annotations)
-  - [ ] Quick jump
-- [ ] Optional verse selector (for specific contexts)
+**Tag Manager:**
+- [ ] View all tags across all sets
+- [ ] Edit tag colors globally
+- [ ] Merge duplicate tags
+- [ ] Delete unused tags
+- [ ] Tag usage statistics
 
 **Timeline:** 2 weeks
 
