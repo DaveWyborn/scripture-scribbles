@@ -588,12 +588,12 @@ body {
 }
 
 /* Annotation Visibility Modes */
-.annotation-mode-subtle .verse.highlight-yellow,
-.annotation-mode-subtle .verse.highlight-green,
-.annotation-mode-subtle .verse.highlight-blue,
-.annotation-mode-subtle .verse.highlight-pink,
-.annotation-mode-subtle .verse.highlight-purple,
-.annotation-mode-subtle .verse.highlight-orange {
+.annotation-mode-subtle .verse.highlight-yellow .verse-body,
+.annotation-mode-subtle .verse.highlight-green .verse-body,
+.annotation-mode-subtle .verse.highlight-blue .verse-body,
+.annotation-mode-subtle .verse.highlight-pink .verse-body,
+.annotation-mode-subtle .verse.highlight-purple .verse-body,
+.annotation-mode-subtle .verse.highlight-orange .verse-body {
     background: transparent !important;
 }
 
@@ -602,19 +602,21 @@ body {
     opacity: 0.5;
 }
 
-.annotation-mode-off .verse.highlight-yellow,
-.annotation-mode-off .verse.highlight-green,
-.annotation-mode-off .verse.highlight-blue,
-.annotation-mode-off .verse.highlight-pink,
-.annotation-mode-off .verse.highlight-purple,
-.annotation-mode-off .verse.highlight-orange,
-.annotation-mode-off .verse.underline-yellow,
-.annotation-mode-off .verse.underline-green,
-.annotation-mode-off .verse.underline-blue,
-.annotation-mode-off .verse.underline-pink,
-.annotation-mode-off .verse.underline-purple,
-.annotation-mode-off .verse.underline-orange {
+.annotation-mode-off .verse.highlight-yellow .verse-body,
+.annotation-mode-off .verse.highlight-green .verse-body,
+.annotation-mode-off .verse.highlight-blue .verse-body,
+.annotation-mode-off .verse.highlight-pink .verse-body,
+.annotation-mode-off .verse.highlight-purple .verse-body,
+.annotation-mode-off .verse.highlight-orange .verse-body {
     background: transparent !important;
+}
+
+.annotation-mode-off .verse.underline-yellow .verse-text,
+.annotation-mode-off .verse.underline-green .verse-text,
+.annotation-mode-off .verse.underline-blue .verse-text,
+.annotation-mode-off .verse.underline-pink .verse-text,
+.annotation-mode-off .verse.underline-purple .verse-text,
+.annotation-mode-off .verse.underline-orange .verse-text {
     text-decoration: none !important;
 }
 
