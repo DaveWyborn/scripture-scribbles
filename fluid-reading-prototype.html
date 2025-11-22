@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fluid Reading Mode - Prototype</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #f5f5f0;
+      color: #2c2c2c;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .controls {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      z-index: 100;
+    }
+
+    .controls-inner {
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .control-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+    }
+
+    select, input {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #4a90e2;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .chapter-info {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 32px;
+    }
+
+    /* Reading Mode Styles */
+    .reading-mode .paragraph {
+      margin-bottom: 1.5em;
+      text-align: justify;
+    }
+
+    .reading-mode .verse-text {
+      display: inline;
+    }
+
+    .reading-mode .verse-number {
+      font-size: 0.75em;
+      vertical-align: super;
+      color: #999;
+      font-weight: 500;
+      margin-left: 2px;
+      margin-right: 2px;
+    }
+
+    .reading-mode .verse-number.margin {
+      position: absolute;
+      left: -40px;
+      top: 0;
+      font-size: 12px;
+      color: #bbb;
+    }
+
+    .reading-mode .verse-wrapper {
+      position: relative;
+    }
+
+    /* Verse-by-Verse Mode Styles */
+    .verse-mode .verse {
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .verse-mode .verse-number {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+      text-align: center;
+      background: #f0f0f0;
+      border-radius: 50%;
+      font-weight: 600;
+      font-size: 14px;
+      color: #666;
+      margin-right: 12px;
+      vertical-align: top;
+    }
+
+    .verse-mode .verse-text {
+      display: inline;
+    }
+
+    /* Poetry Styles */
+    .poetry {
+      margin: 1.5em 0;
+      font-style: italic;
+    }
+
+    .poetry-line {
+      margin: 0.25em 0;
+    }
+
+    .poetry-line.level-1 {
+      margin-left: 0;
+    }
+
+    .poetry-line.level-2 {
+      margin-left: 2em;
+    }
+
+    .poetry-line.level-3 {
+      margin-left: 4em;
+    }
+
+    .poetry-line.level-4 {
+      margin-left: 6em;
+    }
+
+    /* Heading Styles */
+    .section-heading {
+      font-size: 18px;
+      font-weight: 600;
+      color: #4a4a4a;
+      margin: 2em 0 1em 0;
+      text-align: center;
+    }
+
+    /* Footnote/Cross-ref indicators */
+    .has-footnote::after {
+      content: '†';
+      font-size: 0.75em;
+      vertical-align: super;
+      color: #4a90e2;
+      margin-left: 2px;
+    }
+
+    .has-crossref::after {
+      content: '‡';
+      font-size: 0.75em;
+      vertical-align: super;
+      color: #7b68ee;
+      margin-left: 2px;
+    }
+
+    /* Loading state */
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: #999;
+    }
+
+    .error {
+      background: #fee;
+      color: #c33;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <div class="controls-inner">
+      <div class="control-group">
+        <label for="mode">Mode:</label>
+        <select id="mode">
+          <option value="reading">Reading Mode</option>
+          <option value="verse">Verse-by-Verse</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="verseNumbers">Verse Numbers:</label>
+        <select id="verseNumbers">
+          <option value="superscript">Superscript</option>
+          <option value="margin">Margin</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="book">Book:</label>
+        <select id="book"></select>
+      </div>
+
+      <div class="control-group">
+        <label for="chapter">Chapter:</label>
+        <input type="number" id="chapter" value="1" min="1" style="width: 70px;">
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="content" class="loading">
+      Loading Bible data...
+    </div>
+  </div>
+
+  <script>
+    let bibleData = null;
+    let currentBook = null;
+    let currentChapter = 1;
+
+    // Load Bible JSON
+    async function loadBible() {
+      try {
+        const response = await fetch('web-bible-enhanced.json');
+        bibleData = await response.json();
+        console.log('Bible loaded:', bibleData.books.length, 'books');
+
+        // Populate book selector
+        const bookSelect = document.getElementById('book');
+        bibleData.books.forEach(book => {
+          const option = document.createElement('option');
+          option.value = book.number;
+          option.textContent = book.name;
+          bookSelect.appendChild(option);
+        });
+
+        // Load Matthew by default
+        currentBook = bibleData.books.find(b => b.name === 'Matthew');
+        bookSelect.value = currentBook.number;
+
+        renderChapter();
+      } catch (error) {
+        document.getElementById('content').innerHTML = `
+          <div class="error">
+            <strong>Error loading Bible:</strong> ${error.message}<br>
+            Make sure web-bible-enhanced.json is in the same directory.
+          </div>
+        `;
+      }
+    }
+
+    // Render current chapter
+    function renderChapter() {
+      if (!currentBook || !currentChapter) return;
+
+      const chapter = currentBook.chapters.find(c => c.number === currentChapter);
+      if (!chapter) {
+        document.getElementById('content').innerHTML = '<div class="error">Chapter not found</div>';
+        return;
+      }
+
+      const mode = document.getElementById('mode').value;
+      const verseNumberStyle = document.getElementById('verseNumbers').value;
+
+      const content = document.getElementById('content');
+      content.className = mode === 'reading' ? 'reading-mode' : 'verse-mode';
+
+      let html = `
+        <h1>${currentBook.name} ${currentChapter}</h1>
+        <div class="chapter-info">World English Bible • ${chapter.verses.length} verses</div>
+      `;
+
+      if (mode === 'reading') {
+        html += renderReadingMode(chapter, verseNumberStyle);
+      } else {
+        html += renderVerseMode(chapter);
+      }
+
+      content.innerHTML = html;
+    }
+
+    // Render in reading mode (paragraphs)
+    function renderReadingMode(chapter, verseNumberStyle) {
+      let html = '';
+      let currentParagraph = [];
+      let currentPoetry = [];
+      let currentPoetryLevel = null;
+
+      chapter.verses.forEach((verse, index) => {
+        // Check for section heading
+        if (verse.heading) {
+          // Flush current paragraph/poetry
+          if (currentParagraph.length > 0) {
+            html += renderParagraph(currentParagraph, verseNumberStyle);
+            currentParagraph = [];
+          }
+          if (currentPoetry.length > 0) {
+            html += renderPoetry(currentPoetry, currentPoetryLevel, verseNumberStyle);
+            currentPoetry = [];
+            currentPoetryLevel = null;
+          }
+
+          html += `<div class="section-heading">${verse.heading}</div>`;
+        }
+
+        // Handle poetry
+        if (verse.type?.startsWith('poetry')) {
+          // Flush paragraph if switching from paragraph to poetry
+          if (currentParagraph.length > 0) {
+            html += renderParagraph(currentParagraph, verseNumberStyle);
+            currentParagraph = [];
+          }
+
+          const level = verse.type.replace('poetry', '');
+          if (currentPoetryLevel === null) {
+            currentPoetryLevel = level;
+          }
+
+          currentPoetry.push(verse);
+        }
+        // Handle paragraph start
+        else if (verse.type === 'paragraph') {
+          // Flush poetry if switching from poetry to paragraph
+          if (currentPoetry.length > 0) {
+            html += renderPoetry(currentPoetry, currentPoetryLevel, verseNumberStyle);
+            currentPoetry = [];
+            currentPoetryLevel = null;
+          }
+
+          // Flush previous paragraph
+          if (currentParagraph.length > 0) {
+            html += renderParagraph(currentParagraph, verseNumberStyle);
+            currentParagraph = [];
+          }
+
+          currentParagraph.push(verse);
+        }
+        // Continue current paragraph or poetry
+        else {
+          if (currentPoetry.length > 0) {
+            currentPoetry.push(verse);
+          } else {
+            currentParagraph.push(verse);
+          }
+        }
+      });
+
+      // Flush remaining content
+      if (currentParagraph.length > 0) {
+        html += renderParagraph(currentParagraph, verseNumberStyle);
+      }
+      if (currentPoetry.length > 0) {
+        html += renderPoetry(currentPoetry, currentPoetryLevel, verseNumberStyle);
+      }
+
+      return html;
+    }
+
+    // Render a paragraph
+    function renderParagraph(verses, verseNumberStyle) {
+      let html = '<div class="paragraph">';
+
+      verses.forEach(verse => {
+        const verseNum = renderVerseNumber(verse.number, verseNumberStyle);
+        const indicators = getIndicators(verse);
+
+        html += `<span class="verse-wrapper">`;
+        if (verseNumberStyle === 'margin') {
+          html += verseNum;
+        }
+        html += `<span class="verse-text${indicators.classes}">`;
+        if (verseNumberStyle === 'superscript') {
+          html += verseNum;
+        }
+        html += `${verse.text} `;
+        html += `</span></span>`;
+      });
+
+      html += '</div>';
+      return html;
+    }
+
+    // Render poetry section
+    function renderPoetry(verses, level, verseNumberStyle) {
+      let html = '<div class="poetry">';
+
+      verses.forEach(verse => {
+        const verseLevel = verse.type?.replace('poetry', '') || level;
+        const verseNum = verseNumberStyle !== 'hidden'
+          ? renderVerseNumber(verse.number, 'superscript')
+          : '';
+        const indicators = getIndicators(verse);
+
+        html += `<div class="poetry-line level-${verseLevel}">`;
+        html += `<span class="verse-text${indicators.classes}">`;
+        html += verseNum + verse.text;
+        html += `</span></div>`;
+      });
+
+      html += '</div>';
+      return html;
+    }
+
+    // Render verse-by-verse mode
+    function renderVerseMode(chapter) {
+      let html = '';
+
+      chapter.verses.forEach(verse => {
+        if (verse.heading) {
+          html += `<div class="section-heading">${verse.heading}</div>`;
+        }
+
+        const indicators = getIndicators(verse);
+
+        html += `<div class="verse">`;
+        html += `<span class="verse-number">${verse.number}</span>`;
+        html += `<span class="verse-text${indicators.classes}">${verse.text}</span>`;
+        html += `</div>`;
+      });
+
+      return html;
+    }
+
+    // Render verse number
+    function renderVerseNumber(num, style) {
+      if (style === 'hidden') return '';
+
+      const className = style === 'margin' ? 'verse-number margin' : 'verse-number';
+      return `<span class="${className}">${num}</span>`;
+    }
+
+    // Get footnote/cross-ref indicators
+    function getIndicators(verse) {
+      let classes = '';
+      if (verse.footnotes?.length > 0) classes += ' has-footnote';
+      if (verse.crossRefs?.length > 0) classes += ' has-crossref';
+      return { classes };
+    }
+
+    // Event listeners
+    document.getElementById('mode').addEventListener('change', renderChapter);
+    document.getElementById('verseNumbers').addEventListener('change', renderChapter);
+
+    document.getElementById('book').addEventListener('change', (e) => {
+      const bookNum = parseInt(e.target.value);
+      currentBook = bibleData.books.find(b => b.number === bookNum);
+
+      // Update chapter max
+      const maxChapter = currentBook.chapters.length;
+      document.getElementById('chapter').max = maxChapter;
+
+      // Reset to chapter 1
+      currentChapter = 1;
+      document.getElementById('chapter').value = 1;
+
+      renderChapter();
+    });
+
+    document.getElementById('chapter').addEventListener('change', (e) => {
+      currentChapter = parseInt(e.target.value) || 1;
+      renderChapter();
+    });
+
+    // Initialize
+    loadBible();
+  </script>
+</body>
+</html>

@@ -1,431 +1,490 @@
-# Scripture Scribbles - Progress Report
+# Scripture Scribbles - Progress Summary
 
-**Last Updated:** 20 November 2024
-**Current Version:** v1.1.0 ✅ LIVE
-
----
-
-## ✅ v1.1.0 - COMPLETE & DEPLOYED
-
-### What We Built
-
-**Core Infrastructure:**
-- ✅ Supabase authentication (sign up, sign in, sign out)
-- ✅ Cloud sync for all annotations
-- ✅ Row-level security (users only see their data)
-- ✅ Embedded WEB Bible (all 66 books, 31,102 verses)
-- ✅ Mobile support (iOS, Android, all modern browsers)
-- ✅ PWA-ready (can be installed on mobile)
-
-**Navigation:**
-- ✅ Visual navigation modal (grid-based book/chapter selector)
-- ✅ Testament sections (OT/NT)
-- ✅ Previous/Next chapter buttons
-- ✅ Click chapter info to open navigator
-
-**Annotation Features:**
-- ✅ Verse highlights (6 colors: yellow, green, blue, pink, purple, orange)
-- ✅ Verse underlines (6 colors - bonus feature)
-- ✅ Notes (expandable textarea with Cmd/Ctrl+Enter save)
-- ✅ Tags with custom colors
-- ✅ Tag suggestions (previously used tags)
-- ✅ Inline annotation menu (appears when verse selected)
-- ✅ Copy verse to clipboard
-- ✅ Auto-contrast text on highlights (dark text on light colors, light on dark)
-
-**Annotation Sets:**
-- ✅ Multiple annotation sets (Study, Church, Personal - user customizable)
-- ✅ Create/delete/switch between sets
-- ✅ Set switcher in toolbar
-- ✅ Cannot delete last set (protection)
-
-**Export Features:** (🎉 Just completed!)
-- ✅ Export notes to Markdown
-  - ✅ Book selection interface
-  - ✅ Verse counting with running total
-  - ✅ Bible order sorting (Genesis → Revelation)
-  - ✅ Formatted output (verse text, highlights, tags, notes)
-  - ✅ 250-verse limit (ready for commercial versions)
-  - ✅ Licence warnings (hidden for WEB, ready for future)
-- ✅ Export full backup to JSON
-  - ✅ Complete data dump
-  - ✅ No verse limits
-  - ✅ Includes metadata
-
-**Themes:** (🚀 Exceeded expectations!)
-- ✅ 24 themes total (way more than planned!)
-  - ✅ High Contrast (Light/Dark) - WCAG AAA
-  - ✅ Dyslexia themes (Light/Dark)
-  - ✅ GitHub themes (Light/Dark)
-  - ✅ Paper, Nord, Monokai, Gruvbox, Ocean Deep, Twilight, Sunset, Luxury
-  - ✅ Clean, Warm, True Dark, Slate
-- ✅ Theme-aware tag colors (pastel for light, saturated for WCAG)
-- ✅ Persistent theme selection
-
-**Display Modes:**
-- ✅ Annotation visibility modes:
-  - ✅ On: Full color highlights + indicators
-  - ✅ Subtle: Greyscale indicators, highlights become underlines
-  - ✅ Off: All annotations hidden (reading mode)
-- ✅ Smooth transitions between modes
-- ✅ Icons show tags/notes when present
-
-**Settings Panel:**
-- ✅ Hamburger menu (mobile-friendly)
-- ✅ Theme selector link
-- ✅ Annotation mode toggle
-- ✅ Bug report link (GitHub issues)
-- ✅ Export notes option
-- ✅ User info (logged in as...)
-- ✅ Sign in/out buttons
-
-**Polish & UX:**
-- ✅ Auto-save (debounced 500ms)
-- ✅ Smooth animations and transitions
-- ✅ Copy feedback toast
-- ✅ Mobile-optimized touch targets
-- ✅ Responsive design (works on all screen sizes)
-- ✅ Clean, modern UI (Cava-inspired)
-- ✅ Loading states and error handling
-
-### What We Didn't Build (v1.1.0)
-- ❌ Welcome tutorial overlay (not essential)
-- ❌ Keyboard shortcuts (future enhancement)
-- ❌ Full PWA offline mode (online-first acceptable)
-
-### Beyond Original Plan
-We actually exceeded the v1.1.0 plan:
-- 🚀 24 themes (planned 6)
-- 🚀 Underlines in addition to highlights
-- 🚀 Annotation display modes (On/Subtle/Off)
-- 🚀 Export to Markdown (planned for later)
-- 🚀 Auto-contrast on highlights
-- 🚀 Tag color customization
-- 🚀 Inline annotation menu (cleaner than panel)
+**Last Updated:** 21 November 2024
 
 ---
 
-## 📋 Roadmap Overview
+## Current Status: v1.1.0 LIVE ✅
 
-### ✅ v1.0.0 (Archived)
-Local-only, File System Access API, Chrome desktop only
-**Status:** Replaced by v1.1.0
+**URL:** https://scripturescribbles.co.uk
 
-### ✅ v1.1.0 (LIVE) - Public Launch
-Cloud sync, embedded Bible, mobile support, export
-**Status:** COMPLETE & DEPLOYED
+**Completed Features:**
+- ✅ Supabase authentication (email + Google OAuth)
+- ✅ Cloud sync for annotations
+- ✅ WEB Bible embedded (all 66 books)
+- ✅ Visual navigation (modal with book/chapter grids)
+- ✅ 6-colour highlighting + underlines
+- ✅ Verse notes and tags with custom colours
+- ✅ Multiple annotation sets (Study, Church, Personal)
+- ✅ 24 themes (light + dark)
+- ✅ Export annotations (Markdown + JSON)
+- ✅ Works on all devices (mobile + desktop)
+- ✅ "Why We Exist" page
+- ✅ Interactive roadmap with voting
 
-### 🎯 v1.2.0 - Dyslexia Features (Next)
-**Goal:** "Make Bible reading accessible for dyslexia"
-
-**Planned:**
-- [ ] Font selection:
-  - [ ] OpenDyslexic
-  - [ ] Atkinson Hyperlegible
-  - [ ] System fonts
-- [ ] Typography controls:
-  - [ ] Font size slider (currently fixed)
-  - [ ] Bold toggle
-  - [ ] Line height adjustment
-  - [ ] Letter spacing adjustment
-- [ ] Full color customization:
-  - [ ] Background color picker
-  - [ ] Text color picker
-  - [ ] Custom annotation colors
-- [ ] Dyslexia-optimized color schemes:
-  - [ ] Yellow on black
-  - [ ] Cream on dark blue
-
-**Already Done from v1.2.0:**
-- ✅ 24 themes (exceeded the 6 planned)
-- ✅ Annotation display modes (On/Subtle/Off)
-- ✅ Margin indicators for notes/tags
-
-**Estimate:** 2-3 weeks
+**Recent Fixes:**
+- ✅ Welcome screen no longer flashes for logged-in users
+- ✅ Pricing messaging updated ("Free Core Features" not "Forever Free")
+- ✅ Dyslexia features listed as "Coming Soon" (not yet implemented)
+- ✅ Footer navigation links added
 
 ---
 
-### 🔮 v1.3.0 - Sermon Notes
-**Goal:** "Capture sermon notes alongside Bible reading"
+## Strategic Pivot: Simplicity as Differentiator
 
-**Planned:**
-- [ ] Side-by-side view (Bible + Notes on desktop)
-- [ ] Swipe navigation (mobile: switch Bible ↔ Notes)
-- [ ] Markdown editor with toolbar
-- [ ] Sermon templates (speaker, date, series, passage)
-- [ ] Quick add verse to notes
-- [ ] Multiple verse formatting styles
-- [ ] Continuous scroll (auto-load next chapter)
-- [ ] Export sermon notes to Markdown
+### Key Insight from YouVersion Analysis
 
-**Already Done:**
-- ✅ Export notes to Markdown (foundation ready)
+**YouVersion's weakness = Our opportunity:**
+- 16+ menu items (overwhelming)
+- Font settings hidden in separate "Fonts and Settings" menu
+- Giant play button always visible or hidden
+- Feature bloat makes simple tasks hard
 
-**Estimate:** 3-4 weeks
+**Our approach:**
+- Clean, minimal UI
+- Features OFF by default (opt-in expansion)
+- Easy to find settings (not buried)
+- Beautiful reading over feature count
+- **"Anti-YouVersion simplicity"**
 
----
+### Strategic Milestone: Prove Concept Before Scaling
 
-### 🔮 v1.4.0 - Advanced Highlighting
-**Goal:** "Word-level highlighting with smart merging"
+**Goal:** Reach 1,000 users with v1.2.0-v1.3.0
+**Decision point:**
+- If 1,000 users → Continue to paid tiers (v1.6.0+)
+- If not → Re-evaluate strategy
 
-**Planned:**
-- [ ] Select individual words to highlight
-- [ ] 6+ colors for word highlights
-- [ ] Smart merge rules:
-  - [ ] Word + verse highlights coexist
-  - [ ] Same color → merge into verse highlight
-  - [ ] Clear verse → word highlights remain
-- [ ] Multi-level clear behavior
-
-**Estimate:** 2 weeks
+**Focus areas before paid features:**
+1. Beautiful, minimal reading experience
+2. Fluid reading mode (paragraphs, not just verses)
+3. Full dyslexia controls (fonts, spacing, colours)
+4. **Reading bar** (innovative focus aid - killer feature)
 
 ---
 
-### 🔮 v1.5.0 - Audio Reader (Premium)
-**Goal:** "Listen to Bible with AI voice"
+## Innovation: Reading Bar (Killer Feature)
 
-**Planned:**
-- [ ] AI voice integration
-- [ ] Playback controls (play, pause, speed)
-- [ ] Auto-scroll with audio
-- [ ] Fair pricing model:
-  - [ ] Free: 30 min/day rolling average
-  - [ ] Premium: 45/60/unlimited tiers
-  - [ ] Auto-downgrade after low usage
-  - [ ] Auto-pause after inactivity
-  - [ ] Christian values (no dark patterns)
+**What it is:**
+- Digital equivalent of physical ruler used by dyslexic readers
+- Helps focus on specific lines while blurring/fading surrounding text
+- **No other digital Bible app has this**
 
-**Estimate:** 3-4 weeks
+**Features:**
+- 4 height options: 3 lines, 5 lines, 7 lines, 1 paragraph
+- 4 visual styles: Blur, Fade, Tint, Ruler
+- 3 positioning modes: Fixed centre, Follows scroll, User-anchored
+- Colour picker for tint/ruler
+- Opacity control
+- Easy toggle on/off (not forced)
 
----
-
-### 🔮 v1.6.0 - Multiple Bible Versions & Paid Tier
-**Goal:** "Access multiple translations with fair pricing"
-
-**Planned:**
-
-**Free Tier (Public Domain Bibles):**
-- [ ] Add ASV, KJV, YLT, Darby, BBE
-- [ ] Version selector in settings
-- [ ] Unlimited export for public domain versions
-- [ ] 250 verse export limit (preparation for premium)
-
-**Premium Tier (£5/month or £50/year):**
-- [ ] Licensed Bible APIs (NIV, ESV, NASB, NKJV, NLT)
-- [ ] 500 verse export limit (max under most licenses)
-- [ ] User-to-user sharing enabled
-- [ ] Stripe payment integration
-- [ ] Grace period on lapsed subscription
-
-**User-to-User Sharing (Premium):**
-- [ ] Make annotation sets public
-- [ ] Browse community library
-- [ ] Import others' notes
-- [ ] Auto-convert to public domain for free users
-- [ ] Attribution system
-
-**Export Compliance:**
-- [ ] Show Bible version in export
-- [ ] Enforce verse limits per version
-- [ ] License warnings for commercial versions
-- [ ] "Switch to public domain" option
-
-**Technical:**
-- [ ] Subscription table (tier, status, dates)
-- [ ] API key storage (encrypted)
-- [ ] Usage tracking
-- [ ] Public sets table
-- [ ] Import history
-
-**Estimate:** 4-5 weeks
+**Why it matters:**
+- Many dyslexic readers use physical rulers with books
+- Directly addresses real reading difficulty
+- Combined with spacing controls = genuine innovation
+- Differentiates from all competitors (YouVersion, e-Sword, etc.)
 
 ---
 
-### 🔮 v1.7.0 - Home Screen & Tag Management
-**Goal:** "Organized home screen with tag manager"
+## Recent Strategic Research
 
-**Planned:**
-- [ ] Home screen with main options
-- [ ] Bible version selector
-- [ ] Tag manager (create/edit/delete/merge)
-- [ ] Sermon notes list
-- [ ] Community browser
-- [ ] Recent annotations
-- [ ] Tag usage statistics
+### Bible Versions Strategy ✅ COMPLETE
 
-**Estimate:** 2 weeks
+**Extensive research completed:**
+- USFM format analysis (paragraphs + headings)
+- YouVersion business model ($15M/year, 500M users)
+- e-Sword licensing approach (one-time purchase)
+- API license restrictions (500-verse cache limits)
+- Sermon use case problem + solution
+- Beautiful reading experience research
 
----
+**Key findings:**
+1. **Format:** Convert USFM → Enhanced JSON (parse once, use forever)
+2. **Free tier:** Bundle public domain Bibles locally (WEB, ASV, KJV)
+3. **Premium tier:** API-based licensed Bibles (NIV, ESV, NASB)
+4. **Cache limit:** 500 verses maximum (API license terms)
+5. **Critical solution:** Fallback to WEB for uncached passages (solves sermon problem)
 
-## 🎯 Immediate Next Steps
+**Research documents created:**
+- `bible-versions-strategy-summary.md` (master document)
+- `bible-paragraph-research.md`
+- `bible-format-strategy.md`
+- `youversion-analysis.md`
+- `one-time-purchase-model.md`
+- `sermon-loading-problem.md`
+- `api-license-restrictions.md`
+- `beautiful-reading-experience-research.md`
 
-### For v1.2.0 (Dyslexia Features)
-1. Add font selector dropdown (OpenDyslexic, Atkinson, system)
-2. Build typography controls panel:
-   - Font size slider
-   - Bold toggle
-   - Line height slider
-   - Letter spacing slider
-3. Add color customization:
-   - Background picker
-   - Text picker
-   - Annotation color customizer
-4. Create dyslexia-optimized presets
+### Beautiful Reading Experience Research ✅ COMPLETE
 
-### Quick Wins
-- [ ] Add loading spinner on sign in
-- [ ] Add "Forgot password" link
-- [ ] Improve error messages
-- [ ] Add email verification flow
-- [ ] Create welcome email template
+**Best-in-class apps analyzed:**
+- Matter ("one of the best app designs on the market")
+- Instapaper (minimalist, text-first)
+- Readwise Reader (powerful, fast)
+- Medium (content-first, typography-focused)
 
----
+**Evidence-based findings:**
+- Increased spacing: +26% faster reading for dyslexic readers
+- Warm backgrounds (cream, beige) reduce visual stress
+- Background music: Small negative effect (especially with lyrics)
+- User preferences divided on scrolling vs page turning
+- Simple typography > complex features
 
-## 📊 Success Metrics (To Track)
+**Design formula:**
+```
+Beautiful reading = simple typography + warm colours +
+                   generous spacing + gentle animations +
+                   minimal UI + user choice
+```
 
-**v1.1.0 Goals:**
-- [ ] 1000+ users in first month
-- [ ] 50%+ mobile users
-- [ ] <5% support requests
+### Charity Model Strategy ✅ COMPLETE
 
-**Current Status:**
-- Users: TBD (just launched)
-- Mobile %: TBD
-- Support requests: 0
+**Long-term plan (v2.0.0 at 10k users):**
+- Register as UK charity (CIO)
+- Partner with Wycliffe Bible Translators (40% of revenue)
+- Better publisher licensing terms as charity
+- Multiple revenue streams (donations, grants, church partnerships)
 
----
+**Benefits:**
+- Mission-driven narrative (Bible accessibility + translation funding)
+- Easier to negotiate with publishers
+- Easier to ask for help/favours
+- Grant funding available
+- Gift Aid (UK taxpayers +25% to donations)
 
-## 🤔 Open Questions
-
-1. **Bible Versions:** ✅ RESOLVED - v1.6.0 planned
-   - Free tier: Multiple public domain versions
-   - Premium tier: Licensed versions via API
-   - Export compliance built in
-   - User-to-user sharing with auto-conversion
-
-2. **Pricing Model:**
-   - £5/month or £50/year reasonable?
-   - Alternative: Pay-per-Bible (£2/month per licensed version)?
-   - Lifetime option? (£150-200 one-time)
-   - Family plan? (£8/month for 5 users)
-
-3. **API Costs:**
-   - ESV API: Free tier (500 queries/day), paid after
-   - API.Bible: Free tier limited, commercial tiers available
-   - Need to calculate: API cost per user per month
-   - Ensure £5/month covers API costs + margin
-
-4. **Collaboration:** ✅ RESOLVED - Premium feature in v1.6.0
-   - User-to-user sharing enabled
-   - Auto-conversion for free users
-   - Attribution system
-   - Community library
-
-5. **Offline Mode:**
-   - Currently requires internet
-   - Bible data ~7MB (cacheable)
-   - Service worker needed
-   - Priority: Medium (nice-to-have for v1.7.0+)
-
-6. **Native Apps:**
-   - PWA works on iOS/Android
-   - Native apps = more maintenance
-   - Wait for user demand
-   - Priority: Low (PWA sufficient for now)
-
-7. **License Compliance:**
-   - 500 verses = max under most commercial licenses
-   - Need legal review of terms for NIV/ESV/etc.
-   - User agreement must state license terms
-   - Sermon sharing = personal use (allowed)
-   - Large exports = potential violation (enforce limits)
+**Research document:**
+- `charity-model-strategy.md`
 
 ---
 
-## 💡 Future Ideas (Beyond Roadmap)
+## Updated Roadmap
 
-**From brainstorming:**
-- Cross-references (click verse → see related passages)
-- Study plans (daily reading guides)
-- Share annotation sets (publish to community)
-- Verse memorization mode
-- Study groups (collaborative notes)
-- Verse of the day
-- Search across annotations
-- Timeline view (chronological reading)
-- Original languages (Greek/Hebrew tooltips)
+### v1.2.0 - Beautiful Minimal Reading + Fluid Mode (3-4 weeks)
 
-**Criteria for prioritization:**
-- Aligns with dyslexia-first mission?
-- Serves sermon note-takers?
-- Fair/ethical implementation possible?
-- Low maintenance burden?
+**UI Simplification:**
+- Remove all unnecessary screen clutter
+- Hide UI chrome by default (auto-hide after 3s)
+- Tap verse for actions (keep key actions close)
+- Configurable tap behaviour:
+  - Tap vs long-press (reduce accidental triggers)
+  - Action menu: immediate / 1s delay / require second tap
+- Clean, minimal settings menu (not 16+ items like YouVersion)
+
+**Fluid Reading Mode:**
+- USFM → Enhanced JSON converter script
+- Convert WEB, ASV, KJV from USFM format
+- Render paragraphs (natural flow, not verse blocks)
+- Section headings (styled, toggleable)
+- Verse numbers: margin or superscript (user choice)
+- Toggle: Verse-by-verse vs Reading mode
+
+**Multiple Bible Versions:**
+- Add American Standard Version (ASV 1901)
+- Add King James Version (KJV)
+- Bible version selector (easy to find)
+- All versions support fluid reading
+
+**Gentle Animations:**
+- Smooth page/chapter transitions
+- Gentle fade-ins for text (300ms)
+- Subtle scroll behaviour
+- No aggressive animations
+
+### v1.3.0 - Full Dyslexia Controls + Reading Bar (2-3 weeks)
+
+**Typography & Spacing (Full User Control):**
+- Font selection:
+  - OpenDyslexic (primary)
+  - Atkinson Hyperlegible
+  - System serif
+  - System sans-serif
+- Spacing controls (research-backed):
+  - Font size slider (12px - 32px+)
+  - Line spacing adjustment (1.0x - 2.5x)
+  - Letter spacing adjustment (0x - 0.2em)
+  - Word spacing adjustment (optional)
+  - Bold toggle
+
+**Colour Controls:**
+- Full colour customisation:
+  - Background colour picker
+  - Text colour picker
+  - Annotation colour picker
+- Dyslexia-optimised themes:
+  - Yellow on black
+  - Cream on dark blue
+  - High contrast options
+- Warm backgrounds for reduced visual stress
+
+**Reading Bar (NEW - Killer Feature):**
+- Adjustable focus bar (mimics physical ruler)
+- Bar height options: 3/5/7 lines, paragraph
+- Visual styles: Blur, Fade, Tint, Ruler
+- Positioning: Centre, Follows scroll, Anchored
+- Colour picker + opacity control
+- Easy toggle on/off
+
+### v1.4.0 - Sermon Notes (3-4 weeks)
+- Side-by-side view (desktop: Bible + Notes)
+- Swipe left/right (mobile: switch Bible ↔ Notes)
+- Large clean text editor
+- Quick verse insertion
+- Export to Markdown
+
+### v1.5.0 - Word-Level Highlighting (2 weeks)
+- Select individual words
+- Smart merge with verse highlights
+- Clear behaviour rules
+
+### v1.6.0 - Multiple Bible Versions & Paid Tier (4-5 weeks)
+**Only proceed if 1,000 users achieved**
+
+**Free Tier:**
+- WEB, ASV, KJV (bundled locally)
+- Always instant, works offline
+
+**Premium Tier (£5/month):**
+- NIV, ESV, NASB, NLT via API
+- Smart 500-verse rolling cache
+- Pre-fetch next chapters
+- **Fallback to WEB** (critical for sermon use case)
+- Stripe integration
+
+### v1.7.0 - Audio Reader (Premium) (3-4 weeks)
+- High-quality AI voice
+- Sentence-level highlight/underline (better than YouVersion)
+- Usage-based fair pricing
+- Background playback
+
+### v1.8.0 - Devotionals & Explainers (3-4 weeks)
+**Key principle: Opt-in, not forced bloat**
+
+**Devotionals:**
+- Curated, high-quality sources (3-5 series)
+- Same beautiful reading tools
+- Separate section (not mixed with Bible)
+- OFF by default
+
+**Book/Chapter Explainers:**
+- Book introductions (author, context, themes)
+- Brief chapter summaries (2-3 sentences)
+- Collapsed by default
+- Public domain sources (Matthew Henry simplified)
+- OFF by default
+
+**UX approach:**
+- When OFF: Doesn't exist in UI (truly minimal)
+- When ON: Appears cleanly without cluttering
+
+### v2.0.0 - Charity Transition (3-6 months)
+**When 10,000+ users achieved**
+
+- Register as UK charity (CIO)
+- Recruit 2-3 trustees
+- Partner with Wycliffe Bible Translators (40% revenue)
+- Contact publishers for charitable licensing terms
+- New revenue streams (donations, grants, church partnerships)
+
+### v2.5.0+ - Beyond Bible Content (Future)
+**Only pursue if dyslexia community responds strongly**
+
+**Potential expansions:**
+- Christian books, theology, commentaries
+- General reading (articles, ePubs, PDFs)
+- Educational content (textbooks, papers)
+
+**All with same powerful tools:**
+- Reading bar
+- Spacing controls
+- Font customisation
+- Audio reading
+- Annotations
+
+**Decision criteria:**
+- ✅ 10,000+ Bible users
+- ✅ Strong dyslexia community engagement
+- ✅ User requests for non-Bible content
+- ✅ Sustainable business model
+
+**Positioning evolution:**
+- From: "Dyslexia-friendly Bible app"
+- To: "Dyslexia-friendly reading app (started with Bible)"
+- Bible remains primary mission
+- Tools become outreach to broader dyslexia community
 
 ---
 
-## 🎉 Key Achievements
+## Key Design Principles
 
-**What makes Scripture Scribbles special:**
+**Simplicity over features:**
+- Keep it simple
+- Remove all unnecessary screen clutter
+- Clean text with full user choice
+- Remove all buttons, keep actions close (tap verse)
+- Allow tap behaviour customisation
 
-1. **Dyslexia-focused from day one**
-   - 24 themes with accessibility options
-   - Annotation display modes
-   - Clean, distraction-free reading
+**Anti-YouVersion:**
+- YouVersion: 16+ menu items, buried settings, bloated
+- Scripture Scribbles: Minimal, easy to find, clean
+- Not trying to do everything
+- Doing reading experience exceptionally well
 
-2. **Mobile-first**
-   - Touch-optimized interface
-   - Works everywhere (not just Chrome desktop)
-   - Visual navigation (no typing needed)
+**Dyslexia-first:**
+- Every design decision considers text processing difficulty
+- Reading bar innovation (physical ruler equivalent)
+- Research-backed spacing controls (+26% faster reading)
+- Full user control (what works varies per person)
 
-3. **Fair & transparent**
-   - Free tier is genuinely useful
-   - No dark patterns
-   - Open source (MIT license)
+**Opt-in expansion:**
+- Core features visible
+- Optional features OFF by default
+- Easy to enable if wanted
+- Easy to completely remove from UI
 
-4. **Well-architected**
-   - Clean separation: Bible data vs annotations
-   - Scalable (Supabase + PostgreSQL)
-   - Secure (Row Level Security)
-
-5. **Exceeded expectations**
-   - Launched with more than planned
-   - High polish for v1.1.0
-   - Export feature complete
-
----
-
-## 📅 Timeline Estimate
-
-**v1.2.0 (Dyslexia Features):** January 2025
-**v1.3.0 (Sermon Notes):** February 2025
-**v1.4.0 (Word Highlighting):** March 2025
-**v1.5.0 (Audio Reader):** April 2025
-**v1.6.0 (Bible Versions & Paid Tier):** May-June 2025
-**v1.7.0 (Home Screen & Tags):** July 2025
-
-**Pace:** ~1 version per month (sustainable for solo dev)
-**Note:** v1.6.0 is larger (4-5 weeks) due to payment integration
+**Beautiful reading:**
+- Simple typography
+- Warm colours
+- Generous spacing
+- Gentle animations
+- Minimal UI
+- User choice
 
 ---
 
-## 🙏 Reflection
+## Success Metrics
 
-v1.1.0 is a **massive achievement**:
-- From local-only to cloud sync
-- From Chrome-only to universal
-- From folder setup to zero setup
-- From basic to feature-rich
+**v1.2.0-v1.3.0 Launch:**
+- Target: 1,000 users
+- 80%+ try reading mode
+- 50%+ prefer reading mode over verse-by-verse
+- <5% support requests about reading mode
 
-**What's working:**
-- Clean architecture decisions
-- Incremental delivery
-- Focus on core use case (Bible study + sermon notes)
+**Decision point:**
+- If 1,000 users → Continue to v1.6.0 (paid tier)
+- If not → Re-evaluate strategy
 
-**What's next:**
-- Make it even more accessible (dyslexia features)
-- Add sermon notes (primary use case)
-- Keep it simple and focused
+**v1.6.0 (Paid Tier):**
+- 5% conversion to premium
+- 1,000 free users → 50 premium
+- £250/month revenue
+- <2% churn rate
+
+**6-Month Goals:**
+- 10,000 free users
+- 500 premium users
+- £2,500/month revenue
+
+**12-Month Goals:**
+- 50,000 free users
+- 2,500 premium users
+- £12,500/month revenue
+
+**v2.0.0 (Charity):**
+- 100,000 free users
+- 5,000 premium users
+- £25,000/month revenue
+- £120,000/year to Wycliffe (40%)
+
+---
+
+## Technical Priorities
+
+**Immediate (v1.2.0) - Next 3-4 weeks:**
+1. Download WEB, ASV, KJV in USFM format (ebible.org)
+2. Write USFM → Enhanced JSON converter (Node.js)
+3. Implement paragraph/heading rendering engine
+4. Add reading mode toggle
+5. Simplify UI (remove clutter, configurable tap)
+6. Polish animations and transitions
+
+**Short-term (v1.3.0) - Following 2-3 weeks:**
+1. Implement font selection
+2. Build spacing controls (line, letter, word)
+3. Full colour customisation system
+4. **Build reading bar** (blur, fade, tint, ruler modes)
+5. Create dyslexia-optimised themes
+
+**Medium-term (v1.4.0-v1.5.0) - IF 1,000 users achieved:**
+1. Sermon notes editor
+2. Word-level highlighting engine
+
+**Long-term (v1.6.0+) - IF continued validation:**
+1. API integration for licensed Bibles
+2. Smart caching + fallback system
+3. Stripe subscription/billing
+4. Audio API integration
+5. Usage tracking and limits
+
+---
+
+## Open Questions (Future Decisions)
+
+**Not for today - document for reference:**
+
+1. **API Provider (v1.6.0):**
+   - API.Bible (2,500+ versions) vs ESV API (just ESV)?
+   - Recommendation: API.Bible (more versions, one API)
+
+2. **Focus Music (v1.2.0 optional):**
+   - Include or defer?
+   - If include: 3-5 instrumental tracks (~2-5 MB each)
+   - Research says small negative effect, but user preference varies
+
+3. **Wycliffe Partnership Model (v2.0.0):**
+   - Direct donation (40% of revenue)?
+   - Designated fund?
+   - Sponsor specific translation project? (recommended)
+
+4. **Trustee Recruitment (v2.0.0):**
+   - Church leader/theological advisor
+   - Accessibility/dyslexia expert
+   - Finance/business person
+   - When to start recruiting? (Q1 2025)
+
+5. **Beyond Bible Content (v2.5.0+):**
+   - Balance: Not in-your-face Bible, but not hiding it either
+   - How to serve dyslexic readers who want tools but not Bible?
+   - Nice problem to have if we get there
+
+---
+
+## What's Next
+
+**Immediate focus:** Start v1.2.0 implementation when ready
+
+**Pre-implementation checklist:**
+1. Download USFM files from ebible.org
+2. Study USFM format structure
+3. Plan JSON schema for enhanced format
+4. Design reading mode rendering approach
+5. Plan UI simplification changes
+
+**Timeline to validation:** ~6 weeks (v1.2.0 + v1.3.0)
+
+**After 1,000 users:**
+- Measure engagement with key features
+- Gather user feedback on reading bar
+- Decide whether to continue to paid features
+- Share results and plan next phase
+
+---
+
+## Notes for Next Session
+
+**Context established:**
+- Anti-YouVersion simplicity is the strategy
+- Reading bar is killer feature (genuinely innovative)
+- Prove concept with 1,000 users before paid features
+- All research completed and documented
+- Roadmap updated with clear priorities
+- Ready to begin v1.2.0 implementation when Dave returns
+
+**No immediate tasks pending** - waiting for Dave to:
+1. Review progress and research
+2. Share with community for feedback
+3. Return to begin v1.2.0 development
 
 ---
 
 **Made with ❤️ for the body of Christ**
+
+*Long-term vision: UK charity making Bible accessible for dyslexic readers while funding Bible translation through Wycliffe Bible Translators*

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:ebible.org)",
+      "Bash(node -e:*)",
+      "Bash(node:*)",
+      "Bash(gzip:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

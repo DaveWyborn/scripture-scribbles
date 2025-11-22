@@ -1,0 +1,2330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripture Scribbles v1.2.0 - Fluid Reading Mode</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="scripture-scribbles-v1.1.css">
+</head>
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <div class="toolbar-top">
+                <h1>Scripture Scribbles</h1>
+                <button class="toolbar-menu-btn" id="menu-btn" aria-label="Settings menu">
+                    <i class="ph ph-list"></i>
+                </button>
+            </div>
+            <div class="navigation" id="navigation" style="display: none;">
+                <button class="nav-btn nav-arrow" id="prev-chapter" aria-label="Previous chapter">←</button>
+                <button class="chapter-info" id="chapter-info">Genesis 1</button>
+                <button class="nav-btn nav-arrow" id="next-chapter" aria-label="Next chapter">→</button>
+                <div class="annotation-set-switcher">
+                    <button class="set-switcher-btn" id="set-switcher-btn">
+                        <i class="ph ph-stack"></i>
+                        <span id="current-set-name">Study</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Annotation Set Modal -->
+        <div class="modal" id="set-modal">
+            <div class="modal-content modal-small">
+                <div class="modal-header">
+                    <h2>Annotation Sets</h2>
+                    <button class="modal-close" onclick="closeSetModal()">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="set-list" id="set-list"></div>
+                    <div class="set-actions">
+                        <input type="text" id="new-set-name" placeholder="New set name..." maxlength="50">
+                        <button class="btn primary" onclick="createSet()">Create Set</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Menu -->
+        <div class="settings-menu" id="settings-menu">
+            <a href="themes.html" class="settings-item">
+                <i class="ph ph-palette"></i>
+                <span>Choose Theme</span>
+            </a>
+            <div class="settings-item settings-toggle">
+                <div>
+                    <i class="ph ph-eye"></i>
+                    <span>Annotations</span>
+                </div>
+                <select id="annotation-mode" class="annotation-mode-select">
+                    <option value="on">On</option>
+                    <option value="subtle">Subtle</option>
+                    <option value="off">Off</option>
+                </select>
+            </div>
+            <a href="roadmap.html" target="_blank" class="settings-item">
+                <i class="ph ph-map-trifold"></i>
+                <span>Roadmap</span>
+            </a>
+            <a href="https://github.com/DaveWyborn/scripture-scribbles/issues" target="_blank" class="settings-item">
+                <i class="ph ph-bug"></i>
+                <span>Report a Bug</span>
+            </a>
+            <div class="settings-item" id="export-notes-btn" style="cursor: pointer;">
+                <i class="ph ph-download"></i>
+                <span>Export Notes</span>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-item user-section" id="settings-user-info" style="display: none;">
+                <div class="settings-user-label">Logged in as:</div>
+                <div class="settings-user-email" id="settings-user-email"></div>
+                <button class="btn danger" id="sign-out-btn">Sign Out</button>
+            </div>
+            <div class="settings-item" id="settings-guest-buttons">
+                <button class="btn primary" id="sign-in-btn">Sign In</button>
+                <button class="btn" id="sign-up-btn">Sign Up</button>
+            </div>
+        </div>
+
+        <div class="content" id="content">
+            <div class="welcome" style="display: none;">
+                <h2>Welcome to Scripture Scribbles</h2>
+                <p>Your Bible study companion with rich annotations and cloud sync.</p>
+
+                <div class="features">
+                    <div class="feature">
+                        <h3>📖 Instant Access</h3>
+                        <p>World English Bible embedded. No downloads or setup required.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>✨ Beautiful Annotations</h3>
+                        <p>Highlight verses, add notes, and organise your studies.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>☁️ Sync Everywhere</h3>
+                        <p>Your notes sync across all your devices automatically.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>♿ Coming Soon: Dyslexia Features</h3>
+                        <p>Font options, colour customisation, and audio reader in development.</p>
+                    </div>
+                </div>
+
+                <button class="btn primary" id="get-started-btn" style="font-size: 1.2em; padding: 15px 40px;">Get Started</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Annotation Panel -->
+    <div class="annotation-panel" id="annotation-panel">
+        <div class="annotation-handle"></div>
+        <div class="annotation-header">
+            <h3>Annotate Verse <span id="annotation-verse-num"></span></h3>
+            <button class="btn" id="close-annotation">×</button>
+        </div>
+        <div class="annotation-content">
+            <div class="form-group">
+                <label>Highlight Color</label>
+                <div class="highlight-colors">
+                    <div class="color-option color-yellow" data-color="yellow"></div>
+                    <div class="color-option color-green" data-color="green"></div>
+                    <div class="color-option color-blue" data-color="blue"></div>
+                    <div class="color-option color-pink" data-color="pink"></div>
+                    <div class="color-option color-purple" data-color="purple"></div>
+                    <div class="color-option color-orange" data-color="orange"></div>
+                </div>
+                <button class="btn" id="clear-highlight" style="margin-top: 10px; width: 100%;">Clear Highlight</button>
+            </div>
+
+            <div class="form-group">
+                <label>Note</label>
+                <textarea id="verse-note" placeholder="Add your thoughts, insights, or questions..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Tags</label>
+                <div id="tags-container">
+                    <!-- Tag chips will be added here -->
+                </div>
+                <div class="tag-input-row">
+                    <input type="text" id="new-tag-input" placeholder="Add tag...">
+                    <div class="tag-color-picker" id="new-tag-color" style="background: #ACE5CB;" title="Tag colour"></div>
+                    <button class="btn" id="add-tag-btn" type="button">Add</button>
+                </div>
+                <div id="tag-suggestions" style="display: none; margin-top: 8px; font-size: 0.85em;">
+                    <strong>Previously used:</strong>
+                    <div id="tag-suggestion-list" style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <button class="btn primary" id="save-annotation" style="width: 100%;">Save Annotation</button>
+        </div>
+    </div>
+
+    <!-- Visual Navigation Modal -->
+    <div class="nav-modal" id="nav-modal">
+        <div class="nav-modal-content">
+            <div class="nav-modal-header">
+                <h3>Bible Navigation</h3>
+                <button class="btn" id="close-nav-modal">×</button>
+            </div>
+            <div class="nav-modal-body">
+                <div class="nav-current-location" id="nav-current-display">
+                    Genesis 1
+                </div>
+
+                <div class="nav-tabs">
+                    <button class="nav-tab active" id="nav-tab-book">Book</button>
+                    <button class="nav-tab" id="nav-tab-chapter">Chapter</button>
+                </div>
+
+                <!-- Book Selection View -->
+                <div class="testament-section active" id="nav-book-view">
+                    <div id="old-testament-books"></div>
+                    <div id="new-testament-books"></div>
+                </div>
+
+                <!-- Chapter Selection View -->
+                <div class="testament-section" id="nav-chapter-view">
+                    <h3 id="selected-book-name" style="margin-bottom: var(--space-l);"></h3>
+                    <div class="chapter-grid" id="chapter-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="auth-modal">
+        <div class="modal">
+            <h2 id="auth-modal-title">Sign In</h2>
+            <div id="auth-message"></div>
+            <form id="auth-form">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="auth-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="auth-password" required minlength="6">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn" id="auth-cancel">Cancel</button>
+                    <button type="submit" class="btn primary" id="auth-submit">Sign In</button>
+                </div>
+            </form>
+            <div class="auth-toggle">
+                <span id="auth-toggle-text">Don't have an account? <a id="auth-toggle-link">Sign up</a></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="export-modal">
+        <div class="modal">
+            <h2>Export Notes</h2>
+            <div id="export-message"></div>
+
+            <div class="form-group">
+                <label>Annotation Set</label>
+                <select id="export-annotation-set">
+                    <!-- Will be populated dynamically -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Select Books to Export</label>
+                <div id="export-verse-count" style="margin-bottom: 10px; font-weight: bold; color: var(--text-secondary);">
+                    Loading annotations...
+                </div>
+                <div id="export-book-list" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); padding: 10px; border-radius: 8px; background: var(--bg-secondary);">
+                    <!-- Book checkboxes will be populated here -->
+                </div>
+            </div>
+
+            <!-- Hidden until we add commercial Bible versions -->
+            <div id="export-limit-warning" style="display: none; background: var(--accent-negative); color: white; padding: 10px; border-radius: 8px; margin: 10px 0;">
+                ⚠️ Selected verses exceed the 250-verse limit for commercial Bible versions. Please reduce selection or switch to WEB.
+            </div>
+
+            <div class="export-disclaimer" style="display: none; background: var(--bg-secondary); padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 0.9em; border-left: 3px solid var(--accent-info);">
+                <strong>⚠️ Important:</strong> Sharing exported notes may be subject to Bible translation copyright. You are responsible for ensuring you have permission to share these notes.
+            </div>
+
+            <div class="modal-buttons" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" class="btn" id="export-cancel">Cancel</button>
+                <!-- Hidden until we add commercial Bible versions -->
+                <button type="button" class="btn" id="export-switch-web" style="display: none; background: var(--accent-info); color: white;">Switch to WEB (No Limits)</button>
+                <button type="button" class="btn primary" id="export-markdown">Export Markdown</button>
+                <button type="button" class="btn" id="export-json" style="background: var(--text-secondary); color: var(--bg-primary);">Backup JSON</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script>
+        console.log('Script loaded');
+        console.log('Supabase available:', typeof window.supabase);
+        console.log('Config available:', typeof SUPABASE_CONFIG);
+
+        // Initialize Supabase
+        const supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+        console.log('Supabase client created:', supabase);
+
+        // Global state
+        let currentUser = null;
+        let bibleData = null; // Will be loaded from JSON file
+        let currentBook = 'genesis';
+        let currentChapter = 1;
+        let currentAnnotations = {};
+        let selectedVerse = null;
+        let currentAnnotationSet = 'Study'; // Default annotation set
+        let userAnnotationSets = ['Study', 'Church', 'Personal']; // Default sets
+        let isSignUp = false;
+        let knownTags = {}; // { tagName: color } - persisted to localStorage
+        let currentTags = []; // Tags being edited in annotation panel
+        let selectedTagColor = '#ACE5CB'; // Default tag colour
+
+        // Predefined tag colours - pastels for regular themes
+        const TAG_COLORS_PASTEL = [
+            '#FFE4E1', '#E1F5FF', '#E8F5E9', '#FFF9C4', '#F3E5F5', '#FFE0B2',
+            '#E0F2F1', '#FCE4EC', '#F1F8E9', '#E8EAF6', '#FFF3E0', '#E0E0E0'
+        ];
+
+        // Saturated colours for WCAG/accessible themes
+        const TAG_COLORS_WCAG = [
+            '#D32F2F', '#1976D2', '#388E3C', '#F57C00', '#7B1FA2', '#00796B',
+            '#C2185B', '#0288D1', '#689F38', '#E64A19', '#512DA8', '#00695C'
+        ];
+
+        // Themes that need WCAG-compliant tag colours
+        const WCAG_THEMES = [
+            'high-contrast-light', 'high-contrast-dark',
+            'dyslexia-light', 'dyslexia-dark',
+            'github-light', 'github-dark', 'paper'
+        ];
+
+        // Get appropriate tag colours for current theme
+        function getTagColors() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'clean';
+            return WCAG_THEMES.includes(currentTheme) ? TAG_COLORS_WCAG : TAG_COLORS_PASTEL;
+        }
+
+        // Legacy reference
+        let TAG_COLORS = TAG_COLORS_PASTEL;
+
+        // Initialize app
+        async function initApp() {
+            // Load theme preference
+            loadTheme();
+
+            // Load annotation visibility mode
+            loadAnnotationMode();
+
+            // Load annotation sets
+            loadAnnotationSets();
+
+            // Load Bible data
+            await loadBibleData();
+
+            // Load known tags from localStorage
+            loadKnownTags();
+
+            // Check auth status
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                await handleAuthSuccess(session.user);
+            } else {
+                // No user logged in - show welcome screen
+                const welcomeEl = document.querySelector('.welcome');
+                if (welcomeEl) {
+                    welcomeEl.style.display = 'block';
+                }
+            }
+
+            // Listen for auth changes
+            supabase.auth.onAuthStateChange(async (event, session) => {
+                if (event === 'SIGNED_IN' && session && !currentUser) {
+                    await handleAuthSuccess(session.user);
+                } else if (event === 'SIGNED_OUT') {
+                    handleSignOut();
+                }
+            });
+
+            setupEventListeners();
+        }
+
+        // Settings menu
+        function toggleSettingsMenu() {
+            document.getElementById('settings-menu').classList.toggle('open');
+        }
+
+        // Theme functions
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'clean';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            setTimeout(applyAutoContrast, 50);
+        }
+
+        function changeTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            setTimeout(applyAutoContrast, 50);
+        }
+
+        // Annotation visibility functions
+        function loadAnnotationMode() {
+            const savedMode = localStorage.getItem('annotationMode') || 'on';
+            setAnnotationMode(savedMode);
+            const select = document.getElementById('annotation-mode');
+            if (select) select.value = savedMode;
+        }
+
+        function setAnnotationMode(mode) {
+            const content = document.getElementById('content');
+            content.classList.remove('annotation-mode-on', 'annotation-mode-subtle', 'annotation-mode-off');
+            content.classList.add(`annotation-mode-${mode}`);
+            localStorage.setItem('annotationMode', mode);
+        }
+
+        // Annotation Set functions
+        function loadAnnotationSets() {
+            const saved = localStorage.getItem('annotationSets');
+            if (saved) {
+                userAnnotationSets = JSON.parse(saved);
+            }
+            const savedCurrent = localStorage.getItem('currentAnnotationSet');
+            if (savedCurrent && userAnnotationSets.includes(savedCurrent)) {
+                currentAnnotationSet = savedCurrent;
+            }
+            updateSetSwitcherUI();
+        }
+
+        function saveAnnotationSets() {
+            localStorage.setItem('annotationSets', JSON.stringify(userAnnotationSets));
+            localStorage.setItem('currentAnnotationSet', currentAnnotationSet);
+        }
+
+        function updateSetSwitcherUI() {
+            const setNameEl = document.getElementById('current-set-name');
+            if (setNameEl) setNameEl.textContent = currentAnnotationSet;
+        }
+
+        function openSetModal() {
+            const modal = document.getElementById('set-modal');
+            modal.classList.add('active');
+            renderSetList();
+        }
+
+        function closeSetModal() {
+            const modal = document.getElementById('set-modal');
+            modal.classList.remove('active');
+        }
+
+        function renderSetList() {
+            const listEl = document.getElementById('set-list');
+            let html = '';
+
+            userAnnotationSets.forEach(setName => {
+                const isActive = setName === currentAnnotationSet;
+                html += `
+                    <div class="set-item ${isActive ? 'active' : ''}" onclick="switchAnnotationSet('${setName}')">
+                        <span class="set-item-name">${setName}</span>
+                        <div class="set-item-actions" onclick="event.stopPropagation()">
+                            ${userAnnotationSets.length > 1 ? `<button onclick="deleteSet('${setName}')" title="Delete set"><i class="ph ph-trash"></i></button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            listEl.innerHTML = html;
+        }
+
+        async function switchAnnotationSet(setName) {
+            if (setName === currentAnnotationSet) {
+                closeSetModal();
+                return;
+            }
+
+            currentAnnotationSet = setName;
+            saveAnnotationSets();
+            updateSetSwitcherUI();
+            closeSetModal();
+
+            // Reload annotations for new set
+            if (currentUser && bibleData) {
+                await loadAnnotations();
+                displayChapter();
+            }
+        }
+
+        async function createSet() {
+            const input = document.getElementById('new-set-name');
+            const setName = input.value.trim();
+
+            if (!setName) {
+                alert('Please enter a set name');
+                return;
+            }
+
+            if (userAnnotationSets.includes(setName)) {
+                alert('A set with this name already exists');
+                return;
+            }
+
+            userAnnotationSets.push(setName);
+            saveAnnotationSets();
+            input.value = '';
+            renderSetList();
+        }
+
+        async function deleteSet(setName) {
+            if (userAnnotationSets.length === 1) {
+                alert('Cannot delete the last annotation set');
+                return;
+            }
+
+            if (!confirm(`Delete annotation set "${setName}"? This will delete all annotations in this set.`)) {
+                return;
+            }
+
+            // Delete from Supabase if user is logged in
+            if (currentUser) {
+                try {
+                    await supabase
+                        .from('annotations')
+                        .delete()
+                        .eq('user_id', currentUser.id)
+                        .eq('annotation_set', setName);
+                } catch (error) {
+                    console.error('Error deleting set from Supabase:', error);
+                }
+            }
+
+            // Remove from local list
+            userAnnotationSets = userAnnotationSets.filter(s => s !== setName);
+
+            // Switch to first set if we deleted the current one
+            if (setName === currentAnnotationSet) {
+                currentAnnotationSet = userAnnotationSets[0];
+                await switchAnnotationSet(currentAnnotationSet);
+            }
+
+            saveAnnotationSets();
+            renderSetList();
+        }
+
+        // Auto-contrast functions
+        function getLuminance(r, g, b) {
+            const [rs, gs, bs] = [r, g, b].map(c => {
+                c = c / 255;
+                return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+            });
+            return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+        }
+
+        function parseColour(colour) {
+            const temp = document.createElement('div');
+            temp.style.color = colour;
+            document.body.appendChild(temp);
+            const computed = getComputedStyle(temp).color;
+            document.body.removeChild(temp);
+            const match = computed.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+            if (match) {
+                return [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
+            }
+            return [0, 0, 0];
+        }
+
+        function getCSSVariable(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue('--' + name).trim();
+        }
+
+        function applyAutoContrast() {
+            // Apply to highlighted verses
+            const highlightedVerses = document.querySelectorAll('.verse[class*="highlight-"]');
+
+            highlightedVerses.forEach(verse => {
+                // Get the highlight class
+                const classes = verse.className.split(' ');
+                const highlightClass = classes.find(c => c.startsWith('highlight-') && c !== 'highlight-light-text' && c !== 'highlight-dark-text');
+
+                if (!highlightClass) return;
+
+                // Map highlight class to CSS variable
+                const colorMap = {
+                    'highlight-yellow': 'highlight-yellow',
+                    'highlight-green': 'highlight-green',
+                    'highlight-blue': 'highlight-blue',
+                    'highlight-pink': 'highlight-pink',
+                    'highlight-purple': 'highlight-purple',
+                    'highlight-orange': 'highlight-orange'
+                };
+
+                const varName = colorMap[highlightClass];
+                if (!varName) return;
+
+                const bgColour = getCSSVariable(varName);
+                const rgb = parseColour(bgColour);
+                const luminance = getLuminance(rgb[0], rgb[1], rgb[2]);
+
+                // Remove old classes
+                verse.classList.remove('highlight-light-text', 'highlight-dark-text');
+
+                // Apply appropriate text colour
+                if (luminance > 0.179) {
+                    verse.classList.add('highlight-dark-text');
+                } else {
+                    verse.classList.add('highlight-light-text');
+                }
+            });
+
+            // Apply to tags
+            const tags = document.querySelectorAll('.tag, .tag-item');
+            tags.forEach(tag => {
+                const bg = getComputedStyle(tag).backgroundColor;
+                const match = bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                if (match) {
+                    const luminance = getLuminance(
+                        parseInt(match[1]),
+                        parseInt(match[2]),
+                        parseInt(match[3])
+                    );
+                    tag.style.color = luminance > 0.179 ? '#000000' : '#FFFFFF';
+                }
+            });
+
+            // Apply to highlight buttons
+            const highlightBtns = document.querySelectorAll('.highlight-btn:not(.clear)');
+            highlightBtns.forEach(btn => {
+                const bg = getComputedStyle(btn).backgroundColor;
+                const match = bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                if (match) {
+                    const luminance = getLuminance(
+                        parseInt(match[1]),
+                        parseInt(match[2]),
+                        parseInt(match[3])
+                    );
+                    btn.style.color = luminance > 0.179 ? '#000000' : '#FFFFFF';
+                }
+            });
+        }
+
+        async function loadBibleData() {
+            try {
+                console.log('Loading Bible data...');
+                const response = await fetch('web-bible-enhanced.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                bibleData = await response.json();
+                console.log(`Bible loaded: ${bibleData.books.length} books`);
+            } catch (error) {
+                console.error('Error loading Bible:', error);
+                alert('Failed to load Bible data. Please ensure you are running from a web server (http://localhost:8000)');
+            }
+        }
+
+        function loadKnownTags() {
+            const saved = localStorage.getItem('knownTags');
+            if (saved) {
+                try {
+                    knownTags = JSON.parse(saved);
+                } catch (e) {
+                    knownTags = {};
+                }
+            }
+        }
+
+        function saveKnownTags() {
+            localStorage.setItem('knownTags', JSON.stringify(knownTags));
+        }
+
+        function addKnownTag(tagName, color = null) {
+            const normalizedTag = tagName.trim().toLowerCase();
+            if (!normalizedTag) return;
+
+            if (!knownTags[normalizedTag]) {
+                knownTags[normalizedTag] = color || getRandomTagColor();
+                saveKnownTags();
+            }
+        }
+
+        function getRandomTagColor() {
+            const colors = getTagColors();
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Book abbreviations for grid display
+        const BOOK_ABBR = {
+            'genesis': 'Gen', 'exodus': 'Exod', 'leviticus': 'Lev', 'numbers': 'Num',
+            'deuteronomy': 'Deut', 'joshua': 'Josh', 'judges': 'Judg', 'ruth': 'Ruth',
+            '1samuel': '1Sam', '2samuel': '2Sam', '1kings': '1Kgs', '2kings': '2Kgs',
+            '1chronicles': '1Chr', '2chronicles': '2Chr', 'ezra': 'Ezra', 'nehemiah': 'Neh',
+            'esther': 'Esth', 'job': 'Job', 'psalms': 'Ps', 'proverbs': 'Prov',
+            'ecclesiastes': 'Eccl', 'songofsolomon': 'Song', 'isaiah': 'Isa', 'jeremiah': 'Jer',
+            'lamentations': 'Lam', 'ezekiel': 'Ezek', 'daniel': 'Dan', 'hosea': 'Hos',
+            'joel': 'Joel', 'amos': 'Amos', 'obadiah': 'Obad', 'jonah': 'Jonah',
+            'micah': 'Mic', 'nahum': 'Nah', 'habakkuk': 'Hab', 'zephaniah': 'Zeph',
+            'haggai': 'Hag', 'zechariah': 'Zech', 'malachi': 'Mal',
+            'matthew': 'Matt', 'mark': 'Mark', 'luke': 'Luke', 'john': 'John',
+            'acts': 'Acts', 'romans': 'Rom', '1corinthians': '1Cor', '2corinthians': '2Cor',
+            'galatians': 'Gal', 'ephesians': 'Eph', 'philippians': 'Phil', 'colossians': 'Col',
+            '1thessalonians': '1Thes', '2thessalonians': '2Thes', '1timothy': '1Tim', '2timothy': '2Tim',
+            'titus': 'Titus', 'philemon': 'Phlm', 'hebrews': 'Heb', 'james': 'Jas',
+            '1peter': '1Pet', '2peter': '2Pet', '1john': '1Jn', '2john': '2Jn',
+            '3john': '3Jn', 'jude': 'Jude', 'revelation': 'Rev'
+        };
+
+        // Old Testament book IDs (first 39 books)
+        const OT_BOOKS = [
+            'genesis', 'exodus', 'leviticus', 'numbers', 'deuteronomy',
+            'joshua', 'judges', 'ruth', '1samuel', '2samuel',
+            '1kings', '2kings', '1chronicles', '2chronicles', 'ezra',
+            'nehemiah', 'esther', 'job', 'psalms', 'proverbs',
+            'ecclesiastes', 'songofsolomon', 'isaiah', 'jeremiah', 'lamentations',
+            'ezekiel', 'daniel', 'hosea', 'joel', 'amos',
+            'obadiah', 'jonah', 'micah', 'nahum', 'habakkuk',
+            'zephaniah', 'haggai', 'zechariah', 'malachi'
+        ];
+
+        // Visual Navigation functions
+        function openNavModal() {
+            document.getElementById('nav-modal').classList.add('open');
+            updateNavDisplay();
+            renderBookGrid();
+            showNavTab('book');
+        }
+
+        function closeNavModal() {
+            document.getElementById('nav-modal').classList.remove('open');
+        }
+
+        function updateNavDisplay() {
+            const book = bibleData.books.find(b => b.id === currentBook);
+            document.getElementById('nav-current-display').textContent = `${book.name} ${currentChapter}`;
+        }
+
+        function showNavTab(tab) {
+            document.getElementById('nav-tab-book').classList.toggle('active', tab === 'book');
+            document.getElementById('nav-tab-chapter').classList.toggle('active', tab === 'chapter');
+            document.getElementById('nav-book-view').classList.toggle('active', tab === 'book');
+            document.getElementById('nav-chapter-view').classList.toggle('active', tab === 'chapter');
+
+            if (tab === 'chapter') {
+                renderChapterGrid();
+            }
+        }
+
+        function renderBookGrid() {
+            const otContainer = document.getElementById('old-testament-books');
+            const ntContainer = document.getElementById('new-testament-books');
+
+            // Old Testament
+            let otHtml = '<div class="testament-label">Old Testament</div><div class="book-grid">';
+            bibleData.books.forEach(book => {
+                if (OT_BOOKS.includes(book.id)) {
+                    const abbr = BOOK_ABBR[book.id] || book.name.substring(0, 4);
+                    const isCurrent = book.id === currentBook ? 'current' : '';
+                    otHtml += `<button class="book-btn ${isCurrent}" data-book="${book.id}" title="${book.name}">${abbr}</button>`;
+                }
+            });
+            otHtml += '</div>';
+            otContainer.innerHTML = otHtml;
+
+            // New Testament
+            let ntHtml = '<div class="testament-label">New Testament</div><div class="book-grid">';
+            bibleData.books.forEach(book => {
+                if (!OT_BOOKS.includes(book.id)) {
+                    const abbr = BOOK_ABBR[book.id] || book.name.substring(0, 4);
+                    const isCurrent = book.id === currentBook ? 'current' : '';
+                    ntHtml += `<button class="book-btn ${isCurrent}" data-book="${book.id}" title="${book.name}">${abbr}</button>`;
+                }
+            });
+            ntHtml += '</div>';
+            ntContainer.innerHTML = ntHtml;
+
+            // Add click handlers
+            document.querySelectorAll('.book-btn').forEach(btn => {
+                btn.addEventListener('click', () => selectBook(btn.dataset.book));
+            });
+        }
+
+        function selectBook(bookId) {
+            currentBook = bookId;
+            currentChapter = 1;
+            updateNavDisplay();
+            renderBookGrid();
+            showNavTab('chapter');
+            renderChapterGrid();
+        }
+
+        function renderChapterGrid() {
+            const book = bibleData.books.find(b => b.id === currentBook);
+            document.getElementById('selected-book-name').textContent = book.name;
+
+            let html = '';
+            for (let i = 1; i <= book.chapters.length; i++) {
+                const isCurrent = i === currentChapter ? 'current' : '';
+                html += `<button class="chapter-btn ${isCurrent}" data-chapter="${i}">${i}</button>`;
+            }
+
+            document.getElementById('chapter-grid').innerHTML = html;
+
+            // Add click handlers
+            document.querySelectorAll('.chapter-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    currentChapter = parseInt(btn.dataset.chapter);
+                    await loadAnnotations();
+                    displayChapter();
+                    closeNavModal();
+                });
+            });
+        }
+
+        // Tag management in annotation panel
+        function renderTagChips() {
+            const container = document.getElementById('tags-container');
+            container.innerHTML = '';
+
+            currentTags.forEach((tag, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'tag-chip';
+                chip.style.background = tag.color;
+                chip.innerHTML = `
+                    ${tag.name}
+                    <span class="tag-chip-remove" data-index="${index}">×</span>
+                `;
+                container.appendChild(chip);
+
+                // Remove tag handler
+                chip.querySelector('.tag-chip-remove').addEventListener('click', () => {
+                    currentTags.splice(index, 1);
+                    renderTagChips();
+                });
+            });
+        }
+
+        function addTag() {
+            const input = document.getElementById('new-tag-input');
+            const tagName = input.value.trim();
+
+            if (!tagName) return;
+
+            // Check if tag already exists
+            if (currentTags.some(t => t.name.toLowerCase() === tagName.toLowerCase())) {
+                input.value = '';
+                return;
+            }
+
+            // Get colour from known tags or use selected colour
+            const color = knownTags[tagName.toLowerCase()] || selectedTagColor;
+
+            currentTags.push({ name: tagName, color });
+            addKnownTag(tagName, color);
+
+            input.value = '';
+            selectedTagColor = getRandomTagColor(); // New random colour for next tag
+            document.getElementById('new-tag-color').style.background = selectedTagColor;
+
+            renderTagChips();
+        }
+
+        function showColorPicker() {
+            // Create popup
+            const popup = document.createElement('div');
+            popup.className = 'color-picker-popup open';
+            popup.style.position = 'fixed';
+            popup.style.top = '50%';
+            popup.style.left = '50%';
+            popup.style.transform = 'translate(-50%, -50%)';
+
+            const grid = document.createElement('div');
+            grid.className = 'color-picker-grid';
+
+            // Use theme-aware colours
+            const colors = getTagColors();
+            colors.forEach(color => {
+                const option = document.createElement('div');
+                option.className = 'color-picker-option';
+                option.style.background = color;
+                option.addEventListener('click', () => {
+                    selectedTagColor = color;
+                    document.getElementById('new-tag-color').style.background = color;
+                    document.body.removeChild(popup);
+                });
+                grid.appendChild(option);
+            });
+
+            popup.appendChild(grid);
+            document.body.appendChild(popup);
+
+            // Close on click outside
+            setTimeout(() => {
+                const closeHandler = (e) => {
+                    if (!popup.contains(e.target)) {
+                        document.body.removeChild(popup);
+                        document.removeEventListener('click', closeHandler);
+                    }
+                };
+                document.addEventListener('click', closeHandler);
+            }, 100);
+        }
+
+        function showTagSuggestions() {
+            const tagList = document.getElementById('tag-suggestion-list');
+            tagList.innerHTML = '';
+
+            if (Object.keys(knownTags).length > 0) {
+                document.getElementById('tag-suggestions').style.display = 'block';
+
+                Object.keys(knownTags).sort().forEach(tag => {
+                    const tagBtn = document.createElement('span');
+                    tagBtn.className = 'tag';
+                    tagBtn.textContent = tag;
+                    tagBtn.style.cursor = 'pointer';
+                    tagBtn.style.background = knownTags[tag];
+                    tagBtn.addEventListener('click', () => {
+                        // Add to currentTags if not already there
+                        if (!currentTags.some(t => t.name.toLowerCase() === tag.toLowerCase())) {
+                            currentTags.push({ name: tag, color: knownTags[tag] });
+                            renderTagChips();
+                        }
+                    });
+                    tagList.appendChild(tagBtn);
+                });
+            } else {
+                document.getElementById('tag-suggestions').style.display = 'none';
+            }
+        }
+
+        function setupEventListeners() {
+            console.log('Setting up event listeners...');
+
+            // Settings menu toggle - add both click and touchend for mobile
+            const menuBtn = document.getElementById('menu-btn');
+            menuBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleSettingsMenu();
+            });
+            menuBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleSettingsMenu();
+            });
+
+            // Close settings menu when clicking outside
+            document.addEventListener('click', (e) => {
+                const menu = document.getElementById('settings-menu');
+                const btn = document.getElementById('menu-btn');
+                if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                    menu.classList.remove('open');
+                }
+            });
+
+            // Annotation mode selector
+            const annotationModeSelect = document.getElementById('annotation-mode');
+            if (annotationModeSelect) {
+                annotationModeSelect.addEventListener('change', (e) => {
+                    setAnnotationMode(e.target.value);
+                });
+            }
+
+            // Auth buttons
+            const signInBtn = document.getElementById('sign-in-btn');
+            const signUpBtn = document.getElementById('sign-up-btn');
+            const getStartedBtn = document.getElementById('get-started-btn');
+
+            console.log('Buttons found:', { signInBtn, signUpBtn, getStartedBtn });
+
+            if (signInBtn) signInBtn.addEventListener('click', () => {
+                console.log('Sign in clicked');
+                showAuthModal(false);
+            });
+            if (signUpBtn) signUpBtn.addEventListener('click', () => {
+                console.log('Sign up clicked');
+                showAuthModal(true);
+            });
+            if (getStartedBtn) getStartedBtn.addEventListener('click', () => {
+                console.log('Get started clicked');
+                if (currentUser) {
+                    // User is logged in, mark welcome as seen and show Bible
+                    localStorage.setItem('hasSeenWelcome', 'true');
+                    document.querySelector('.welcome').style.display = 'none';
+                    displayChapter();
+                } else {
+                    // User not logged in, show sign up modal
+                    showAuthModal(true);
+                }
+            });
+            document.getElementById('sign-out-btn').addEventListener('click', signOut);
+            document.getElementById('auth-cancel').addEventListener('click', hideAuthModal);
+            document.getElementById('auth-form').addEventListener('submit', handleAuth);
+            document.getElementById('auth-toggle-link').addEventListener('click', toggleAuthMode);
+
+            // Navigation - chapter-info now opens nav modal
+            document.getElementById('chapter-info').addEventListener('click', openNavModal);
+            document.getElementById('close-nav-modal').addEventListener('click', closeNavModal);
+            document.getElementById('nav-tab-book').addEventListener('click', () => showNavTab('book'));
+            document.getElementById('nav-tab-chapter').addEventListener('click', () => showNavTab('chapter'));
+
+            // Annotation set switcher
+            document.getElementById('set-switcher-btn').addEventListener('click', openSetModal);
+            document.getElementById('prev-chapter').addEventListener('click', () => navigateChapter(-1));
+            document.getElementById('next-chapter').addEventListener('click', () => navigateChapter(1));
+
+            // Close modal on background click
+            document.getElementById('nav-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'nav-modal') closeNavModal();
+            });
+
+            // Annotation panel
+            document.getElementById('close-annotation').addEventListener('click', closeAnnotationPanel);
+            document.querySelectorAll('.color-option').forEach(el => {
+                el.addEventListener('click', () => selectHighlight(el.dataset.color));
+            });
+            document.getElementById('clear-highlight').addEventListener('click', clearHighlight);
+            document.getElementById('save-annotation').addEventListener('click', saveAnnotation);
+
+            // Tag management
+            document.getElementById('add-tag-btn').addEventListener('click', addTag);
+            document.getElementById('new-tag-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTag();
+                }
+            });
+            document.getElementById('new-tag-color').addEventListener('click', showColorPicker);
+
+            // Export functionality
+            document.getElementById('export-notes-btn').addEventListener('click', openExportModal);
+            document.getElementById('export-cancel').addEventListener('click', hideExportModal);
+            document.getElementById('export-markdown').addEventListener('click', exportMarkdown);
+            document.getElementById('export-json').addEventListener('click', exportJSON);
+            document.getElementById('export-switch-web').addEventListener('click', switchToWebExport);
+            document.getElementById('export-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'export-modal') hideExportModal();
+            });
+            document.getElementById('export-annotation-set').addEventListener('change', loadExportData);
+        }
+
+        // Auth functions
+        function showAuthModal(signUp = false) {
+            isSignUp = signUp;
+            document.getElementById('auth-modal-title').textContent = signUp ? 'Sign Up' : 'Sign In';
+            document.getElementById('auth-submit').textContent = signUp ? 'Sign Up' : 'Sign In';
+            document.getElementById('auth-toggle-text').innerHTML = signUp
+                ? 'Already have an account? <a id="auth-toggle-link">Sign in</a>'
+                : 'Don\'t have an account? <a id="auth-toggle-link">Sign up</a>';
+            // Re-attach toggle listener
+            document.getElementById('auth-toggle-link').addEventListener('click', toggleAuthMode);
+            document.getElementById('auth-modal').classList.add('active');
+            document.getElementById('auth-message').innerHTML = '';
+            document.getElementById('auth-form').reset();
+        }
+
+        function hideAuthModal() {
+            document.getElementById('auth-modal').classList.remove('active');
+        }
+
+        function toggleAuthMode() {
+            hideAuthModal();
+            showAuthModal(!isSignUp);
+        }
+
+        async function handleAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const messageEl = document.getElementById('auth-message');
+
+            try {
+                if (isSignUp) {
+                    const { data, error } = await supabase.auth.signUp({ email, password });
+                    if (error) throw error;
+                    messageEl.innerHTML = '<div class="success-message">Account created! Please check your email to verify.</div>';
+                    setTimeout(() => {
+                        hideAuthModal();
+                        showAuthModal(false); // Switch to sign in
+                    }, 2000);
+                } else {
+                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                    if (error) throw error;
+                    hideAuthModal();
+                }
+            } catch (error) {
+                messageEl.innerHTML = `<div class="error-message">${error.message}</div>`;
+            }
+        }
+
+        async function signOut() {
+            await supabase.auth.signOut();
+        }
+
+        async function handleAuthSuccess(user) {
+            currentUser = user;
+            document.getElementById('settings-user-email').textContent = user.email;
+            document.getElementById('settings-user-info').style.display = 'flex';
+            document.getElementById('settings-guest-buttons').style.display = 'none';
+            document.getElementById('navigation').style.display = 'flex';
+
+            // Load annotations
+            await loadAnnotations();
+
+            // Check if first visit
+            const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+            const welcomeEl = document.querySelector('.welcome');
+
+            if (!hasSeenWelcome) {
+                // First-time logged-in user - show welcome screen once
+                if (welcomeEl) {
+                    welcomeEl.style.display = 'block';
+                }
+            } else {
+                // Returning user - hide welcome and show Bible
+                if (welcomeEl) {
+                    welcomeEl.style.display = 'none';
+                }
+                displayChapter();
+            }
+        }
+
+
+        function handleSignOut() {
+            currentUser = null;
+            currentAnnotations = {};
+            document.getElementById('settings-user-info').style.display = 'none';
+            document.getElementById('settings-guest-buttons').style.display = 'flex';
+            document.getElementById('navigation').style.display = 'none';
+
+            // Show welcome screen
+            document.getElementById('content').innerHTML = `
+                <div class="welcome">
+                    <h2>Welcome to Scripture Scribbles</h2>
+                    <p>Your dyslexia-friendly Bible study companion with rich annotations and sermon notes.</p>
+
+                    <div class="features">
+                        <div class="feature">
+                            <h3>📖 Instant Access</h3>
+                            <p>World English Bible embedded. No downloads or setup required.</p>
+                        </div>
+                        <div class="feature">
+                            <h3>✨ Beautiful Annotations</h3>
+                            <p>Highlight verses, add notes, and organize your studies.</p>
+                        </div>
+                        <div class="feature">
+                            <h3>☁️ Sync Everywhere</h3>
+                            <p>Your notes sync across all your devices automatically.</p>
+                        </div>
+                        <div class="feature">
+                            <h3>♿ Accessible</h3>
+                            <p>Designed for people with dyslexia. Clean, customizable, readable.</p>
+                        </div>
+                    </div>
+
+                    <button class="btn primary" id="get-started-btn-2" style="font-size: 1.2em; padding: 15px 40px;">Get Started</button>
+                </div>
+            `;
+            document.getElementById('get-started-btn-2').addEventListener('click', () => showAuthModal(true));
+        }
+
+        // Bible display functions
+        function displayChapter() {
+            if (!bibleData || !bibleData.books) {
+                console.error('Bible data not loaded!');
+                return;
+            }
+
+            const book = bibleData.books.find(b => b.id === currentBook);
+            if (!book) {
+                console.error('Book not found:', currentBook);
+                return;
+            }
+
+            const chapter = book.chapters.find(c => c.number === currentChapter);
+            if (!chapter) {
+                console.error('Chapter not found:', currentChapter);
+                return;
+            }
+
+            document.getElementById('chapter-info').textContent = `${book.name} ${currentChapter}`;
+
+            const contentEl = document.getElementById('content');
+
+            let html = `<div class="chapter-title">${book.name} ${currentChapter}</div>`;
+
+            chapter.verses.forEach(verse => {
+                const annotation = currentAnnotations[verse.number] || {};
+                const highlightClass = annotation.highlight ? `highlight-${annotation.highlight}` : '';
+                const underlineClass = annotation.underline ? `underline-${annotation.underline}` : '';
+                const selectedClass = selectedVerse === verse.number ? 'selected' : '';
+
+                const hasNote = annotation.note && annotation.note.trim();
+                const hasTags = annotation.tags && annotation.tags.length > 0;
+                const hasAnnotations = hasNote || hasTags || annotation.highlight || annotation.underline;
+
+                html += `
+                    <div class="verse ${highlightClass} ${underlineClass} ${selectedClass} ${hasAnnotations ? 'has-annotations' : ''}" data-verse="${verse.number}">
+                        <div class="verse-body">
+                            <div class="verse-content">
+                                <span class="verse-number">${verse.number}</span>
+                                <div class="verse-text-wrapper">
+                                    <span class="verse-text">${verse.text}</span>
+                                </div>
+                            </div>
+                        </div>
+                `;
+
+                // Indicators below verse (outside highlight area)
+                html += `<div class="verse-indicators">`;
+                if (hasTags) {
+                    const tags = annotation.tags;
+                    const tagNames = tags.map(t => typeof t === 'string' ? t : t.name).join(', ');
+                    if (tags.length === 1) {
+                        const tag = tags[0];
+                        const tagColor = typeof tag === 'object' ? tag.color : (knownTags[tag.toLowerCase()] || '#ACE5CB');
+                        html += `<i class="ph-fill ph-tag indicator-icon" style="color: ${tagColor}" title="${tagNames}"></i>`;
+                    } else {
+                        html += `<i class="ph-fill ph-tags indicator-icon" style="color: var(--text-tertiary)" title="${tagNames}"></i>`;
+                    }
+                }
+                if (hasNote) {
+                    html += `<i class="ph ph-note-pencil indicator-icon" style="color: var(--accent-info)" title="Note"></i>`;
+                }
+                html += `</div>`;
+
+                // Inline menu (shown when selected)
+                html += `
+                    <div class="inline-menu">
+                        <div class="menu-buttons">
+                            <button class="menu-btn" data-menu="highlight" onclick="toggleSubmenu(${verse.number}, 'highlight')">
+                                <i class="ph ph-highlighter-circle"></i> Highlight
+                            </button>
+                            <button class="menu-btn" data-menu="note" onclick="toggleSubmenu(${verse.number}, 'note')">
+                                <i class="ph ph-note-pencil"></i> Note
+                            </button>
+                            <button class="menu-btn" data-menu="tag" onclick="toggleSubmenu(${verse.number}, 'tag')">
+                                <i class="ph ph-tag"></i> Tag
+                            </button>
+                            <button class="menu-btn" onclick="copyVerse(${verse.number})">
+                                <i class="ph ph-copy"></i> Copy
+                            </button>
+                        </div>
+
+                        <!-- Highlight submenu -->
+                        <div class="submenu" id="submenu-highlight-${verse.number}">
+                            <div class="submenu-title">Highlight</div>
+                            <div class="highlight-grid">
+                                <button class="highlight-btn ${annotation.highlight === 'yellow' ? 'selected' : ''}" style="background: var(--highlight-yellow)" onclick="setHighlight(${verse.number}, 'yellow')">H1</button>
+                                <button class="highlight-btn ${annotation.highlight === 'green' ? 'selected' : ''}" style="background: var(--highlight-green)" onclick="setHighlight(${verse.number}, 'green')">H2</button>
+                                <button class="highlight-btn ${annotation.highlight === 'blue' ? 'selected' : ''}" style="background: var(--highlight-blue)" onclick="setHighlight(${verse.number}, 'blue')">H3</button>
+                                <button class="highlight-btn ${annotation.highlight === 'pink' ? 'selected' : ''}" style="background: var(--highlight-pink)" onclick="setHighlight(${verse.number}, 'pink')">H4</button>
+                                <button class="highlight-btn ${annotation.highlight === 'purple' ? 'selected' : ''}" style="background: var(--highlight-purple)" onclick="setHighlight(${verse.number}, 'purple')">H5</button>
+                                <button class="highlight-btn ${annotation.highlight === 'orange' ? 'selected' : ''}" style="background: var(--highlight-orange)" onclick="setHighlight(${verse.number}, 'orange')">H6</button>
+                                <button class="highlight-btn clear" onclick="setHighlight(${verse.number}, null)">X</button>
+                            </div>
+                            <div class="submenu-title">Underline</div>
+                            <div class="underline-grid">
+                                <button class="underline-btn ${annotation.underline === 'yellow' ? 'selected' : ''}" style="--underline-color: var(--highlight-yellow)" onclick="setUnderline(${verse.number}, 'yellow')">U1</button>
+                                <button class="underline-btn ${annotation.underline === 'green' ? 'selected' : ''}" style="--underline-color: var(--highlight-green)" onclick="setUnderline(${verse.number}, 'green')">U2</button>
+                                <button class="underline-btn ${annotation.underline === 'blue' ? 'selected' : ''}" style="--underline-color: var(--highlight-blue)" onclick="setUnderline(${verse.number}, 'blue')">U3</button>
+                                <button class="underline-btn ${annotation.underline === 'pink' ? 'selected' : ''}" style="--underline-color: var(--highlight-pink)" onclick="setUnderline(${verse.number}, 'pink')">U4</button>
+                                <button class="underline-btn ${annotation.underline === 'purple' ? 'selected' : ''}" style="--underline-color: var(--highlight-purple)" onclick="setUnderline(${verse.number}, 'purple')">U5</button>
+                                <button class="underline-btn ${annotation.underline === 'orange' ? 'selected' : ''}" style="--underline-color: var(--highlight-orange)" onclick="setUnderline(${verse.number}, 'orange')">U6</button>
+                                <button class="underline-btn clear" onclick="setUnderline(${verse.number}, null)">X</button>
+                            </div>
+                        </div>
+
+                        <!-- Note submenu -->
+                        <div class="submenu" id="submenu-note-${verse.number}">
+                            <textarea class="note-textarea" id="note-input-${verse.number}" placeholder="Add your thoughts... (Cmd+Enter to save)" onkeydown="handleNoteKeydown(event, ${verse.number})">${annotation.note || ''}</textarea>
+                            <div class="note-actions">
+                                <button class="note-delete" onclick="deleteNote(${verse.number})">Delete</button>
+                                <button class="note-save" onclick="saveNote(${verse.number})">Save</button>
+                            </div>
+                        </div>
+
+                        <!-- Tag submenu -->
+                        <div class="submenu" id="submenu-tag-${verse.number}">
+                            <div class="tag-section">
+                                <div class="tag-section-title">Active tags (tap to remove)</div>
+                                <div class="active-tags" id="active-tags-${verse.number}">
+                                    ${hasTags ? annotation.tags.map(tag => {
+                                        const tagName = typeof tag === 'string' ? tag : tag.name;
+                                        const tagColor = typeof tag === 'object' ? tag.color : knownTags[tagName.toLowerCase()] || '#ACE5CB';
+                                        return `<span class="tag-item active" style="background: ${tagColor}" onclick="removeTag(${verse.number}, '${tagName}')">${tagName}</span>`;
+                                    }).join('') : '<span style="color: var(--text-tertiary); font-size: 0.8em;">No tags</span>'}
+                                </div>
+                            </div>
+                            <div class="tag-section">
+                                <div class="tag-section-title">Add existing tag</div>
+                                <div class="existing-tags" id="existing-tags-${verse.number}">
+                                    ${Object.keys(knownTags).length > 0 ?
+                                        Object.entries(knownTags).map(([name, color]) => {
+                                            const isActive = hasTags && annotation.tags.some(t => (typeof t === 'string' ? t : t.name).toLowerCase() === name.toLowerCase());
+                                            if (isActive) return '';
+                                            return `<span class="tag-item" style="background: ${color}" onclick="addExistingTag(${verse.number}, '${name}', '${color}')">${name}</span>`;
+                                        }).join('') || '<span style="color: var(--text-tertiary); font-size: 0.8em;">No saved tags</span>'
+                                    : '<span style="color: var(--text-tertiary); font-size: 0.8em;">No saved tags</span>'}
+                                </div>
+                            </div>
+                            <div class="tag-section">
+                                <div class="tag-section-title">New tag</div>
+                                <div class="new-tag-row">
+                                    <input type="text" id="new-tag-input-${verse.number}" placeholder="Tag name...">
+                                    <div class="new-tag-color" id="new-tag-color-${verse.number}" style="background: #ACE5CB" onclick="event.stopPropagation(); showInlineColorPicker(${verse.number})"></div>
+                                    <button class="new-tag-add" onclick="addNewTag(${verse.number})">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                `;
+            });
+
+            // Add footer
+            html += `
+                <div class="footer">
+                    <p>Scripture Scribbles v1.2.0 - Fluid Reading Mode | World English Bible (WEB) | <a href="https://github.com/DaveWyborn/scripture-scribbles" target="_blank">GitHub</a></p>
+                    <p>Made with ❤️ for people with dyslexia</p>
+                </div>
+            `;
+
+            contentEl.innerHTML = html;
+
+            // Re-apply annotation mode class (innerHTML wipes classes)
+            const annotationMode = localStorage.getItem('annotationMode') || 'on';
+            contentEl.classList.add(`annotation-mode-${annotationMode}`);
+
+            // Add click handlers to verses
+            document.querySelectorAll('.verse').forEach(el => {
+                // Single click: select/deselect verse (show/hide inline menu)
+                el.addEventListener('click', (e) => {
+                    // Don't handle click if it's on interactive elements
+                    if (e.target.tagName === 'BUTTON' ||
+                        e.target.tagName === 'INPUT' ||
+                        e.target.tagName === 'TEXTAREA' ||
+                        e.target.closest('.inline-menu') ||
+                        e.target.closest('.annotation-panel')) {
+                        return;
+                    }
+
+                    const verseNum = parseInt(el.dataset.verse);
+
+                    // Deselect all verses
+                    document.querySelectorAll('.verse').forEach(v => v.classList.remove('selected'));
+
+                    // Select this verse
+                    if (selectedVerse !== verseNum) {
+                        selectedVerse = verseNum;
+                        el.classList.add('selected');
+                    } else {
+                        // Clicking same verse again deselects it
+                        selectedVerse = null;
+                    }
+                });
+            });
+
+            // Update navigation buttons
+            const book_obj = bibleData.books.find(b => b.id === currentBook);
+            document.getElementById('prev-chapter').disabled = currentChapter === 1;
+            document.getElementById('next-chapter').disabled = currentChapter === book_obj.chapters.length;
+
+            // Apply auto-contrast to highlights and tags
+            setTimeout(applyAutoContrast, 50);
+        }
+
+        let isNavigating = false;
+        async function navigateChapter(delta) {
+            if (isNavigating) return;
+            isNavigating = true;
+            try {
+                currentChapter += delta;
+                await loadAnnotations();
+                displayChapter();
+            } catch (error) {
+                console.error('Error in navigateChapter:', error);
+            } finally {
+                isNavigating = false;
+            }
+        }
+
+        // Annotation functions
+        async function loadAnnotations() {
+            if (!currentUser) return;
+
+            try {
+                const bookId = `${currentBook}-${currentChapter}`;
+
+                // Add timeout to prevent hung requests
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Request timeout')), 5000)
+                );
+
+                const queryPromise = supabase
+                    .from('annotations')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .eq('bible_version', 'WEB')
+                    .eq('annotation_set', currentAnnotationSet)
+                    .eq('book_id', bookId)
+                    .maybeSingle();
+
+                const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
+
+                if (error) {
+                    console.warn('Annotation load error:', error.code, error.message);
+                }
+
+                currentAnnotations = data ? data.data : {};
+            } catch (error) {
+                console.error('Error loading annotations:', error);
+                currentAnnotations = {};
+            }
+        }
+
+        function openAnnotationPanel(verseNum) {
+            console.log('openAnnotationPanel called with verse:', verseNum);
+
+            if (!currentUser) {
+                alert('Please sign in to add annotations');
+                return;
+            }
+
+            selectedVerse = verseNum;
+            console.log('Set selectedVerse to:', selectedVerse);
+            document.getElementById('annotation-verse-num').textContent = verseNum;
+
+            // Load existing annotation
+            const annotation = currentAnnotations[verseNum] || {};
+
+            // Clear all color selections
+            document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+
+            // Select current color
+            if (annotation.highlight) {
+                document.querySelector(`[data-color="${annotation.highlight}"]`).classList.add('selected');
+            }
+
+            document.getElementById('verse-note').value = annotation.note || '';
+
+            // Load tags into currentTags array
+            currentTags = [];
+            if (annotation.tags && annotation.tags.length > 0) {
+                annotation.tags.forEach(tag => {
+                    if (typeof tag === 'string') {
+                        // Old format - convert
+                        const color = knownTags[tag.toLowerCase()] || getRandomTagColor();
+                        currentTags.push({ name: tag, color });
+                    } else {
+                        // New format
+                        currentTags.push({ ...tag });
+                    }
+                });
+            }
+            renderTagChips();
+
+            // Show tag suggestions
+            showTagSuggestions();
+
+            document.getElementById('annotation-panel').classList.add('open');
+
+            // Update selected verse in UI
+            document.querySelectorAll('.verse').forEach(el => el.classList.remove('selected'));
+            const verseElement = document.querySelector(`[data-verse="${verseNum}"]`);
+            if (verseElement) {
+                verseElement.classList.add('selected');
+
+                // Scroll verse into view above the panel
+                setTimeout(() => {
+                    const panelHeight = document.getElementById('annotation-panel').offsetHeight;
+                    const verseRect = verseElement.getBoundingClientRect();
+                    const viewportHeight = window.innerHeight;
+
+                    // Check if verse is hidden behind panel
+                    if (verseRect.bottom > viewportHeight - panelHeight) {
+                        // Scroll so verse is visible above panel with some padding
+                        const scrollTarget = verseElement.offsetTop - 200; // 200px padding from top (less aggressive on desktop)
+                        window.scrollTo({
+                            top: scrollTarget,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, 300); // Wait for panel animation to complete
+            }
+        }
+
+        function closeAnnotationPanel() {
+            document.getElementById('annotation-panel').classList.remove('open');
+            // Don't clear selectedVerse immediately - wait for animation
+            setTimeout(() => {
+                selectedVerse = null;
+                document.querySelectorAll('.verse').forEach(el => el.classList.remove('selected'));
+            }, 300);
+        }
+
+        function selectHighlight(color) {
+            document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+            document.querySelector(`[data-color="${color}"]`).classList.add('selected');
+        }
+
+        function clearHighlight() {
+            document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+        }
+
+        async function saveAnnotation() {
+            console.log('Save annotation called', { currentUser, selectedVerse });
+
+            if (!currentUser) {
+                console.error('No user logged in');
+                alert('Please sign in to save annotations');
+                return;
+            }
+
+            if (selectedVerse === null) {
+                console.error('No verse selected');
+                return;
+            }
+
+            // Store verse number locally in case it gets cleared
+            const verseToSave = selectedVerse;
+
+            const selectedColor = document.querySelector('.color-option.selected');
+            const highlight = selectedColor ? selectedColor.dataset.color : null;
+            const note = document.getElementById('verse-note').value.trim();
+
+            // Use currentTags array (already has name + color)
+            const tags = [...currentTags];
+
+            console.log('Saving annotation:', { verseToSave, highlight, note, tags });
+
+            // Update local annotations
+            if (!highlight && !note && tags.length === 0) {
+                delete currentAnnotations[verseToSave];
+            } else {
+                currentAnnotations[verseToSave] = { highlight, note, tags };
+            }
+
+            // Save to Supabase
+            try {
+                const bookId = `${currentBook}-${currentChapter}`;
+
+                console.log('Saving to Supabase:', { bookId, verseToSave });
+
+                // Check if annotation exists
+                const { data: existing } = await supabase
+                    .from('annotations')
+                    .select('id')
+                    .eq('user_id', currentUser.id)
+                    .eq('bible_version', 'WEB')
+                    .eq('annotation_set', currentAnnotationSet)
+                    .eq('book_id', bookId)
+                    .maybeSingle();
+
+                if (existing) {
+                    // Update existing
+                    console.log('Updating existing annotation');
+                    const { error } = await supabase
+                        .from('annotations')
+                        .update({ data: currentAnnotations })
+                        .eq('id', existing.id);
+
+                    if (error) throw error;
+                } else {
+                    // Insert new
+                    console.log('Inserting new annotation');
+                    const { error } = await supabase
+                        .from('annotations')
+                        .insert({
+                            user_id: currentUser.id,
+                            bible_version: 'WEB',
+                            annotation_set: currentAnnotationSet,
+                            book_id: bookId,
+                            data: currentAnnotations
+                        });
+
+                    if (error) throw error;
+                }
+
+                console.log('Save successful, refreshing display');
+
+                // Refresh display
+                displayChapter();
+                closeAnnotationPanel();
+            } catch (error) {
+                console.error('Error saving annotation:', error);
+                alert('Failed to save annotation. Please try again.');
+            }
+        }
+
+        // Inline menu functions
+        function toggleSubmenu(verseNum, menuType) {
+            const submenuId = `submenu-${menuType}-${verseNum}`;
+            const submenu = document.getElementById(submenuId);
+
+            if (!submenu) return;
+
+            // Close all other submenus for this verse
+            const verse = document.querySelector(`[data-verse="${verseNum}"]`);
+            verse.querySelectorAll('.submenu').forEach(s => {
+                if (s.id !== submenuId) s.classList.remove('open');
+            });
+
+            // Toggle menu button active state
+            verse.querySelectorAll('.menu-btn').forEach(btn => {
+                if (btn.dataset.menu === menuType) {
+                    btn.classList.toggle('active', !submenu.classList.contains('open'));
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Toggle this submenu
+            submenu.classList.toggle('open');
+        }
+
+        async function setHighlight(verseNum, color) {
+            if (!currentUser) {
+                alert('Please sign in to add annotations');
+                return;
+            }
+
+            // Update annotation
+            if (!currentAnnotations[verseNum]) {
+                currentAnnotations[verseNum] = {};
+            }
+
+            if (color) {
+                currentAnnotations[verseNum].highlight = color;
+            } else {
+                delete currentAnnotations[verseNum].highlight;
+            }
+
+            // Clean up empty annotations
+            if (!currentAnnotations[verseNum].highlight &&
+                !currentAnnotations[verseNum].underline &&
+                !currentAnnotations[verseNum].note &&
+                (!currentAnnotations[verseNum].tags || currentAnnotations[verseNum].tags.length === 0)) {
+                delete currentAnnotations[verseNum];
+            }
+
+            await saveInlineAnnotation(verseNum);
+        }
+
+        async function setUnderline(verseNum, color) {
+            if (!currentUser) {
+                alert('Please sign in to add annotations');
+                return;
+            }
+
+            // Update annotation
+            if (!currentAnnotations[verseNum]) {
+                currentAnnotations[verseNum] = {};
+            }
+
+            if (color) {
+                currentAnnotations[verseNum].underline = color;
+            } else {
+                delete currentAnnotations[verseNum].underline;
+            }
+
+            // Clean up empty annotations
+            if (!currentAnnotations[verseNum].highlight &&
+                !currentAnnotations[verseNum].underline &&
+                !currentAnnotations[verseNum].note &&
+                (!currentAnnotations[verseNum].tags || currentAnnotations[verseNum].tags.length === 0)) {
+                delete currentAnnotations[verseNum];
+            }
+
+            await saveInlineAnnotation(verseNum);
+        }
+
+        async function saveNote(verseNum) {
+            if (!currentUser) {
+                alert('Please sign in to add annotations');
+                return;
+            }
+
+            const noteInput = document.getElementById(`note-input-${verseNum}`);
+            const note = noteInput.value.trim();
+
+            if (!currentAnnotations[verseNum]) {
+                currentAnnotations[verseNum] = {};
+            }
+
+            if (note) {
+                currentAnnotations[verseNum].note = note;
+            } else {
+                delete currentAnnotations[verseNum].note;
+            }
+
+            // Clean up empty annotations
+            if (!currentAnnotations[verseNum].highlight &&
+                !currentAnnotations[verseNum].underline &&
+                !currentAnnotations[verseNum].note &&
+                (!currentAnnotations[verseNum].tags || currentAnnotations[verseNum].tags.length === 0)) {
+                delete currentAnnotations[verseNum];
+            }
+
+            await saveInlineAnnotation(verseNum);
+        }
+
+        async function deleteNote(verseNum) {
+            if (!currentUser) return;
+
+            if (!currentAnnotations[verseNum]) return;
+
+            delete currentAnnotations[verseNum].note;
+
+            // Clean up empty annotations
+            if (!currentAnnotations[verseNum].highlight &&
+                !currentAnnotations[verseNum].underline &&
+                !currentAnnotations[verseNum].note &&
+                (!currentAnnotations[verseNum].tags || currentAnnotations[verseNum].tags.length === 0)) {
+                delete currentAnnotations[verseNum];
+            }
+
+            await saveInlineAnnotation(verseNum);
+        }
+
+        async function addExistingTag(verseNum, tagName, tagColor) {
+            if (!currentUser) {
+                alert('Please sign in to add annotations');
+                return;
+            }
+
+            if (!currentAnnotations[verseNum]) {
+                currentAnnotations[verseNum] = {};
+            }
+            if (!currentAnnotations[verseNum].tags) {
+                currentAnnotations[verseNum].tags = [];
+            }
+
+            // Check if already exists
+            const exists = currentAnnotations[verseNum].tags.some(t =>
+                (typeof t === 'string' ? t : t.name).toLowerCase() === tagName.toLowerCase()
+            );
+
+            if (!exists) {
+                currentAnnotations[verseNum].tags.push({ name: tagName, color: tagColor });
+                await saveInlineAnnotation(verseNum);
+            }
+        }
+
+        async function addNewTag(verseNum) {
+            if (!currentUser) {
+                alert('Please sign in to add annotations');
+                return;
+            }
+
+            const input = document.getElementById(`new-tag-input-${verseNum}`);
+            const colorPicker = document.getElementById(`new-tag-color-${verseNum}`);
+            const tagName = input.value.trim();
+
+            if (!tagName) return;
+
+            const tagColor = colorPicker.style.background || '#ACE5CB';
+
+            if (!currentAnnotations[verseNum]) {
+                currentAnnotations[verseNum] = {};
+            }
+            if (!currentAnnotations[verseNum].tags) {
+                currentAnnotations[verseNum].tags = [];
+            }
+
+            // Check if already exists
+            const exists = currentAnnotations[verseNum].tags.some(t =>
+                (typeof t === 'string' ? t : t.name).toLowerCase() === tagName.toLowerCase()
+            );
+
+            if (!exists) {
+                currentAnnotations[verseNum].tags.push({ name: tagName, color: tagColor });
+
+                // Save to knownTags
+                knownTags[tagName.toLowerCase()] = tagColor;
+                saveKnownTags();
+
+                input.value = '';
+                await saveInlineAnnotation(verseNum);
+            }
+        }
+
+        async function removeTag(verseNum, tagName) {
+            if (!currentUser) return;
+
+            if (!currentAnnotations[verseNum] || !currentAnnotations[verseNum].tags) return;
+
+            currentAnnotations[verseNum].tags = currentAnnotations[verseNum].tags.filter(t => {
+                const name = typeof t === 'string' ? t : t.name;
+                return name.toLowerCase() !== tagName.toLowerCase();
+            });
+
+            // Clean up empty annotations
+            if (!currentAnnotations[verseNum].highlight &&
+                !currentAnnotations[verseNum].underline &&
+                !currentAnnotations[verseNum].note &&
+                (!currentAnnotations[verseNum].tags || currentAnnotations[verseNum].tags.length === 0)) {
+                delete currentAnnotations[verseNum];
+            }
+
+            await saveInlineAnnotation(verseNum);
+        }
+
+        function handleNoteKeydown(event, verseNum) {
+            // CMD+Enter (Mac) or Ctrl+Enter (Windows) to save
+            if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+                event.preventDefault();
+                saveNote(verseNum);
+            }
+        }
+
+        function showInlineColorPicker(verseNum) {
+            // Show a popup with colour options
+            const colorPicker = document.getElementById(`new-tag-color-${verseNum}`);
+            const colors = getTagColors();
+
+            // Check if popup already exists
+            let popup = document.getElementById(`color-popup-${verseNum}`);
+            if (popup) {
+                popup.remove();
+                return;
+            }
+
+            // Create popup
+            popup = document.createElement('div');
+            popup.id = `color-popup-${verseNum}`;
+            popup.className = 'color-picker-popup open';
+            popup.style.position = 'absolute';
+            popup.style.bottom = '40px';
+            popup.style.right = '0';
+
+            let html = '<div class="color-picker-grid">';
+            colors.forEach(color => {
+                html += `<div class="color-picker-option" style="background: ${color}" onclick="event.stopPropagation(); selectInlineTagColor(${verseNum}, '${color}')"></div>`;
+            });
+            html += '</div>';
+
+            popup.innerHTML = html;
+
+            // Position relative to the color picker button
+            const tagSection = colorPicker.closest('.tag-section');
+            if (tagSection) {
+                tagSection.style.position = 'relative';
+                tagSection.appendChild(popup);
+            } else {
+                colorPicker.parentElement.style.position = 'relative';
+                colorPicker.parentElement.appendChild(popup);
+            }
+
+            // Close on click outside
+            setTimeout(() => {
+                document.addEventListener('click', function closePopup(e) {
+                    if (!popup.contains(e.target) && e.target !== colorPicker) {
+                        popup.remove();
+                        document.removeEventListener('click', closePopup);
+                    }
+                });
+            }, 10);
+        }
+
+        function selectInlineTagColor(verseNum, color) {
+            const colorPicker = document.getElementById(`new-tag-color-${verseNum}`);
+            colorPicker.style.background = color;
+
+            // Remove popup
+            const popup = document.getElementById(`color-popup-${verseNum}`);
+            if (popup) popup.remove();
+        }
+
+        async function saveInlineAnnotation(verseNum) {
+            try {
+                const bookId = `${currentBook}-${currentChapter}`;
+
+                // Check if annotation exists
+                const { data: existing } = await supabase
+                    .from('annotations')
+                    .select('id')
+                    .eq('user_id', currentUser.id)
+                    .eq('bible_version', 'WEB')
+                    .eq('annotation_set', currentAnnotationSet)
+                    .eq('book_id', bookId)
+                    .maybeSingle();
+
+                if (existing) {
+                    // Update existing
+                    const { error } = await supabase
+                        .from('annotations')
+                        .update({ data: currentAnnotations })
+                        .eq('id', existing.id);
+
+                    if (error) throw error;
+                } else {
+                    // Insert new
+                    const { error } = await supabase
+                        .from('annotations')
+                        .insert({
+                            user_id: currentUser.id,
+                            bible_version: 'WEB',
+                            annotation_set: currentAnnotationSet,
+                            book_id: bookId,
+                            data: currentAnnotations
+                        });
+
+                    if (error) throw error;
+                }
+
+                // Refresh display but keep verse selected and submenu open
+                const wasSelected = selectedVerse;
+
+                // Find which submenu was open
+                let openSubmenuType = null;
+                if (wasSelected) {
+                    const openSubmenu = document.querySelector(`[data-verse="${wasSelected}"] .submenu.open`);
+                    if (openSubmenu) {
+                        const id = openSubmenu.id;
+                        const match = id.match(/submenu-(\w+)-/);
+                        if (match) openSubmenuType = match[1];
+                    }
+                }
+
+                displayChapter();
+
+                // Re-select the verse and re-open submenu
+                if (wasSelected) {
+                    selectedVerse = wasSelected;
+                    const verseEl = document.querySelector(`[data-verse="${wasSelected}"]`);
+                    if (verseEl) {
+                        verseEl.classList.add('selected');
+
+                        // Re-open the submenu that was open
+                        if (openSubmenuType) {
+                            setTimeout(() => {
+                                toggleSubmenu(wasSelected, openSubmenuType);
+                            }, 50);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving annotation:', error);
+                alert('Failed to save annotation. Please try again.');
+            }
+        }
+
+        function copyVerse(verseNum) {
+            if (!bibleData) return;
+
+            const book = bibleData.books.find(b => b.id === currentBook);
+            if (!book) return;
+
+            const chapter = book.chapters.find(c => c.number === currentChapter);
+            if (!chapter) return;
+
+            const verse = chapter.verses.find(v => v.number === verseNum);
+            if (!verse) return;
+
+            const text = `${book.name} ${currentChapter}:${verseNum} - ${verse.text}`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                // Show feedback
+                showCopyFeedback('Verse copied to clipboard');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showCopyFeedback('Verse copied to clipboard');
+            });
+        }
+
+        function showCopyFeedback(message) {
+            // Create feedback element if it doesn't exist
+            let feedback = document.getElementById('copy-feedback');
+            if (!feedback) {
+                feedback = document.createElement('div');
+                feedback.id = 'copy-feedback';
+                feedback.className = 'copy-feedback';
+                document.body.appendChild(feedback);
+            }
+
+            feedback.textContent = message;
+            feedback.classList.add('show');
+
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 2000);
+        }
+
+        // Export functions
+        let exportBookData = {}; // Stores {bookId: {bookName, chapterCount, verseCount, chapters: {1: [verses]}}}
+        let exportUseWEB = false;
+
+        // Bible book order (for sorting exports)
+        const BIBLE_BOOK_ORDER = [
+            'genesis', 'exodus', 'leviticus', 'numbers', 'deuteronomy',
+            'joshua', 'judges', 'ruth', '1samuel', '2samuel',
+            '1kings', '2kings', '1chronicles', '2chronicles', 'ezra',
+            'nehemiah', 'esther', 'job', 'psalms', 'proverbs',
+            'ecclesiastes', 'songofsolomon', 'isaiah', 'jeremiah', 'lamentations',
+            'ezekiel', 'daniel', 'hosea', 'joel', 'amos',
+            'obadiah', 'jonah', 'micah', 'nahum', 'habakkuk',
+            'zephaniah', 'haggai', 'zechariah', 'malachi',
+            'matthew', 'mark', 'luke', 'john', 'acts',
+            'romans', '1corinthians', '2corinthians', 'galatians', 'ephesians',
+            'philippians', 'colossians', '1thessalonians', '2thessalonians',
+            '1timothy', '2timothy', 'titus', 'philemon', 'hebrews',
+            'james', '1peter', '2peter', '1john', '2john', '3john',
+            'jude', 'revelation'
+        ];
+
+        async function openExportModal() {
+            if (!currentUser) {
+                alert('Please sign in to export notes');
+                return;
+            }
+
+            // Close settings menu
+            document.getElementById('settings-menu').classList.remove('open');
+
+            // Populate annotation sets
+            const setSelect = document.getElementById('export-annotation-set');
+            setSelect.innerHTML = '';
+            userAnnotationSets.forEach(setName => {
+                const option = document.createElement('option');
+                option.value = setName;
+                option.textContent = setName;
+                if (setName === currentAnnotationSet) option.selected = true;
+                setSelect.appendChild(option);
+            });
+
+            exportUseWEB = false;
+            document.getElementById('export-modal').classList.add('active');
+            await loadExportData();
+        }
+
+        function hideExportModal() {
+            document.getElementById('export-modal').classList.remove('active');
+            exportBookData = {};
+        }
+
+        async function loadExportData() {
+            const setName = document.getElementById('export-annotation-set').value;
+            const verseCountEl = document.getElementById('export-verse-count');
+            const bookListEl = document.getElementById('export-book-list');
+
+            verseCountEl.textContent = 'Loading annotations...';
+            bookListEl.innerHTML = '<div style="text-align: center; padding: 20px;">Loading...</div>';
+
+            try {
+                // Fetch all annotations for this set
+                const { data, error } = await supabase
+                    .from('annotations')
+                    .select('book_id, data')
+                    .eq('user_id', currentUser.id)
+                    .eq('bible_version', 'WEB')
+                    .eq('annotation_set', setName);
+
+                if (error) throw error;
+
+                // Build book data structure
+                exportBookData = {};
+                let totalVerses = 0;
+
+                data.forEach(row => {
+                    const [bookId, chapterNum] = row.book_id.split('-');
+                    const chapter = parseInt(chapterNum);
+
+                    if (!exportBookData[bookId]) {
+                        const book = bibleData.books.find(b => b.id === bookId);
+                        exportBookData[bookId] = {
+                            bookName: book ? book.name : bookId,
+                            chapterCount: 0,
+                            verseCount: 0,
+                            chapters: {},
+                            selected: true
+                        };
+                    }
+
+                    // Count verses in this chapter
+                    const verseNums = Object.keys(row.data || {});
+                    if (verseNums.length > 0) {
+                        exportBookData[bookId].chapters[chapter] = verseNums.map(v => parseInt(v));
+                        exportBookData[bookId].verseCount += verseNums.length;
+                        exportBookData[bookId].chapterCount++;
+                        totalVerses += verseNums.length;
+                    }
+                });
+
+                // Render book checkboxes
+                renderExportBookList();
+                updateExportVerseCount();
+
+            } catch (error) {
+                console.error('Error loading export data:', error);
+                bookListEl.innerHTML = '<div style="color: var(--accent-negative); padding: 20px;">Error loading annotations</div>';
+            }
+        }
+
+        function renderExportBookList() {
+            const bookListEl = document.getElementById('export-book-list');
+
+            if (Object.keys(exportBookData).length === 0) {
+                bookListEl.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-tertiary);">No annotations found in this set</div>';
+                return;
+            }
+
+            let html = '';
+            // Sort by Bible order
+            const sortedBookIds = Object.keys(exportBookData).sort((a, b) => {
+                const indexA = BIBLE_BOOK_ORDER.indexOf(a);
+                const indexB = BIBLE_BOOK_ORDER.indexOf(b);
+                return indexA - indexB;
+            });
+
+            sortedBookIds.forEach(bookId => {
+                const book = exportBookData[bookId];
+                html += `
+                    <div style="padding: 8px; border-bottom: 1px solid var(--border);">
+                        <label style="display: flex; align-items: center; cursor: pointer; gap: 10px;">
+                            <input type="checkbox" class="export-book-checkbox" data-book="${bookId}"
+                                ${book.selected ? 'checked' : ''}
+                                onchange="toggleBookSelection('${bookId}')">
+                            <span style="flex: 1;"><strong>${book.bookName}</strong></span>
+                            <span style="color: var(--text-tertiary); font-size: 0.9em;">
+                                ${book.chapterCount} chapter${book.chapterCount !== 1 ? 's' : ''},
+                                ${book.verseCount} verse${book.verseCount !== 1 ? 's' : ''}
+                            </span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            bookListEl.innerHTML = html;
+        }
+
+        function toggleBookSelection(bookId) {
+            exportBookData[bookId].selected = !exportBookData[bookId].selected;
+            updateExportVerseCount();
+        }
+
+        function updateExportVerseCount() {
+            let selectedVerses = 0;
+            Object.values(exportBookData).forEach(book => {
+                if (book.selected) selectedVerses += book.verseCount;
+            });
+
+            const verseCountEl = document.getElementById('export-verse-count');
+            const warningEl = document.getElementById('export-limit-warning');
+
+            if (selectedVerses === 0) {
+                verseCountEl.innerHTML = '<span style="color: var(--text-tertiary);">No books selected</span>';
+                warningEl.style.display = 'none';
+            } else if (selectedVerses > 250 && !exportUseWEB) {
+                verseCountEl.innerHTML = `<span style="color: var(--accent-negative);">${selectedVerses}/250 verses selected</span>`;
+                warningEl.style.display = 'block';
+            } else {
+                verseCountEl.innerHTML = `<span style="color: var(--accent-positive);">${selectedVerses} verses selected</span> ${exportUseWEB ? '(WEB - No limits)' : ''}`;
+                warningEl.style.display = 'none';
+            }
+        }
+
+        function switchToWebExport() {
+            exportUseWEB = !exportUseWEB;
+            const btn = document.getElementById('export-switch-web');
+            if (exportUseWEB) {
+                btn.textContent = 'Using WEB (No Limits) ✓';
+                btn.style.background = 'var(--accent-positive)';
+            } else {
+                btn.textContent = 'Switch to WEB (No Limits)';
+                btn.style.background = 'var(--accent-info)';
+            }
+            updateExportVerseCount();
+        }
+
+        async function exportMarkdown() {
+            // Check verse limit
+            let selectedVerses = 0;
+            Object.values(exportBookData).forEach(book => {
+                if (book.selected) selectedVerses += book.verseCount;
+            });
+
+            if (selectedVerses === 0) {
+                alert('Please select at least one book to export');
+                return;
+            }
+
+            if (selectedVerses > 250 && !exportUseWEB) {
+                alert('Please reduce selection to 250 verses or switch to WEB version');
+                return;
+            }
+
+            // Build markdown
+            const setName = document.getElementById('export-annotation-set').value;
+            let markdown = `# ${setName} - Annotation Notes\n\n`;
+            markdown += `**Exported:** ${new Date().toLocaleDateString()}\n\n`;
+            markdown += `**Bible Version:** ${exportUseWEB ? 'World English Bible (WEB)' : 'WEB'}\n\n`;
+            markdown += `---\n\n`;
+
+            // Fetch all annotations for selected books (sorted in Bible order)
+            const selectedBooks = Object.keys(exportBookData)
+                .filter(bookId => exportBookData[bookId].selected)
+                .sort((a, b) => {
+                    const indexA = BIBLE_BOOK_ORDER.indexOf(a);
+                    const indexB = BIBLE_BOOK_ORDER.indexOf(b);
+                    return indexA - indexB;
+                });
+
+            for (const bookId of selectedBooks) {
+                const bookData = exportBookData[bookId];
+                markdown += `## ${bookData.bookName}\n\n`;
+
+                // Sort chapters
+                const chapters = Object.keys(bookData.chapters).map(c => parseInt(c)).sort((a, b) => a - b);
+
+                for (const chapterNum of chapters) {
+                    markdown += `### Chapter ${chapterNum}\n\n`;
+
+                    // Fetch annotations for this chapter
+                    const { data, error } = await supabase
+                        .from('annotations')
+                        .select('data')
+                        .eq('user_id', currentUser.id)
+                        .eq('bible_version', 'WEB')
+                        .eq('annotation_set', setName)
+                        .eq('book_id', `${bookId}-${chapterNum}`)
+                        .single();
+
+                    if (error || !data) continue;
+
+                    const annotations = data.data;
+                    const verses = bookData.chapters[chapterNum].sort((a, b) => a - b);
+
+                    for (const verseNum of verses) {
+                        const annotation = annotations[verseNum];
+                        if (!annotation) continue;
+
+                        // Get verse text
+                        const book = bibleData.books.find(b => b.id === bookId);
+                        const chapter = book.chapters.find(c => c.number === chapterNum);
+                        const verse = chapter.verses.find(v => v.number === verseNum);
+
+                        markdown += `**${bookData.bookName} ${chapterNum}:${verseNum}**\n\n`;
+                        markdown += `> ${verse.text}\n\n`;
+
+                        if (annotation.highlight) {
+                            markdown += `**Highlight:** ${annotation.highlight}\n\n`;
+                        }
+
+                        if (annotation.tags && annotation.tags.length > 0) {
+                            const tagNames = annotation.tags.map(t => typeof t === 'string' ? t : t.name).join(', ');
+                            markdown += `**Tags:** ${tagNames}\n\n`;
+                        }
+
+                        if (annotation.note) {
+                            markdown += `**Notes:** ${annotation.note}\n\n`;
+                        }
+
+                        markdown += `---\n\n`;
+                    }
+                }
+            }
+
+            // Download file
+            const blob = new Blob([markdown], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${setName.toLowerCase().replace(/\s+/g, '-')}-notes-${new Date().toISOString().split('T')[0]}.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            hideExportModal();
+            showCopyFeedback('Notes exported successfully!');
+        }
+
+        async function exportJSON() {
+            // Export complete backup - no verse limits
+            const setName = document.getElementById('export-annotation-set').value;
+
+            try {
+                // Fetch ALL annotations for this set
+                const { data, error } = await supabase
+                    .from('annotations')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .eq('bible_version', 'WEB')
+                    .eq('annotation_set', setName);
+
+                if (error) throw error;
+
+                const backup = {
+                    version: '1.1.0',
+                    exportDate: new Date().toISOString(),
+                    annotationSet: setName,
+                    bibleVersion: 'WEB',
+                    annotations: data
+                };
+
+                // Download file
+                const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `scripture-scribbles-backup-${setName.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                hideExportModal();
+                showCopyFeedback('Backup exported successfully!');
+            } catch (error) {
+                console.error('Error exporting backup:', error);
+                alert('Failed to export backup. Please try again.');
+            }
+        }
+
+        // TODO: Review export functionality when adding new Bible versions (beyond WEB)
+        // Currently only WEB is supported. When adding NIV, ESV, etc:
+        // - Update exportMarkdown() to handle version-specific licensing
+        // - Ensure 250-verse limit is enforced for commercial versions
+        // - Add version selector in export modal
+        // - Update "Switch to WEB" logic to support switching between versions
+
+        // Start the app
+        initApp();
+
+        // Handle bfcache (back-forward cache) restoration
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                // Page was restored from bfcache, refresh display and theme
+                console.log('Page restored from bfcache, refreshing...');
+                loadTheme();
+                if (currentUser && bibleData) {
+                    displayChapter();
+                }
+            }
+        });
+
+        // Refresh Supabase session when tab regains focus
+        document.addEventListener('visibilitychange', async () => {
+            if (document.visibilityState === 'visible' && currentUser) {
+                try {
+                    await supabase.auth.getSession();
+                } catch (e) {
+                    console.error('Failed to refresh session:', e);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

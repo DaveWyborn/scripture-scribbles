@@ -38,74 +38,81 @@
 
 ---
 
+## Strategic Milestone: Prove Concept Before Scaling
+
+**Goal:** Reach 1,000 users with beautiful, minimal, accessible reading experience
+**If successful:** Continue to paid tiers (v1.6.0+)
+**If not:** Re-evaluate strategy
+
+**Focus areas before paid features:**
+1. Beautiful, minimal reading experience (anti-YouVersion simplicity)
+2. Fluid reading mode with paragraphs
+3. Full dyslexia controls (fonts, spacing, colours)
+4. Reading bar (innovative focus aid)
+
+---
+
 ## Version Roadmap
 
-### v1.2.0 - Beautiful Reading Experience & Multiple Bibles
-**Goal:** "Natural, fluid reading with multiple Bible versions"
+### v1.2.0 - Beautiful Minimal Reading + Fluid Mode
+**Goal:** "Clean, distraction-free reading with paragraphs"
 
-**Reading Experience:**
-- [ ] Fluid reading mode (USFM with paragraphs and headings)
-  - [ ] Convert WEB, ASV, KJV from USFM to enhanced JSON
-  - [ ] Section headings (styled, toggleable)
-  - [ ] Natural paragraph flow
-  - [ ] Verse numbers in margin or superscript (toggleable)
-- [ ] Beautiful animations
-  - [ ] Smooth page transitions
-  - [ ] Gentle fade-ins for text
-  - [ ] Subtle scroll animations
-  - [ ] Progress indicators
-- [ ] Focus mode enhancements
-  - [ ] Optional background focus music (ambient, instrumental)
-  - [ ] Distraction-free reading
-  - [ ] Reading timer/progress
-  - [ ] "Deep focus" mode (minimal UI)
+**UI Simplification:**
+- [ ] Remove all unnecessary screen clutter
+- [ ] Hide UI chrome by default (auto-hide after 3s)
+- [ ] Tap verse for actions (keep key actions close)
+- [ ] Configurable tap behaviour:
+  - [ ] Tap vs long-press to reduce accidental triggers
+  - [ ] Action menu: immediate / 1s delay / require second tap
+- [ ] Clean, minimal settings menu (not 16+ items like YouVersion)
+
+**Fluid Reading Mode:**
+- [ ] USFM → Enhanced JSON converter script
+- [ ] Convert WEB, ASV, KJV from USFM format
+- [ ] Render paragraphs (natural flow, not verse-by-verse blocks)
+- [ ] Section headings (styled, toggleable)
+- [ ] Verse numbers: margin or superscript (user choice, not intrusive)
+- [ ] Toggle: Verse-by-verse mode vs Reading mode
 
 **Multiple Bible Versions (Public Domain):**
 - [ ] Add American Standard Version (ASV 1901)
 - [ ] Add King James Version (KJV)
-- [ ] Bible version selector in settings
-- [ ] Annotations tied to version (cross-compatible)
+- [ ] Bible version selector (easy to find, not buried in menus)
 - [ ] All versions support fluid reading mode
 
-**Technical:**
-- [ ] USFM → Enhanced JSON converter script
-- [ ] Enhanced JSON structure:
-  ```json
-  {
-    "type": "heading|paragraph",
-    "level": 1,
-    "text": "...",
-    "verses": [...]
-  }
-  ```
-- [ ] Rendering engine for paragraphs + headings
-- [ ] Toggle: Verse-by-verse vs Reading mode
+**Gentle Animations:**
+- [ ] Smooth page/chapter transitions
+- [ ] Gentle fade-ins for text (300ms, not jarring)
+- [ ] Subtle scroll behaviour
+- [ ] No aggressive animations or flashing
 
 **Maintain Existing Features:**
 - ✅ Verse highlights still work (in both modes)
 - ✅ Notes and tags still work
 - ✅ All annotation features preserved
+- ✅ Tap verse for inline actions (no clutter)
 
 **Timeline:** 3-4 weeks
 
 ---
 
-### v1.3.0 - Dyslexia Features
-**Goal:** "Make Bible reading accessible for dyslexia"
+### v1.3.0 - Full Dyslexia Controls + Reading Bar
+**Goal:** "Complete text control + innovative focus aids"
 
-**Typography features:**
+**Typography & Spacing (Full User Control):**
 - [ ] Font selection (4-5 options):
   - [ ] OpenDyslexic (primary)
   - [ ] Atkinson Hyperlegible
   - [ ] System serif
   - [ ] System sans-serif
-- [ ] Font controls:
-  - [ ] Size slider (12px - 32px+)
+- [ ] Spacing controls (research-backed):
+  - [ ] Font size slider (12px - 32px+)
+  - [ ] Line spacing adjustment (1.0x - 2.5x)
+  - [ ] Letter spacing adjustment (0x - 0.2em)
+  - [ ] Word spacing adjustment (optional)
   - [ ] Bold toggle
-  - [ ] Line height adjustment
-  - [ ] Letter spacing adjustment
 
-**Colour features:**
+**Colour Controls (Full User Choice):**
 - [ ] Full colour customisation:
   - [ ] Background colour picker
   - [ ] Text colour picker
@@ -114,6 +121,38 @@
   - [ ] Yellow on black
   - [ ] Cream on dark blue
   - [ ] High contrast options
+- [ ] Warm backgrounds (cream, beige) for reduced visual stress
+
+**Reading Bar (NEW - Innovative Focus Aid):**
+- [ ] Adjustable focus bar (mimics physical ruler for dyslexic readers)
+- [ ] Bar height options:
+  - [ ] 3 lines
+  - [ ] 5 lines
+  - [ ] 7 lines
+  - [ ] 1 paragraph
+- [ ] Visual styles:
+  - [ ] Blur (text above/below blurred)
+  - [ ] Fade (text above/below greyed 50%)
+  - [ ] Tint (transparent colour overlay on focused area)
+  - [ ] Ruler (clean lines top/bottom with subtle colour)
+- [ ] Positioning:
+  - [ ] Fixed centre
+  - [ ] Follows scroll
+  - [ ] User-anchored
+- [ ] Easy toggle on/off (not forced on users who don't need it)
+- [ ] Colour picker for tint/ruler
+- [ ] Opacity control
+
+**Settings UI:**
+```
+Reading Bar:
+□ Enable reading bar
+  Height: [3] [5] [7 lines] [paragraph]
+  Style: [Blur] [Fade] [Tint] [Ruler]
+  Position: [Centre] [Follows scroll] [Anchored]
+  Tint colour: [picker]
+  Opacity: [slider]
+```
 
 **Timeline:** 2-3 weeks
 
@@ -222,6 +261,9 @@
 - [ ] High-quality AI voice API integration
 - [ ] Playback controls (play, pause, speed)
 - [ ] Follow along (auto-scroll with audio)
+- [ ] **Sentence-level highlight/underline** (not just verse margin like YouVersion)
+  - [ ] Smooth animation as audio progresses
+  - [ ] Toggle on/off if distracting
 - [ ] Verse-level navigation
 - [ ] Background playback (mobile)
 
@@ -246,7 +288,69 @@
 
 ---
 
-### v1.8.0 - Home Screen & Tag Management
+### v1.8.0 - Devotionals & Explainers (Optional Expansion)
+**Goal:** "Add devotionals without bloating the core experience"
+
+**Key Principle: Opt-in, not forced**
+- Users who want Bible-only get clean, minimal experience
+- Users who want devotionals can enable them
+- Easy to disable/remove completely
+
+**Devotionals System:**
+- [ ] Devotional library (curated, high-quality sources)
+  - [ ] Start with 3-5 solid devotional series
+  - [ ] Public domain + Creative Commons content
+  - [ ] Partner with devotional authors (if charity)
+- [ ] Daily devotional notification (optional)
+- [ ] Devotional reader:
+  - [ ] Same beautiful reading experience (paragraphs, spacing controls)
+  - [ ] Same dyslexia tools (reading bar, fonts, colours)
+  - [ ] Quick link to referenced Bible passages
+  - [ ] Annotations work on devotionals too
+- [ ] Devotional management:
+  - [ ] Browse available devotionals
+  - [ ] Add/remove devotionals from library
+  - [ ] Mark as read/unread
+  - [ ] Reading progress tracking
+
+**Book & Chapter Explainers (Contextual Help):**
+- [ ] Optional book introductions:
+  - [ ] Author, date, historical context
+  - [ ] Key themes
+  - [ ] Structure overview
+  - [ ] Toggleable (hide if you don't want them)
+- [ ] Chapter summaries (optional):
+  - [ ] Brief 2-3 sentence overview
+  - [ ] Accessible via small "info" icon (not intrusive)
+  - [ ] Collapsed by default
+- [ ] Content sources:
+  - [ ] Public domain commentaries (Matthew Henry, etc.)
+  - [ ] Simplified, accessible language
+  - [ ] Curated for clarity (not academic jargon)
+
+**UX Design (Non-Bloating):**
+- [ ] Devotionals: Separate tab/section (not mixed with Bible)
+- [ ] Explainers: Collapsed by default, small icon to expand
+- [ ] Settings toggle: "Enable devotionals" (OFF by default for new users)
+- [ ] Settings toggle: "Show book/chapter info" (OFF by default)
+- [ ] Clean removal: Disabling feature removes it from UI entirely
+
+**Example UX:**
+```
+Settings > Content:
+□ Enable devotionals
+□ Show book introductions
+□ Show chapter summaries
+
+When OFF: Feature doesn't exist in UI (truly minimal)
+When ON: Appears as separate section (doesn't clutter Bible)
+```
+
+**Timeline:** 3-4 weeks
+
+---
+
+### v1.9.0 - Tag Management & Home Screen
 **Goal:** "Organised home screen with tag manager"
 
 **Home screen:**
@@ -256,6 +360,7 @@
   - [ ] Settings
   - [ ] Tags manager (create/edit/delete tags)
   - [ ] Bible Reader
+  - [ ] Devotionals (if enabled)
   - [ ] Sermon Notes:
     - [ ] New sermon note
     - [ ] Open existing
@@ -449,6 +554,48 @@ Premium: £5/month
 3. Publisher negotiations (charitable licensing)
 4. Grant applications
 5. Church/corporate partnerships
+
+### Future Vision (v2.5.0+) - Beyond Bible Content
+**Only pursue if dyslexia community responds strongly to Bible reader**
+
+**Core insight:** We're building a **dyslexia-friendly reader with powerful focus tools**. Bible is the first (and most important) content, but the tools work for any text.
+
+**Potential content expansions:**
+1. **Christian content:**
+   - Theology books (public domain + licensed)
+   - Commentaries and study resources
+   - Christian living books
+
+2. **General reading:**
+   - Articles (import via URL)
+   - eBooks (ePub import)
+   - PDFs (upload and read with dyslexia tools)
+   - Long-form web content
+
+3. **Educational content:**
+   - Textbooks for dyslexic students
+   - Academic papers
+   - Study materials
+
+**All with same powerful tools:**
+- Reading bar (focus aid)
+- Full spacing controls
+- Font customisation
+- Colour themes
+- Audio reading
+- Annotations and notes
+
+**Decision criteria:**
+- ✅ Bible reader has 10,000+ users
+- ✅ Strong dyslexia community engagement
+- ✅ User requests for non-Bible content
+- ✅ Sustainable business model established
+
+**Positioning shift:**
+- From: "Dyslexia-friendly Bible app"
+- To: "Dyslexia-friendly reading app (started with Bible)"
+
+**This is NOT a pivot** - Bible remains core mission and primary content. But if the dyslexia tools prove valuable, they can serve a broader community.
 
 ---
 

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fluid Reading Mode v3 - With Annotations</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --highlight-yellow: #FFD93D;
+      --highlight-green: #6BCF7F;
+      --highlight-blue: #4A90E2;
+      --highlight-pink: #FF6B9D;
+      --highlight-purple: #9D6BFF;
+      --highlight-orange: #FF9D6B;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #f5f5f0;
+      color: #2c2c2c;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .controls {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      z-index: 100;
+    }
+
+    .controls-inner {
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .control-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+    }
+
+    select, input {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #4a90e2;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .chapter-info {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 32px;
+    }
+
+    /* Reading Mode Styles */
+    .reading-mode .paragraph {
+      margin-bottom: 1.5em;
+      text-align: justify;
+    }
+
+    .reading-mode .verse-text {
+      display: inline;
+    }
+
+    .reading-mode .verse-number {
+      font-size: 0.75em;
+      vertical-align: super;
+      color: #999;
+      font-weight: 500;
+      margin-right: 2px;
+    }
+
+    .reading-mode .verse-number.hidden {
+      display: none;
+    }
+
+    .reading-mode .verse-number.margin {
+      position: absolute;
+      left: -50px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #999;
+      width: 40px;
+      text-align: right;
+    }
+
+    /* Highlighted text in reading mode */
+    .highlighted-text {
+      padding: 2px 0;
+      border-radius: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .highlighted-text.yellow { background: var(--highlight-yellow); }
+    .highlighted-text.green { background: var(--highlight-green); }
+    .highlighted-text.blue { background: var(--highlight-blue); }
+    .highlighted-text.pink { background: var(--highlight-pink); }
+    .highlighted-text.purple { background: var(--highlight-purple); }
+    .highlighted-text.orange { background: var(--highlight-orange); }
+
+    /* Verse note indicator */
+    .verse-note-indicator {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #4a90e2;
+      border-radius: 50%;
+      margin-left: 4px;
+      vertical-align: super;
+      cursor: pointer;
+    }
+
+    /* Tags */
+    .verse-tags {
+      display: inline-flex;
+      gap: 4px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .tag-chip {
+      display: inline-block;
+      background: #4a90e2;
+      color: white;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+
+    /* Verse-by-Verse Mode */
+    .verse-mode .verse {
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      background: white;
+      position: relative;
+    }
+
+    .verse-mode .verse-number {
+      font-weight: 600;
+      color: #4a90e2;
+      margin-right: 8px;
+    }
+
+    .verse-mode .verse.highlight-yellow { background: var(--highlight-yellow); }
+    .verse-mode .verse.highlight-green { background: var(--highlight-green); }
+    .verse-mode .verse.highlight-blue { background: var(--highlight-blue); }
+    .verse-mode .verse.highlight-pink { background: var(--highlight-pink); }
+    .verse-mode .verse.highlight-purple { background: var(--highlight-purple); }
+    .verse-mode .verse.highlight-orange { background: var(--highlight-orange); }
+
+    /* Poetry */
+    .poetry {
+      font-style: italic;
+      margin: 1.5em 0;
+      position: relative;
+    }
+
+    .poetry-line {
+      margin: 0.5em 0;
+      position: relative;
+    }
+
+    .poetry-line.poetry1 { padding-left: 0; }
+    .poetry-line.poetry2 { padding-left: 2em; }
+    .poetry-line.poetry3 { padding-left: 4em; }
+    .poetry-line.poetry4 { padding-left: 6em; }
+
+    .quote {
+      font-style: italic;
+      color: #555;
+    }
+
+    .quote-attribution {
+      margin-top: 0.5em;
+      font-weight: 600;
+      color: #4a90e2;
+    }
+
+    /* Heading Styles */
+    .section-heading {
+      font-size: 18px;
+      font-weight: 600;
+      color: #4a4a4a;
+      margin: 2em 0 1em 0;
+      text-align: center;
+    }
+
+    /* Hebrew letter headings (Psalm 119) */
+    .hebrew-heading {
+      font-size: 20px;
+      font-weight: 700;
+      color: #2c2c2c;
+      margin: 2.5em 0 0.5em 0;
+      text-align: left;
+      font-family: Georgia, serif;
+      letter-spacing: 2px;
+    }
+
+    /* Footnote/Cross-ref indicators */
+    .footnote-ref {
+      font-size: 0.75em;
+      vertical-align: super;
+      color: #4a90e2;
+      cursor: pointer;
+      margin-left: 2px;
+      text-decoration: none;
+    }
+
+    .footnote-ref:hover {
+      color: #2e6db8;
+      text-decoration: underline;
+    }
+
+    .crossref-ref {
+      font-size: 0.75em;
+      vertical-align: super;
+      color: #7b68ee;
+      cursor: pointer;
+      margin-left: 2px;
+      text-decoration: none;
+    }
+
+    .crossref-ref:hover {
+      color: #5a4bb5;
+      text-decoration: underline;
+    }
+
+    /* Tooltip/Popup for footnotes and annotations */
+    .tooltip {
+      position: fixed;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      max-width: 400px;
+      font-size: 14px;
+      z-index: 1000;
+      display: none;
+    }
+
+    .tooltip.show {
+      display: block;
+    }
+
+    .tooltip-header {
+      font-weight: 600;
+      color: #4a90e2;
+      margin-bottom: 8px;
+    }
+
+    .tooltip-content {
+      color: #2c2c2c;
+      line-height: 1.5;
+    }
+
+    .tooltip-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #999;
+      cursor: pointer;
+      padding: 0 4px;
+      line-height: 1;
+    }
+
+    .tooltip-close:hover {
+      color: #666;
+    }
+
+    .tooltip-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <div class="controls-inner">
+      <div class="control-group">
+        <label for="book-select">Book:</label>
+        <select id="book-select">
+          <option value="1">Genesis</option>
+          <option value="19" selected>Psalms</option>
+          <option value="40">Matthew</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="chapter-input">Chapter:</label>
+        <input type="number" id="chapter-input" min="1" max="150" value="1" style="width: 70px;">
+      </div>
+      <div class="control-group">
+        <label for="mode-select">Mode:</label>
+        <select id="mode-select">
+          <option value="reading" selected>Reading</option>
+          <option value="verse">Verse-by-Verse</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="verse-number-style">Verse Numbers:</label>
+        <select id="verse-number-style">
+          <option value="superscript" selected>Superscript</option>
+          <option value="margin">Margin</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1 id="book-title">Loading...</h1>
+    <div class="chapter-info" id="chapter-info"></div>
+    <div id="chapter-content"></div>
+  </div>
+
+  <!-- Tooltip/Popup -->
+  <div id="tooltip" class="tooltip">
+    <button class="tooltip-close" onclick="closeTooltip()">×</button>
+    <div class="tooltip-header" id="tooltip-header"></div>
+    <div class="tooltip-content" id="tooltip-content"></div>
+  </div>
+
+  <script>
+    let currentBible = null;
+
+    // Mock annotation data
+    const mockAnnotations = {
+      '19:1:1': { highlight: 'yellow', tags: ['Favourite', 'Worship'] },
+      '19:1:2': { highlight: 'green' },
+      '19:1:3': { highlight: 'blue', note: 'God separates the righteous from the wicked - important distinction!' },
+      '19:1:6': { highlight: 'pink', tags: ['Warning'] },
+    };
+
+    // Load Bible data
+    fetch('web-bible-enhanced.json')
+      .then(r => r.json())
+      .then(data => {
+        currentBible = data;
+        displayChapter();
+      });
+
+    // Display chapter
+    function displayChapter() {
+      if (!currentBible) return;
+
+      const bookNum = parseInt(document.getElementById('book-select').value);
+      const chapterNum = parseInt(document.getElementById('chapter-input').value);
+
+      const book = currentBible.books.find(b => b.number === bookNum);
+      if (!book) return;
+
+      const chapter = book.chapters.find(c => c.number === chapterNum);
+      if (!chapter) return;
+
+      document.getElementById('book-title').textContent = `${book.name} ${chapterNum}`;
+      document.getElementById('chapter-info').textContent = `${chapter.verses.length} verses`;
+
+      const mode = document.getElementById('mode-select').value;
+      const content = mode === 'reading'
+        ? renderReadingMode(chapter, book.number)
+        : renderVerseMode(chapter, book.number);
+
+      document.getElementById('chapter-content').innerHTML = content;
+      document.getElementById('chapter-content').className = mode + '-mode';
+    }
+
+    // Render reading mode
+    function renderReadingMode(chapter, bookNum) {
+      const verseNumberStyle = document.getElementById('verse-number-style').value;
+      let html = '';
+      let currentParagraph = [];
+      let currentPoetry = [];
+      let currentPoetryLevel = null;
+
+      chapter.verses.forEach((verse, index) => {
+        // Check for section heading
+        if (verse.heading) {
+          // Flush current paragraph/poetry
+          if (currentParagraph.length > 0) {
+            html += renderParagraph(currentParagraph, verseNumberStyle, bookNum, chapter.number);
+            currentParagraph = [];
+          }
+          if (currentPoetry.length > 0) {
+            html += renderPoetry(currentPoetry, verseNumberStyle, bookNum, chapter.number);
+            currentPoetry = [];
+            currentPoetryLevel = null;
+          }
+
+          // Check if it's a Hebrew letter heading (single word, all caps)
+          const isHebrewLetter = verse.heading.length < 20 && verse.heading === verse.heading.toUpperCase();
+          const headingClass = isHebrewLetter ? 'hebrew-heading' : 'section-heading';
+          html += `<div class="${headingClass}">ℵ ${verse.heading}</div>`;
+        }
+
+        // Handle poetry
+        if (verse.type?.startsWith('poetry')) {
+          // Flush paragraph if switching from paragraph to poetry
+          if (currentParagraph.length > 0) {
+            html += renderParagraph(currentParagraph, verseNumberStyle, bookNum, chapter.number);
+            currentParagraph = [];
+          }
+
+          currentPoetry.push(verse);
+        } else {
+          // Flush poetry if switching from poetry to paragraph
+          if (currentPoetry.length > 0) {
+            html += renderPoetry(currentPoetry, verseNumberStyle, bookNum, chapter.number);
+            currentPoetry = [];
+            currentPoetryLevel = null;
+          }
+
+          // Start new paragraph on paragraph marker
+          if (verse.type === 'paragraph' && currentParagraph.length > 0) {
+            html += renderParagraph(currentParagraph, verseNumberStyle, bookNum, chapter.number);
+            currentParagraph = [];
+          }
+
+          currentParagraph.push(verse);
+        }
+      });
+
+      // Flush remaining content
+      if (currentParagraph.length > 0) {
+        html += renderParagraph(currentParagraph, verseNumberStyle, bookNum, chapter.number);
+      }
+      if (currentPoetry.length > 0) {
+        html += renderPoetry(currentPoetry, verseNumberStyle, bookNum, chapter.number);
+      }
+
+      return html;
+    }
+
+    // Render paragraph with highlights and annotations
+    function renderParagraph(verses, verseNumberStyle, bookNum, chapterNum) {
+      let html = '<p class="paragraph">';
+
+      verses.forEach(verse => {
+        const annotation = mockAnnotations[`${bookNum}:${chapterNum}:${verse.number}`];
+        const verseNumClass = verseNumberStyle === 'hidden' ? 'verse-number hidden' : `verse-number ${verseNumberStyle}`;
+        const verseNum = `<span class="${verseNumClass}">${verse.number}</span>`;
+
+        let verseText = verse.text;
+        const indicators = renderIndicators(verse);
+
+        // Wrap in highlight if annotated
+        if (annotation?.highlight) {
+          verseText = `<span class="highlighted-text ${annotation.highlight}" onclick="showAnnotation(event, ${bookNum}, ${chapterNum}, ${verse.number})">${verseText}</span>`;
+        }
+
+        html += `<span class="verse-text">${verseNum}${verseText}${indicators}`;
+
+        // Add note indicator
+        if (annotation?.note) {
+          html += `<span class="verse-note-indicator" onclick="showAnnotation(event, ${bookNum}, ${chapterNum}, ${verse.number})"></span>`;
+        }
+
+        // Add tags
+        if (annotation?.tags?.length) {
+          html += '<span class="verse-tags">';
+          annotation.tags.forEach(tag => {
+            html += `<span class="tag-chip">${tag}</span>`;
+          });
+          html += '</span>';
+        }
+
+        html += ' </span>';
+      });
+
+      html += '</p>';
+      return html;
+    }
+
+    // Render poetry with highlights
+    function renderPoetry(verses, verseNumberStyle, bookNum, chapterNum) {
+      let html = '<div class="poetry">';
+
+      verses.forEach(verse => {
+        const annotation = mockAnnotations[`${bookNum}:${chapterNum}:${verse.number}`];
+        const poetryLevel = verse.type || 'poetry1';
+        const verseNumClass = verseNumberStyle === 'hidden' ? 'verse-number hidden' : `verse-number ${verseNumberStyle}`;
+        const verseNum = `<span class="${verseNumClass}">${verse.number}</span>`;
+
+        let verseText = verse.text;
+        const indicators = renderIndicators(verse);
+
+        // Wrap in highlight if annotated
+        if (annotation?.highlight) {
+          verseText = `<span class="highlighted-text ${annotation.highlight}" onclick="showAnnotation(event, ${bookNum}, ${chapterNum}, ${verse.number})">${verseText}</span>`;
+        }
+
+        html += `<div class="poetry-line ${poetryLevel}">${verseNum}${verseText}${indicators}`;
+
+        // Add note indicator
+        if (annotation?.note) {
+          html += `<span class="verse-note-indicator" onclick="showAnnotation(event, ${bookNum}, ${chapterNum}, ${verse.number})"></span>`;
+        }
+
+        // Add tags
+        if (annotation?.tags?.length) {
+          html += '<span class="verse-tags">';
+          annotation.tags.forEach(tag => {
+            html += `<span class="tag-chip">${tag}</span>`;
+          });
+          html += '</span>';
+        }
+
+        html += '</div>';
+      });
+
+      html += '</div>';
+      return html;
+    }
+
+    // Render footnote/cross-ref indicators
+    function renderIndicators(verse) {
+      let html = '';
+
+      if (verse.footnotes?.length > 0) {
+        verse.footnotes.forEach((fn, index) => {
+          const fnData = JSON.stringify(fn).replace(/"/g, '&quot;');
+          html += `<a href="#" class="footnote-ref" onclick="showFootnote(event, '${fnData}')">†</a>`;
+        });
+      }
+
+      if (verse.crossRefs?.length > 0) {
+        verse.crossRefs.forEach((ref, index) => {
+          const refData = JSON.stringify(ref).replace(/"/g, '&quot;');
+          html += `<a href="#" class="crossref-ref" onclick="showCrossRef(event, '${refData}')">‡</a>`;
+        });
+      }
+
+      return html;
+    }
+
+    // Render verse-by-verse mode
+    function renderVerseMode(chapter, bookNum) {
+      let html = '';
+
+      chapter.verses.forEach(verse => {
+        const annotation = mockAnnotations[`${bookNum}:${chapter.number}:${verse.number}`];
+        const highlightClass = annotation?.highlight ? `highlight-${annotation.highlight}` : '';
+
+        if (verse.heading) {
+          html += `<div class="section-heading">${verse.heading}</div>`;
+        }
+
+        const indicators = renderIndicators(verse);
+
+        html += `<div class="verse ${highlightClass}">`;
+        html += `<span class="verse-number">${verse.number}</span>`;
+        html += `<span class="verse-text">${verse.text}${indicators}</span>`;
+
+        // Add note indicator
+        if (annotation?.note) {
+          html += `<span class="verse-note-indicator" onclick="showAnnotation(event, ${bookNum}, ${chapter.number}, ${verse.number})"></span>`;
+        }
+
+        // Add tags
+        if (annotation?.tags?.length) {
+          html += '<span class="verse-tags">';
+          annotation.tags.forEach(tag => {
+            html += `<span class="tag-chip">${tag}</span>`;
+          });
+          html += '</span>';
+        }
+
+        html += '</div>';
+      });
+
+      return html;
+    }
+
+    // Show footnote
+    function showFootnote(event, footnoteJson) {
+      event.preventDefault();
+      const footnote = JSON.parse(footnoteJson.replace(/&quot;/g, '"'));
+      document.getElementById('tooltip-header').textContent = `Footnote (${footnote.ref})`;
+      document.getElementById('tooltip-content').textContent = footnote.text;
+      showTooltipAtPosition(event);
+    }
+
+    // Show cross-reference
+    function showCrossRef(event, refJson) {
+      event.preventDefault();
+      const ref = JSON.parse(refJson.replace(/&quot;/g, '"'));
+      document.getElementById('tooltip-header').textContent = `Cross Reference (${ref.origin})`;
+      document.getElementById('tooltip-content').textContent = `See: ${ref.refs}`;
+      showTooltipAtPosition(event);
+    }
+
+    // Show annotation (note/tags/highlight)
+    function showAnnotation(event, bookNum, chapterNum, verseNum) {
+      event.stopPropagation();
+      const key = `${bookNum}:${chapterNum}:${verseNum}`;
+      const annotation = mockAnnotations[key];
+
+      if (!annotation) return;
+
+      document.getElementById('tooltip-header').textContent = `Verse ${verseNum} Annotation`;
+
+      let content = '';
+      if (annotation.note) {
+        content += `<div style="margin-bottom: 8px;"><strong>Note:</strong> ${annotation.note}</div>`;
+      }
+      if (annotation.highlight) {
+        content += `<div style="margin-bottom: 8px;"><strong>Highlight:</strong> ${annotation.highlight}</div>`;
+      }
+      if (annotation.tags?.length) {
+        content += '<div class="tooltip-tags">';
+        annotation.tags.forEach(tag => {
+          content += `<span class="tag-chip">${tag}</span>`;
+        });
+        content += '</div>';
+      }
+
+      document.getElementById('tooltip-content').innerHTML = content;
+      showTooltipAtPosition(event);
+    }
+
+    // Show tooltip at click position
+    function showTooltipAtPosition(event) {
+      const tooltip = document.getElementById('tooltip');
+      tooltip.style.left = (event.pageX + 10) + 'px';
+      tooltip.style.top = (event.pageY + 10) + 'px';
+      tooltip.classList.add('show');
+    }
+
+    // Close tooltip
+    function closeTooltip() {
+      document.getElementById('tooltip').classList.remove('show');
+    }
+
+    // Close tooltip on outside click
+    document.addEventListener('click', (e) => {
+      const tooltip = document.getElementById('tooltip');
+      if (!e.target.closest('.tooltip') && !e.target.closest('.footnote-ref') &&
+          !e.target.closest('.crossref-ref') && !e.target.closest('.highlighted-text') &&
+          !e.target.closest('.verse-note-indicator')) {
+        closeTooltip();
+      }
+    });
+
+    // Event listeners
+    document.getElementById('book-select').addEventListener('change', displayChapter);
+    document.getElementById('chapter-input').addEventListener('change', displayChapter);
+    document.getElementById('mode-select').addEventListener('change', displayChapter);
+    document.getElementById('verse-number-style').addEventListener('change', displayChapter);
+  </script>
+</body>
+</html>

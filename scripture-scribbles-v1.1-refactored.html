@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripture Scribbles v1.1.0 (Refactored)</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Modular CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/themes.css">
+</head>
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <div class="toolbar-top">
+                <h1>Scripture Scribbles</h1>
+                <button class="toolbar-menu-btn" id="menu-btn" aria-label="Settings menu">
+                    <i class="ph ph-list"></i>
+                </button>
+            </div>
+            <div class="navigation" id="navigation" style="display: none;">
+                <button class="nav-btn nav-arrow" id="prev-chapter" aria-label="Previous chapter">←</button>
+                <button class="chapter-info" id="chapter-info">Genesis 1</button>
+                <button class="nav-btn nav-arrow" id="next-chapter" aria-label="Next chapter">→</button>
+                <div class="annotation-set-switcher">
+                    <button class="set-switcher-btn" id="set-switcher-btn">
+                        <i class="ph ph-stack"></i>
+                        <span id="current-set-name">Study</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Annotation Set Modal -->
+        <div class="modal" id="set-modal">
+            <div class="modal-content modal-small">
+                <div class="modal-header">
+                    <h2>Annotation Sets</h2>
+                    <button class="modal-close" id="close-set-modal">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="set-list" id="set-list"></div>
+                    <div class="set-actions">
+                        <input type="text" id="new-set-name" placeholder="New set name..." maxlength="50">
+                        <button class="btn primary" id="create-set-btn">Create Set</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Menu -->
+        <div class="settings-menu" id="settings-menu">
+            <a href="themes.html" class="settings-item">
+                <i class="ph ph-palette"></i>
+                <span>Choose Theme</span>
+            </a>
+            <div class="settings-item settings-toggle">
+                <div>
+                    <i class="ph ph-eye"></i>
+                    <span>Annotations</span>
+                </div>
+                <select id="annotation-mode" class="annotation-mode-select">
+                    <option value="on">On</option>
+                    <option value="subtle">Subtle</option>
+                    <option value="off">Off</option>
+                </select>
+            </div>
+            <a href="roadmap.html" target="_blank" class="settings-item">
+                <i class="ph ph-map-trifold"></i>
+                <span>Roadmap</span>
+            </a>
+            <a href="https://github.com/DaveWyborn/scripture-scribbles/issues" target="_blank" class="settings-item">
+                <i class="ph ph-bug"></i>
+                <span>Report a Bug</span>
+            </a>
+            <div class="settings-item" id="export-notes-btn" style="cursor: pointer;">
+                <i class="ph ph-download"></i>
+                <span>Export Notes</span>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-item user-section" id="settings-user-info" style="display: none;">
+                <div class="settings-user-label">Logged in as:</div>
+                <div class="settings-user-email" id="settings-user-email"></div>
+                <button class="btn danger" id="sign-out-btn">Sign Out</button>
+            </div>
+            <div class="settings-item" id="settings-guest-buttons">
+                <button class="btn primary" id="sign-in-btn">Sign In</button>
+                <button class="btn" id="sign-up-btn">Sign Up</button>
+            </div>
+        </div>
+
+        <div class="content" id="content">
+            <div class="welcome" style="display: none;">
+                <h2>Welcome to Scripture Scribbles</h2>
+                <p>Your Bible study companion with rich annotations and cloud sync.</p>
+
+                <div class="features">
+                    <div class="feature">
+                        <h3>📖 Instant Access</h3>
+                        <p>World English Bible embedded. No downloads or setup required.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>✨ Beautiful Annotations</h3>
+                        <p>Highlight verses, add notes, and organise your studies.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>☁️ Sync Everywhere</h3>
+                        <p>Your notes sync across all your devices automatically.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>♿ Coming Soon: Dyslexia Features</h3>
+                        <p>Font options, colour customisation, and audio reader in development.</p>
+                    </div>
+                </div>
+
+                <button class="btn primary" id="get-started-btn" style="font-size: 1.2em; padding: 15px 40px;">Get Started</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Annotation Panel -->
+    <div class="annotation-panel" id="annotation-panel">
+        <div class="annotation-handle"></div>
+        <div class="annotation-header">
+            <h3>Annotate Verse <span id="annotation-verse-num"></span></h3>
+            <button class="btn" id="close-annotation">×</button>
+        </div>
+        <div class="annotation-content">
+            <div class="form-group">
+                <label>Highlight Color</label>
+                <div class="highlight-colors">
+                    <div class="color-option color-yellow" data-color="yellow"></div>
+                    <div class="color-option color-green" data-color="green"></div>
+                    <div class="color-option color-blue" data-color="blue"></div>
+                    <div class="color-option color-pink" data-color="pink"></div>
+                    <div class="color-option color-purple" data-color="purple"></div>
+                    <div class="color-option color-orange" data-color="orange"></div>
+                </div>
+                <button class="btn" id="clear-highlight" style="margin-top: 10px; width: 100%;">Clear Highlight</button>
+            </div>
+
+            <div class="form-group">
+                <label>Note</label>
+                <textarea id="verse-note" placeholder="Add your thoughts, insights, or questions..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Tags</label>
+                <div id="tags-container">
+                    <!-- Tag chips will be added here -->
+                </div>
+                <div class="tag-input-row">
+                    <input type="text" id="new-tag-input" placeholder="Add tag...">
+                    <div class="tag-color-picker" id="new-tag-color" style="background: #ACE5CB;" title="Tag colour"></div>
+                    <button class="btn" id="add-tag-btn" type="button">Add</button>
+                </div>
+                <div id="tag-suggestions" style="display: none; margin-top: 8px; font-size: 0.85em;">
+                    <strong>Previously used:</strong>
+                    <div id="tag-suggestion-list" style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <button class="btn primary" id="save-annotation" style="width: 100%;">Save Annotation</button>
+        </div>
+    </div>
+
+    <!-- Visual Navigation Modal -->
+    <div class="nav-modal" id="nav-modal">
+        <div class="nav-modal-content">
+            <div class="nav-modal-header">
+                <h3>Bible Navigation</h3>
+                <button class="btn" id="close-nav-modal">×</button>
+            </div>
+            <div class="nav-modal-body">
+                <div class="nav-current-location" id="nav-current-display">
+                    Genesis 1
+                </div>
+
+                <div class="nav-tabs">
+                    <button class="nav-tab active" id="nav-tab-book">Book</button>
+                    <button class="nav-tab" id="nav-tab-chapter">Chapter</button>
+                </div>
+
+                <!-- Book Selection View -->
+                <div class="testament-section active" id="nav-book-view">
+                    <div id="old-testament-books"></div>
+                    <div id="new-testament-books"></div>
+                </div>
+
+                <!-- Chapter Selection View -->
+                <div class="testament-section" id="nav-chapter-view">
+                    <h3 id="selected-book-name" style="margin-bottom: var(--space-l);"></h3>
+                    <div class="chapter-grid" id="chapter-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal-overlay" id="auth-modal">
+        <div class="modal">
+            <h2 id="auth-modal-title">Sign In</h2>
+            <div id="auth-message"></div>
+            <form id="auth-form">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="auth-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="auth-password" required minlength="6">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn" id="auth-cancel">Cancel</button>
+                    <button type="submit" class="btn primary" id="auth-submit">Sign In</button>
+                </div>
+            </form>
+            <div class="auth-toggle">
+                <span id="auth-toggle-text">Don't have an account? <a id="auth-toggle-link">Sign up</a></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="export-modal">
+        <div class="modal">
+            <h2>Export Notes</h2>
+            <div id="export-message"></div>
+
+            <div class="form-group">
+                <label>Annotation Set</label>
+                <select id="export-annotation-set">
+                    <!-- Will be populated dynamically -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Select Books to Export</label>
+                <div id="export-verse-count" style="margin-bottom: 10px; font-weight: bold; color: var(--text-secondary);">
+                    Loading annotations...
+                </div>
+                <div id="export-book-list" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); padding: 10px; border-radius: 8px; background: var(--bg-secondary);">
+                    <!-- Book checkboxes will be populated here -->
+                </div>
+            </div>
+
+            <!-- Hidden until we add commercial Bible versions -->
+            <div id="export-limit-warning" style="display: none; background: var(--accent-negative); color: white; padding: 10px; border-radius: 8px; margin: 10px 0;">
+                Warning: Selected verses exceed the 250-verse limit for commercial Bible versions. Please reduce selection or switch to WEB.
+            </div>
+
+            <div class="export-disclaimer" style="display: none; background: var(--bg-secondary); padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 0.9em; border-left: 3px solid var(--accent-info);">
+                <strong>Warning:</strong> Sharing exported notes may be subject to Bible translation copyright. You are responsible for ensuring you have permission to share these notes.
+            </div>
+
+            <div class="modal-buttons" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" class="btn" id="export-cancel">Cancel</button>
+                <!-- Hidden until we add commercial Bible versions -->
+                <button type="button" class="btn" id="export-switch-web" style="display: none; background: var(--accent-info); color: white;">Switch to WEB (No Limits)</button>
+                <button type="button" class="btn primary" id="export-markdown">Export Markdown</button>
+                <button type="button" class="btn" id="export-json" style="background: var(--text-secondary); color: var(--bg-primary);">Backup JSON</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+
+    <!-- Modular JavaScript (loaded in dependency order) -->
+    <script src="js/state.js"></script>
+    <script src="js/bible-loader.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/annotations.js"></script>
+    <script src="js/verse-renderer.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
