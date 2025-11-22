@@ -74,13 +74,13 @@ const BOOK_ABBR = {
     '2-john': '2 John', '3-john': '3 John', 'jude': 'Jude', 'revelation': 'Rev'
 };
 
-// Old Testament books list
+// Old Testament books list (must match generated IDs: no spaces/hyphens)
 const OT_BOOKS = [
     'genesis', 'exodus', 'leviticus', 'numbers', 'deuteronomy',
-    'joshua', 'judges', 'ruth', '1-samuel', '2-samuel',
-    '1-kings', '2-kings', '1-chronicles', '2-chronicles',
+    'joshua', 'judges', 'ruth', '1samuel', '2samuel',
+    '1kings', '2kings', '1chronicles', '2chronicles',
     'ezra', 'nehemiah', 'esther', 'job', 'psalms', 'proverbs',
-    'ecclesiastes', 'song-of-solomon', 'isaiah', 'jeremiah', 'lamentations',
+    'ecclesiastes', 'songofsolomon', 'isaiah', 'jeremiah', 'lamentations',
     'ezekiel', 'daniel', 'hosea', 'joel', 'amos',
     'obadiah', 'jonah', 'micah', 'nahum', 'habakkuk',
     'zephaniah', 'haggai', 'zechariah', 'malachi'
