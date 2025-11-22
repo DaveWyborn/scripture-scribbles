@@ -36,3 +36,34 @@ function getVerse(bookId, chapterNum, verseNum) {
     if (!chapter) return null;
     return chapter.verses.find(v => v.number === verseNum);
 }
+
+// Tag management (localStorage)
+function loadKnownTags() {
+    const saved = localStorage.getItem('knownTags');
+    if (saved) {
+        try {
+            knownTags = JSON.parse(saved);
+        } catch (e) {
+            knownTags = {};
+        }
+    }
+}
+
+function saveKnownTags() {
+    localStorage.setItem('knownTags', JSON.stringify(knownTags));
+}
+
+function addKnownTag(tagName, color = null) {
+    const normalizedTag = tagName.trim().toLowerCase();
+    if (!normalizedTag) return;
+
+    if (!knownTags[normalizedTag]) {
+        knownTags[normalizedTag] = color || getRandomTagColor();
+        saveKnownTags();
+    }
+}
+
+function getRandomTagColor() {
+    const colors = getTagColors();
+    return colors[Math.floor(Math.random() * colors.length)];
+}
