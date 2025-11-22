@@ -9,6 +9,12 @@ async function loadBibleData() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         bibleData = await response.json();
+
+        // Add ID fields to books (enhanced JSON uses name only)
+        bibleData.books.forEach(book => {
+            book.id = book.name.toLowerCase().replace(/\s+/g, '');
+        });
+
         console.log(`Bible loaded: ${bibleData.books.length} books`);
         console.log(`Enhanced features: paragraphs, poetry, footnotes, Strong's numbers`);
     } catch (error) {
