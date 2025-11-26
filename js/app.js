@@ -8,6 +8,10 @@ async function initApp() {
     // Load annotation visibility mode
     loadAnnotationMode();
 
+    // Load reading mode preferences
+    loadReadingMode();
+    loadVerseNumberStyle();
+
     // Load annotation sets
     loadAnnotationSets();
 
@@ -72,6 +76,22 @@ function setupEventListeners() {
     if (annotationModeSelect) {
         annotationModeSelect.addEventListener('change', (e) => {
             setAnnotationMode(e.target.value);
+        });
+    }
+
+    // Reading mode selector
+    const readingModeSelect = document.getElementById('reading-mode');
+    if (readingModeSelect) {
+        readingModeSelect.addEventListener('change', (e) => {
+            setReadingMode(e.target.value);
+        });
+    }
+
+    // Verse number style selector
+    const verseNumberStyleSelect = document.getElementById('verse-number-style');
+    if (verseNumberStyleSelect) {
+        verseNumberStyleSelect.addEventListener('change', (e) => {
+            setVerseNumberStyle(e.target.value);
         });
     }
 

@@ -5,7 +5,8 @@
       "WebFetch(domain:ebible.org)",
       "Bash(node -e:*)",
       "Bash(node:*)",
-      "Bash(gzip:*)"
+      "Bash(gzip:*)",
+      "Bash(git mv:*)"
     ],
     "deny": [],
     "ask": []

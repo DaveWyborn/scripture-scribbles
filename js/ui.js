@@ -42,6 +42,44 @@ function setAnnotationMode(mode) {
     localStorage.setItem('annotationMode', mode);
 }
 
+// ===== Reading Mode =====
+
+function loadReadingMode() {
+    const savedMode = localStorage.getItem('readingMode') || 'verse';
+    readingMode = savedMode;
+    const select = document.getElementById('reading-mode');
+    if (select) select.value = savedMode;
+    updateVerseNumberStyleVisibility();
+}
+
+function setReadingMode(mode) {
+    readingMode = mode;
+    localStorage.setItem('readingMode', mode);
+    updateVerseNumberStyleVisibility();
+    displayChapter(); // Re-render with new mode
+}
+
+function loadVerseNumberStyle() {
+    const savedStyle = localStorage.getItem('verseNumberStyle') || 'superscript';
+    verseNumberStyle = savedStyle;
+    const select = document.getElementById('verse-number-style');
+    if (select) select.value = savedStyle;
+}
+
+function setVerseNumberStyle(style) {
+    verseNumberStyle = style;
+    localStorage.setItem('verseNumberStyle', style);
+    displayChapter(); // Re-render with new style
+}
+
+function updateVerseNumberStyleVisibility() {
+    const container = document.getElementById('verse-number-style-container');
+    if (container) {
+        // Only show verse number style in fluid mode
+        container.style.display = readingMode === 'fluid' ? 'flex' : 'none';
+    }
+}
+
 // ===== Annotation Set Management =====
 
 function loadAnnotationSets() {

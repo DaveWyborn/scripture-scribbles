@@ -7,9 +7,9 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <!-- Modular CSS -->
-    <link rel="stylesheet" href="css/base.css?v=1.1.1">
-    <link rel="stylesheet" href="css/components.css?v=1.1.1">
-    <link rel="stylesheet" href="css/themes.css?v=1.1.1">
+    <link rel="stylesheet" href="css/base.css?v=1.2.0">
+    <link rel="stylesheet" href="css/components.css?v=1.2.0">
+    <link rel="stylesheet" href="css/themes.css?v=1.2.0">
 </head>
 <body>
     <div class="container">
@@ -67,6 +67,27 @@
                     <option value="on">On</option>
                     <option value="subtle">Subtle</option>
                     <option value="off">Off</option>
+                </select>
+            </div>
+            <div class="settings-item settings-toggle">
+                <div>
+                    <i class="ph ph-book-open"></i>
+                    <span>Reading Mode</span>
+                </div>
+                <select id="reading-mode" class="reading-mode-select">
+                    <option value="verse">Verse-by-Verse</option>
+                    <option value="fluid">Fluid Reading</option>
+                </select>
+            </div>
+            <div class="settings-item settings-toggle" id="verse-number-style-container">
+                <div>
+                    <i class="ph ph-hash"></i>
+                    <span>Verse Numbers</span>
+                </div>
+                <select id="verse-number-style" class="verse-number-style-select">
+                    <option value="superscript">Superscript</option>
+                    <option value="margin">Margin</option>
+                    <option value="hidden">Hidden</option>
                 </select>
             </div>
             <a href="roadmap.html" target="_blank" class="settings-item">
@@ -272,13 +293,13 @@
     <script src="supabase-config.js"></script>
 
     <!-- Modular JavaScript (loaded in dependency order) -->
-    <script src="js/state.js?v=1.1.3"></script>
-    <script src="js/bible-loader.js?v=1.1.3"></script>
-    <script src="js/auth.js?v=1.1.3"></script>
-    <script src="js/annotations.js?v=1.1.3"></script>
-    <script src="js/verse-renderer.js?v=1.1.3"></script>
-    <script src="js/navigation.js?v=1.1.3"></script>
-    <script src="js/ui.js?v=1.1.3"></script>
-    <script src="js/app.js?v=1.1.3"></script>
+    <script src="js/state.js?v=1.2.0"></script>
+    <script src="js/bible-loader.js?v=1.2.0"></script>
+    <script src="js/auth.js?v=1.2.0"></script>
+    <script src="js/annotations.js?v=1.2.0"></script>
+    <script src="js/verse-renderer.js?v=1.2.0"></script>
+    <script src="js/navigation.js?v=1.2.0"></script>
+    <script src="js/ui.js?v=1.2.0"></script>
+    <script src="js/app.js?v=1.2.0"></script>
 </body>
 </html>
