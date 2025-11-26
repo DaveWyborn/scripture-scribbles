@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gzip Load Test</title>
+  <style>
+    body { font-family: system-ui; padding: 40px; max-width: 800px; margin: 0 auto; }
+    button { padding: 12px 24px; margin: 8px; font-size: 16px; cursor: pointer; }
+    #output { margin-top: 20px; padding: 20px; background: #f5f5f5; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Testing Gzipped Bible Loading</h1>
+  <p>Testing DecompressionStream API support and load performance</p>
+  <button onclick="testLoad('web')">Load WEB (5.3 MB)</button>
+  <button onclick="testLoad('asv')">Load ASV (5.4 MB)</button>
+  <button onclick="testLoad('kjv')">Load KJV (4.8 MB)</button>
+  <div id="output"></div>
+
+  <script src="js/gzip-loader.js"></script>
+  <script>
+    async function testLoad(version) {
+      const output = document.getElementById('output');
+      output.innerHTML = '<p>Loading ' + version.toUpperCase() + '...</p>';
+
+      const startTime = performance.now();
+
+      try {
+        const data = await loadBibleVersion(version);
+        const endTime = performance.now();
+        const loadTime = ((endTime - startTime) / 1000).toFixed(2);
+
+        const hasType = data.books[0].chapters[0].verses[0].type;
+
+        output.innerHTML =
+          '<h2>✅ ' + version.toUpperCase() + ' Loaded Successfully</h2>' +
+          '<p><strong>Load Time:</strong> ' + loadTime + 's</p>' +
+          '<p><strong>Books:</strong> ' + data.books.length + '</p>' +
+          '<p><strong>First Book:</strong> ' + data.books[0].name + '</p>' +
+          '<p><strong>First Verse:</strong> ' + data.books[0].chapters[0].verses[0].text + '</p>' +
+          '<p><strong>Has Type Field:</strong> ' + (hasType ? 'Yes (' + hasType + ')' : 'No') + '</p>';
+      } catch (error) {
+        output.innerHTML = '<p style="color: red;">❌ Error: ' + error.message + '</p>';
+      }
+    }
+  </script>
+</body>
+</html>

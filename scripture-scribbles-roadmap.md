@@ -126,32 +126,61 @@
 **Reading Bar (NEW - Innovative Focus Aid):**
 - [ ] Adjustable focus bar (mimics physical ruler for dyslexic readers)
 - [ ] Bar height options:
+  - [ ] 1 line (single sentence focus)
   - [ ] 3 lines
   - [ ] 5 lines
   - [ ] 7 lines
   - [ ] 1 paragraph
+  - [ ] Custom height (user-defined)
 - [ ] Visual styles:
+  - [ ] Overlay (coloured transparent overlay on focused area)
+  - [ ] Underline (single/double line under current line)
+  - [ ] Mask (dim everything except focused area)
   - [ ] Blur (text above/below blurred)
   - [ ] Fade (text above/below greyed 50%)
-  - [ ] Tint (transparent colour overlay on focused area)
   - [ ] Ruler (clean lines top/bottom with subtle colour)
+  - [ ] Reading Guide (combination of underline + mask)
 - [ ] Positioning:
-  - [ ] Fixed centre
-  - [ ] Follows scroll
-  - [ ] User-anchored
+  - [ ] Fixed top (ruler stays at top)
+  - [ ] Fixed centre (ruler stays in middle)
+  - [ ] Fixed bottom (ruler stays at bottom)
+  - [ ] Follows scroll (moves with content)
+  - [ ] Follows mouse/finger (desktop/mobile)
+  - [ ] User-anchored (click to position)
+- [ ] Customisation:
+  - [ ] Colour picker for overlay/ruler/underline
+  - [ ] Opacity control (0-100%)
+  - [ ] Thickness control (for underline/ruler)
+  - [ ] Margin/padding around focused area
+  - [ ] Blur intensity (for blur mode)
+- [ ] Keyboard controls (desktop):
+  - [ ] Arrow up/down to move ruler
+  - [ ] Spacebar to toggle on/off
+  - [ ] +/- to adjust height
+- [ ] Touch controls (mobile):
+  - [ ] Drag to reposition
+  - [ ] Pinch to adjust height
+  - [ ] Double-tap to toggle
 - [ ] Easy toggle on/off (not forced on users who don't need it)
-- [ ] Colour picker for tint/ruler
-- [ ] Opacity control
+- [ ] Save preferences per device
 
 **Settings UI:**
 ```
 Reading Bar:
 □ Enable reading bar
-  Height: [3] [5] [7 lines] [paragraph]
-  Style: [Blur] [Fade] [Tint] [Ruler]
-  Position: [Centre] [Follows scroll] [Anchored]
-  Tint colour: [picker]
-  Opacity: [slider]
+
+Height: [1] [3] [5] [7 lines] [paragraph] [custom ▼]
+Style: [Overlay] [Underline] [Mask] [Blur] [Fade] [Ruler] [Guide]
+Position: [Top] [Centre] [Bottom] [Follow scroll] [Follow cursor] [Anchored]
+
+Customisation:
+  Colour: [colour picker]
+  Opacity: [━━━━━━━○━━] 70%
+  Thickness: [━━━○━━━━━━] 3px
+  Blur intensity: [━━━━━○━━━━] 5px
+  Margin: [━━○━━━━━━━] 10px
+
+Keyboard shortcuts: [Configure]
 ```
 
 **Timeline:** 2-3 weeks
