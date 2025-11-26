@@ -15,6 +15,10 @@ let currentBook = 'genesis';
 let currentChapter = 1;
 let isNavigating = false;
 
+// Reading mode state
+let readingMode = 'verse'; // 'verse' or 'fluid'
+let verseNumberStyle = 'superscript'; // 'superscript', 'margin', or 'hidden'
+
 // Annotation state
 let currentAnnotations = {};
 let selectedVerse = null;

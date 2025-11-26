@@ -1,25 +1,58 @@
 // Bible Data Loading
 // Handles loading and caching of Bible data from JSON
 
-async function loadBibleData() {
+/**
+ * Load gzipped Bible JSON file
+ * Falls back to uncompressed if gzip fails
+ */
+async function loadGzippedBible(version = 'web') {
+    const gzippedUrl = `data/${version}-bible-enhanced.json.gz`;
+    const fallbackUrl = `data/${version}-bible-enhanced.json`;
+
     try {
-        console.log('Loading Bible data...');
-        const response = await fetch('data/web-bible-enhanced.json');
+        console.log(`Loading ${version.toUpperCase()} Bible (gzipped)...`);
+        const response = await fetch(gzippedUrl);
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        bibleData = await response.json();
+
+        // Decompress using browser's DecompressionStream API
+        const blob = await response.blob();
+        const decompressedStream = blob.stream().pipeThrough(
+            new DecompressionStream('gzip')
+        );
+        const decompressedBlob = await new Response(decompressedStream).blob();
+        const text = await decompressedBlob.text();
+
+        return JSON.parse(text);
+    } catch (error) {
+        console.warn(`Gzipped version failed (${error.message}), trying uncompressed...`);
+
+        // Fallback to uncompressed JSON
+        const response = await fetch(fallbackUrl);
+        if (!response.ok) {
+            throw new Error(`Failed to load Bible: ${response.status}`);
+        }
+        return await response.json();
+    }
+}
+
+async function loadBibleData(version = 'web') {
+    try {
+        bibleData = await loadGzippedBible(version);
 
         // Add ID fields to books (enhanced JSON uses name only)
         bibleData.books.forEach(book => {
             book.id = book.name.toLowerCase().replace(/\s+/g, '');
         });
 
-        console.log(`Bible loaded: ${bibleData.books.length} books`);
-        console.log(`Enhanced features: paragraphs, poetry, footnotes, Strong's numbers`);
+        console.log(`✅ Bible loaded: ${bibleData.version || version.toUpperCase()}`);
+        console.log(`   Books: ${bibleData.books.length}`);
+        console.log(`   Features: paragraphs, poetry, headings, footnotes, Strong's numbers`);
     } catch (error) {
         console.error('Error loading Bible:', error);
-        alert('Failed to load Bible data. Please ensure you are running from a web server (http://localhost:8001)');
+        alert('Failed to load Bible data. Please refresh the page or check your connection.');
     }
 }
 
