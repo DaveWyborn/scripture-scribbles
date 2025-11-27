@@ -15,27 +15,45 @@ async function initApp() {
     // Load annotation sets
     loadAnnotationSets();
 
-    // Load Bible data
-    await loadBibleData();
-
     // Load known tags from localStorage
     loadKnownTags();
 
     // Check auth status
     const { data: { session } } = await supabase.auth.getSession();
+
+    // Start loading Bible in background
+    const bibleLoadPromise = loadBibleData();
+
     if (session) {
+        // Returning user - show loading message if Bible not ready yet
+        const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+        if (hasSeenWelcome && !bibleData) {
+            // Show loading message for returning users
+            document.getElementById('bible-loading-message').style.display = 'block';
+        }
+
+        // Wait for Bible to load before showing content
+        await bibleLoadPromise;
         await handleAuthSuccess(session.user);
     } else {
-        // No user logged in - show welcome screen
+        // No user logged in - show welcome screen immediately
+        // Bible loads in background whilst they sign up
         const welcomeEl = document.querySelector('.welcome');
         if (welcomeEl) {
             welcomeEl.style.display = 'block';
         }
+
+        // Continue loading Bible in background
+        bibleLoadPromise.then(() => {
+            console.log('✅ Bible ready for new user');
+        });
     }
 
     // Listen for auth changes
     supabase.auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' && session && !currentUser) {
+            // Ensure Bible is loaded before showing content
+            await bibleLoadPromise;
             await handleAuthSuccess(session.user);
         } else if (event === 'SIGNED_OUT') {
             handleSignOut();

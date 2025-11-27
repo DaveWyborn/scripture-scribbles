@@ -40,20 +40,18 @@ async function loadGzippedBible(version = 'web') {
 
 async function loadBibleData(version = 'web') {
     try {
-        // Check if Bible was preloaded from landing page
-        const preloaded = sessionStorage.getItem('preloadedBible');
-        if (preloaded) {
-            console.log('✅ Using preloaded Bible from landing page');
-            bibleData = JSON.parse(preloaded);
-            sessionStorage.removeItem('preloadedBible'); // Clear to save memory
-        } else {
-            bibleData = await loadGzippedBible(version);
-        }
+        bibleData = await loadGzippedBible(version);
 
         // Add ID fields to books (enhanced JSON uses name only)
         bibleData.books.forEach(book => {
             book.id = book.name.toLowerCase().replace(/\s+/g, '');
         });
+
+        // Hide loading message if showing
+        const loadingMsg = document.getElementById('bible-loading-message');
+        if (loadingMsg) {
+            loadingMsg.style.display = 'none';
+        }
 
         console.log(`✅ Bible loaded: ${bibleData.version || version.toUpperCase()}`);
         console.log(`   Books: ${bibleData.books.length}`);
