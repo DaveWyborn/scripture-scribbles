@@ -127,6 +127,30 @@
             color: #7f8c8d;
             margin-top: 10px;
         }
+
+        .loading-message {
+            background: #fff3cd;
+            border: 2px solid #f39c12;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin: 20px auto;
+            max-width: 500px;
+            text-align: center;
+            font-size: 1em;
+            color: #856404;
+        }
+
+        .loading-message.ready {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .cta-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
     </style>
 </head>
 <body>
@@ -143,7 +167,10 @@
             </p>
 
             <div style="text-align: center;">
-                <a href="scripture-scribbles-v1.1.html" class="cta-button">🚀 Launch Scripture Scribbles</a>
+                <div id="loading-message" class="loading-message">
+                    📖 Downloading Bible for first read... this may take a minute
+                </div>
+                <a href="scripture-scribbles-v1.1-refactored.html" id="launch-btn" class="cta-button" disabled>🚀 Launch Scripture Scribbles</a>
                 <p class="browser-note">Works on all modern browsers</p>
             </div>
 
@@ -205,7 +232,10 @@
 
             <div style="text-align: center; margin-top: 50px;">
                 <h3>Ready to transform your Bible study?</h3>
-                <a href="scripture-scribbles-v1.1.html" class="cta-button">Get Started Now</a>
+                <div id="loading-message-2" class="loading-message">
+                    📖 Downloading Bible for first read... this may take a minute
+                </div>
+                <a href="scripture-scribbles-v1.1-refactored.html" id="launch-btn-2" class="cta-button" disabled>Get Started Now</a>
             </div>
         </div>
 
@@ -221,5 +251,55 @@
             </p>
         </footer>
     </div>
+
+    <script>
+        // Preload Bible in the background
+        (async function() {
+            const buttons = [
+                document.getElementById('launch-btn'),
+                document.getElementById('launch-btn-2')
+            ];
+            const messages = [
+                document.getElementById('loading-message'),
+                document.getElementById('loading-message-2')
+            ];
+
+            try {
+                // Fetch and decompress the Bible
+                const response = await fetch('data/web-bible-enhanced.json.gz');
+                const blob = await response.blob();
+                const decompressedStream = blob.stream().pipeThrough(
+                    new DecompressionStream('gzip')
+                );
+                const decompressedBlob = await new Response(decompressedStream).blob();
+                const text = await decompressedBlob.text();
+
+                // Store in sessionStorage for the reader page
+                sessionStorage.setItem('preloadedBible', text);
+
+                // Enable buttons and update messages
+                buttons.forEach(btn => {
+                    btn.removeAttribute('disabled');
+                    btn.style.opacity = '1';
+                });
+                messages.forEach(msg => {
+                    msg.className = 'loading-message ready';
+                    msg.textContent = '✅ Bible ready! Click below to start reading';
+                });
+
+                console.log('✅ Bible preloaded successfully');
+            } catch (error) {
+                console.error('Failed to preload Bible:', error);
+                // Enable buttons anyway - let the reader page handle the download
+                buttons.forEach(btn => {
+                    btn.removeAttribute('disabled');
+                    btn.style.opacity = '1';
+                });
+                messages.forEach(msg => {
+                    msg.style.display = 'none';
+                });
+            }
+        })();
+    </script>
 </body>
 </html>
