@@ -12,6 +12,9 @@ async function initApp() {
     loadReadingMode();
     loadVerseNumberStyle();
 
+    // Load typography preferences
+    loadTypography();
+
     // Load annotation sets
     loadAnnotationSets();
 
@@ -111,6 +114,52 @@ function setupEventListeners() {
         verseNumberStyleSelect.addEventListener('change', (e) => {
             setVerseNumberStyle(e.target.value);
         });
+    }
+
+    // Typography controls
+    const fontFamilySelect = document.getElementById('font-family');
+    if (fontFamilySelect) {
+        fontFamilySelect.addEventListener('change', (e) => {
+            setFontFamily(e.target.value);
+        });
+    }
+
+    const fontSizeSlider = document.getElementById('font-size');
+    if (fontSizeSlider) {
+        fontSizeSlider.addEventListener('input', (e) => {
+            setFontSize(e.target.value);
+        });
+    }
+
+    const lineSpacingSlider = document.getElementById('line-spacing');
+    if (lineSpacingSlider) {
+        lineSpacingSlider.addEventListener('input', (e) => {
+            setLineSpacing(e.target.value);
+        });
+    }
+
+    const letterSpacingSlider = document.getElementById('letter-spacing');
+    if (letterSpacingSlider) {
+        letterSpacingSlider.addEventListener('input', (e) => {
+            setLetterSpacing(e.target.value);
+        });
+    }
+
+    const wordSpacingSlider = document.getElementById('word-spacing');
+    if (wordSpacingSlider) {
+        wordSpacingSlider.addEventListener('input', (e) => {
+            setWordSpacing(e.target.value);
+        });
+    }
+
+    const typographyResetBtn = document.getElementById('typography-reset');
+    if (typographyResetBtn) {
+        typographyResetBtn.addEventListener('click', resetTypography);
+    }
+
+    const typographyDyslexiaBtn = document.getElementById('typography-dyslexia');
+    if (typographyDyslexiaBtn) {
+        typographyDyslexiaBtn.addEventListener('click', applyDyslexiaPreset);
     }
 
     // Auth buttons

@@ -6,10 +6,14 @@
     <title>Scripture Scribbles v1.1.0 (Refactored)</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+    <!-- Dyslexia-friendly fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@3.0.0/opendyslexic-regular.min.css">
+
     <!-- Modular CSS -->
-    <link rel="stylesheet" href="css/base.css?v=1.2.0">
-    <link rel="stylesheet" href="css/components.css?v=1.2.0">
-    <link rel="stylesheet" href="css/themes.css?v=1.2.0">
+    <link rel="stylesheet" href="css/base.css?v=1.3.0">
+    <link rel="stylesheet" href="css/components.css?v=1.3.0">
+    <link rel="stylesheet" href="css/themes.css?v=1.3.0">
 </head>
 <body>
     <div class="container">
@@ -90,6 +94,64 @@
                     <option value="hidden">Hidden</option>
                 </select>
             </div>
+
+            <div class="settings-divider"></div>
+            <div class="settings-section-header">Typography</div>
+
+            <div class="settings-item settings-toggle">
+                <div>
+                    <i class="ph ph-text-aa"></i>
+                    <span>Font</span>
+                </div>
+                <select id="font-family">
+                    <option value="system">System (Default)</option>
+                    <option value="atkinson">Atkinson Hyperlegible</option>
+                    <option value="opendyslexic">OpenDyslexic</option>
+                    <option value="serif">Serif</option>
+                </select>
+            </div>
+
+            <div class="settings-item settings-range">
+                <div>
+                    <i class="ph ph-text-t"></i>
+                    <span>Font Size</span>
+                    <span class="range-value" id="font-size-value">16px</span>
+                </div>
+                <input type="range" id="font-size" min="14" max="28" value="16" step="1">
+            </div>
+
+            <div class="settings-item settings-range">
+                <div>
+                    <i class="ph ph-arrows-vertical"></i>
+                    <span>Line Spacing</span>
+                    <span class="range-value" id="line-spacing-value">1.5x</span>
+                </div>
+                <input type="range" id="line-spacing" min="1.0" max="2.5" value="1.5" step="0.1">
+            </div>
+
+            <div class="settings-item settings-range">
+                <div>
+                    <i class="ph ph-arrows-horizontal"></i>
+                    <span>Letter Spacing</span>
+                    <span class="range-value" id="letter-spacing-value">Normal</span>
+                </div>
+                <input type="range" id="letter-spacing" min="0" max="0.2" value="0" step="0.01">
+            </div>
+
+            <div class="settings-item settings-range">
+                <div>
+                    <i class="ph ph-text-align-left"></i>
+                    <span>Word Spacing</span>
+                    <span class="range-value" id="word-spacing-value">Normal</span>
+                </div>
+                <input type="range" id="word-spacing" min="0" max="0.5" value="0" step="0.05">
+            </div>
+
+            <div class="settings-item" style="padding: 8px 15px; display: flex; gap: 8px;">
+                <button class="btn" id="typography-reset" style="flex: 1; font-size: 0.9em;">Reset</button>
+                <button class="btn primary" id="typography-dyslexia" style="flex: 1; font-size: 0.9em;">Dyslexia Optimised</button>
+            </div>
+
             <a href="roadmap.html" target="_blank" class="settings-item">
                 <i class="ph ph-map-trifold"></i>
                 <span>Roadmap</span>
@@ -297,13 +359,14 @@
     <script src="supabase-config.js"></script>
 
     <!-- Modular JavaScript (loaded in dependency order) -->
-    <script src="js/state.js?v=1.2.0"></script>
-    <script src="js/bible-loader.js?v=1.2.0"></script>
-    <script src="js/auth.js?v=1.2.0"></script>
-    <script src="js/annotations.js?v=1.2.0"></script>
-    <script src="js/verse-renderer.js?v=1.2.0"></script>
-    <script src="js/navigation.js?v=1.2.0"></script>
-    <script src="js/ui.js?v=1.2.0"></script>
-    <script src="js/app.js?v=1.2.0"></script>
+    <script src="js/state.js?v=1.3.0"></script>
+    <script src="js/bible-loader.js?v=1.3.0"></script>
+    <script src="js/auth.js?v=1.3.0"></script>
+    <script src="js/annotations.js?v=1.3.0"></script>
+    <script src="js/verse-renderer.js?v=1.3.0"></script>
+    <script src="js/navigation.js?v=1.3.0"></script>
+    <script src="js/typography.js?v=1.3.0"></script>
+    <script src="js/ui.js?v=1.3.0"></script>
+    <script src="js/app.js?v=1.3.0"></script>
 </body>
 </html>
