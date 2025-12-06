@@ -516,13 +516,13 @@ function displayChapter() {
         });
         });
     } else {
-        // Fluid reading mode: click on inline verse text to show annotation modal
+        // Fluid reading mode: click on inline verse text to show annotation panel
         document.querySelectorAll('[data-verse]').forEach(el => {
             el.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent event bubbling
                 const verseNum = parseInt(el.dataset.verse);
-                // TODO: Show annotation modal for this verse in fluid mode
-                console.log('Clicked verse in fluid mode:', verseNum);
-                // For now, just log - will implement modal later
+                selectedVerse = verseNum;
+                showAnnotationPanel(verseNum);
             });
             el.style.cursor = 'pointer';
         });

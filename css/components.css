@@ -1207,6 +1207,8 @@
     margin-bottom: 1.5em;
     line-height: 1.8;
     text-align: justify;
+    position: relative;
+    padding-left: 60px; /* Space for margin verse numbers */
 }
 
 /* Inline verse wrapper */
@@ -1230,12 +1232,19 @@
 .reading-mode-fluid .verse-number.margin {
     position: absolute;
     left: -50px;
+    top: 0;
     font-size: 14px;
     font-weight: 600;
     color: var(--text-tertiary);
     width: 40px;
     text-align: right;
     vertical-align: baseline;
+    margin-right: 0;
+}
+
+/* Remove paragraph padding when not using margin style */
+.reading-mode-fluid:not(.verse-style-margin) .paragraph {
+    padding-left: 0;
 }
 
 /* Highlighted text in reading mode */
