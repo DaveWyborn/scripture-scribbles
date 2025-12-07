@@ -522,7 +522,7 @@ function displayChapter() {
                 e.stopPropagation(); // Prevent event bubbling
                 const verseNum = parseInt(el.dataset.verse);
                 selectedVerse = verseNum;
-                showAnnotationPanel(verseNum);
+                openAnnotationPanel(verseNum);
             });
             el.style.cursor = 'pointer';
         });

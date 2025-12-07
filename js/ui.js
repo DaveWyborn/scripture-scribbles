@@ -70,11 +70,11 @@ function setVerseNumberStyle(style) {
     verseNumberStyle = style;
     localStorage.setItem('verseNumberStyle', style);
 
-    // Add/remove class for margin style (used in CSS)
-    const container = document.querySelector('.container');
-    if (container) {
-        container.classList.remove('verse-style-margin', 'verse-style-superscript', 'verse-style-hidden');
-        container.classList.add(`verse-style-${style}`);
+    // Add/remove class for margin style (used in CSS) - apply to #content where reading-mode class is
+    const content = document.getElementById('content');
+    if (content) {
+        content.classList.remove('verse-style-margin', 'verse-style-superscript', 'verse-style-hidden');
+        content.classList.add(`verse-style-${style}`);
     }
 
     displayChapter(); // Re-render with new style
