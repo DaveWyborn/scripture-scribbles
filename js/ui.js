@@ -623,3 +623,40 @@ async function exportJSON() {
         alert('Failed to export backup. Please try again.');
     }
 }
+
+// ===== Note Tooltip =====
+
+function showNoteTooltip(event, verseNum) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const annotation = currentAnnotations[verseNum];
+    if (!annotation || !annotation.note) return;
+
+    const tooltip = document.getElementById('note-tooltip');
+    const header = document.getElementById('note-tooltip-header');
+    const content = document.getElementById('note-tooltip-content');
+
+    header.textContent = `Verse ${verseNum} Note`;
+    content.textContent = annotation.note;
+
+    // Position near click
+    const x = Math.min(event.clientX + 10, window.innerWidth - 420);
+    const y = Math.min(event.clientY + 10, window.innerHeight - 200);
+
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+    tooltip.classList.add('show');
+}
+
+function hideNoteTooltip() {
+    document.getElementById('note-tooltip').classList.remove('show');
+}
+
+// Click outside to close tooltip
+document.addEventListener('click', (e) => {
+    const tooltip = document.getElementById('note-tooltip');
+    if (tooltip && !e.target.closest('.verse-note-indicator') && !e.target.closest('.note-tooltip')) {
+        hideNoteTooltip();
+    }
+});

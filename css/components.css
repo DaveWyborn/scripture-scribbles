@@ -1144,6 +1144,71 @@
     text-decoration: underline;
 }
 
+/* Note Tooltip */
+.note-tooltip {
+    position: fixed;
+    background: var(--bg-primary);
+    border: 2px solid var(--accent-info);
+    border-radius: var(--radius-m);
+    padding: var(--space-m) var(--space-l);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    max-width: 400px;
+    font-size: 0.95em;
+    z-index: 2000;
+    display: none;
+}
+
+.note-tooltip.show {
+    display: block;
+}
+
+.note-tooltip-header {
+    font-weight: 600;
+    color: var(--accent-info);
+    margin-bottom: var(--space-s);
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.note-tooltip-content {
+    color: var(--text-primary);
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.note-tooltip-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    width: 24px;
+    height: 24px;
+}
+
+.note-tooltip-close:hover {
+    color: var(--text-primary);
+}
+
+.verse-note-indicator {
+    color: var(--accent-info);
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-left: 2px;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.verse-note-indicator:hover {
+    color: var(--accent-primary);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .toolbar {

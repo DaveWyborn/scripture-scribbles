@@ -516,8 +516,19 @@ function displayChapter() {
         });
         });
     } else {
+        // Fluid reading mode: click on note indicators to show tooltip
+        document.querySelectorAll('.verse-note-indicator').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const verseNum = parseInt(el.dataset.verse);
+                showNoteTooltip(e, verseNum);
+            });
+        });
+
         // Fluid reading mode: click on inline verse text to show annotation panel
         document.querySelectorAll('[data-verse]').forEach(el => {
+            // Skip note indicators (handled above)
+            if (el.classList.contains('verse-note-indicator')) return;
+
             el.addEventListener('click', (e) => {
                 e.stopPropagation(); // Prevent event bubbling
                 const verseNum = parseInt(el.dataset.verse);
