@@ -134,8 +134,8 @@ function renderParagraph(verses, bookNum, chapterNum) {
                         </div>
                     </div>
                 </div>
-            </div>
-        </span>`;
+            </div>`;
+        html += '</span>'; // Close verse-inline-wrapper
     });
 
     html += '</p>';
@@ -617,20 +617,16 @@ function displayChapter() {
         // Fluid reading mode: click on verse wrapper to toggle inline menu
         document.querySelectorAll('.verse-inline-wrapper').forEach(el => {
             el.addEventListener('click', (e) => {
-                console.log('Clicked verse wrapper:', el.dataset.verse, 'Target:', e.target.tagName, e.target);
-
                 // Don't handle click if it's on interactive elements
                 if (e.target.tagName === 'BUTTON' ||
                     e.target.tagName === 'INPUT' ||
                     e.target.tagName === 'TEXTAREA' ||
                     e.target.tagName === 'I' || // Skip icons
                     e.target.closest('.inline-menu')) {
-                    console.log('  -> Click ignored (interactive element)');
                     return;
                 }
 
                 const verseNum = parseInt(el.dataset.verse);
-                console.log('  -> Processing verse:', verseNum);
 
                 // Deselect all verse wrappers
                 document.querySelectorAll('.verse-inline-wrapper').forEach(v => v.classList.remove('selected'));
@@ -638,11 +634,9 @@ function displayChapter() {
                 // Toggle selection
                 if (selectedVerse === verseNum) {
                     selectedVerse = null;
-                    console.log('  -> Deselected');
                 } else {
                     selectedVerse = verseNum;
                     el.classList.add('selected');
-                    console.log('  -> Selected');
                 }
             });
         });
