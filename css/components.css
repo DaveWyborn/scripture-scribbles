@@ -1281,6 +1281,12 @@
     position: relative;
 }
 
+/* When using margin verse numbers, each verse starts on new line */
+.reading-mode-fluid.verse-style-margin .verse-inline {
+    display: block;
+    position: relative;
+}
+
 /* Verse numbers */
 .reading-mode-fluid .verse-number {
     font-size: 0.75em;
@@ -1296,12 +1302,12 @@
 
 .reading-mode-fluid .verse-number.margin {
     position: absolute;
-    left: -50px;
+    left: -60px;
     top: 0;
     font-size: 14px;
     font-weight: 600;
     color: var(--text-tertiary);
-    width: 40px;
+    width: 50px;
     text-align: right;
     vertical-align: baseline;
     margin-right: 0;
@@ -1405,9 +1411,13 @@
     }
 
     .reading-mode-fluid .verse-number.margin {
-        left: -35px;
-        width: 30px;
+        left: -45px;
+        width: 40px;
         font-size: 12px;
+    }
+
+    .reading-mode-fluid.verse-style-margin .paragraph {
+        padding-left: 45px;
     }
 
     .reading-mode-fluid .poetry-line.poetry2 { padding-left: 1.5em; }
