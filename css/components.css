@@ -1127,7 +1127,7 @@
 
 /* Footer */
 .footer {
-    padding: 60vh var(--space-l) var(--space-xxl) var(--space-l);
+    padding: var(--space-xxl) var(--space-l);
     text-align: center;
     color: var(--text-tertiary);
     font-size: 0.9em;
