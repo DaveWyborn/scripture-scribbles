@@ -30,9 +30,8 @@ function renderParagraph(verses, bookNum, chapterNum) {
         const hasNote = annotation.note && annotation.note.trim();
         const hasTags = annotation.tags && annotation.tags.length > 0;
 
-        if (hasNote) {
-            html += `<span class="verse-note-indicator" data-verse="${verse.number}">†</span>`;
-        }
+        // Dagger (†) reserved for Bible translation footnotes only
+        // User notes shown via note icon below
 
         if (hasTags) {
             html += '<span class="verse-tags-inline">';
@@ -45,6 +44,11 @@ function renderParagraph(verses, bookNum, chapterNum) {
         }
 
         html += ' </span>';
+
+        // Add note icon for user notes (opens inline menu)
+        if (hasNote) {
+            html += `<i class="ph ph-note-pencil indicator-icon-inline" style="color: var(--accent-info); margin-left: 4px; font-size: 0.9em; cursor: pointer;" data-verse="${verse.number}"></i>`;
+        }
 
         // Add inline menu (same as verse-by-verse mode)
         html += `
@@ -162,15 +166,14 @@ function renderPoetry(verses, bookNum, chapterNum) {
             verseText = `<span class="verse-text-inline" data-verse="${verse.number}">${verseText}</span>`;
         }
 
-        html += `<div class="poetry-line ${poetryLevel}">${verseNum}${verseText}`;
+        html += `<div class="verse-inline-wrapper poetry-line ${poetryLevel}" data-verse="${verse.number}">${verseNum}${verseText}`;
 
         // Add indicators
         const hasNote = annotation.note && annotation.note.trim();
         const hasTags = annotation.tags && annotation.tags.length > 0;
 
-        if (hasNote) {
-            html += `<span class="verse-note-indicator" data-verse="${verse.number}">†</span>`;
-        }
+        // Dagger (†) reserved for Bible translation footnotes only
+        // User notes shown via note icon below
 
         if (hasTags) {
             html += '<span class="verse-tags-inline">';
@@ -181,6 +184,13 @@ function renderPoetry(verses, bookNum, chapterNum) {
             });
             html += '</span>';
         }
+
+        // Add note icon for user notes (opens inline menu)
+        if (hasNote) {
+            html += `<i class="ph ph-note-pencil indicator-icon-inline" style="color: var(--accent-info); margin-left: 4px; font-size: 0.9em; cursor: pointer;" data-verse="${verse.number}"></i>`;
+        }
+
+        // TODO: Add inline menu for poetry (copy from paragraph renderer)
 
         html += '</div>';
     });
@@ -604,15 +614,6 @@ function displayChapter() {
         });
         });
     } else {
-        // Fluid reading mode: click on note indicators to show tooltip
-        document.querySelectorAll('.verse-note-indicator').forEach(el => {
-            el.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const verseNum = parseInt(el.dataset.verse);
-                showNoteTooltip(e, verseNum);
-            });
-        });
-
         // Fluid reading mode: click on verse wrapper to toggle inline menu
         document.querySelectorAll('.verse-inline-wrapper').forEach(el => {
             el.addEventListener('click', (e) => {
@@ -620,8 +621,8 @@ function displayChapter() {
                 if (e.target.tagName === 'BUTTON' ||
                     e.target.tagName === 'INPUT' ||
                     e.target.tagName === 'TEXTAREA' ||
-                    e.target.closest('.inline-menu') ||
-                    e.target.classList.contains('verse-note-indicator')) {
+                    e.target.tagName === 'I' || // Skip icons
+                    e.target.closest('.inline-menu')) {
                     return;
                 }
 
@@ -636,6 +637,26 @@ function displayChapter() {
                 } else {
                     selectedVerse = verseNum;
                     el.classList.add('selected');
+                }
+            });
+        });
+
+        // Click note icon to toggle inline menu on that verse
+        document.querySelectorAll('.indicator-icon-inline').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const verseNum = parseInt(el.dataset.verse);
+                const wrapper = el.closest('.verse-inline-wrapper');
+
+                // Deselect all
+                document.querySelectorAll('.verse-inline-wrapper').forEach(v => v.classList.remove('selected'));
+
+                // Select this verse and open note submenu
+                if (wrapper) {
+                    wrapper.classList.add('selected');
+                    selectedVerse = verseNum;
+                    // Auto-open note submenu
+                    setTimeout(() => toggleSubmenu(verseNum, 'note'), 50);
                 }
             });
         });
