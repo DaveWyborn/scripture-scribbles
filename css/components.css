@@ -1276,7 +1276,13 @@
     padding-left: 60px; /* Space for margin verse numbers */
 }
 
-/* Inline verse wrapper */
+/* Inline verse wrapper - block for menu placement */
+.reading-mode-fluid .verse-inline-wrapper {
+    display: block;
+    position: relative;
+    cursor: pointer;
+}
+
 .reading-mode-fluid .verse-inline {
     position: relative;
 }
@@ -1285,6 +1291,18 @@
 .reading-mode-fluid.verse-style-margin .verse-inline {
     display: block;
     position: relative;
+}
+
+/* Hide inline menu by default in fluid mode */
+.reading-mode-fluid .verse-inline-wrapper .inline-menu {
+    display: none;
+}
+
+/* Show inline menu when verse is selected */
+.reading-mode-fluid .verse-inline-wrapper.selected .inline-menu {
+    display: block;
+    margin-top: var(--space-s);
+    margin-bottom: var(--space-m);
 }
 
 /* Verse numbers */

@@ -23,6 +23,7 @@ function renderParagraph(verses, bookNum, chapterNum) {
             verseText = `<span class="verse-text-inline" data-verse="${verse.number}">${verseText}</span>`;
         }
 
+        html += `<span class="verse-inline-wrapper" data-verse="${verse.number}">`;
         html += `<span class="verse-inline">${verseNum}${verseText}`;
 
         // Add indicators
@@ -44,6 +45,93 @@ function renderParagraph(verses, bookNum, chapterNum) {
         }
 
         html += ' </span>';
+
+        // Add inline menu (same as verse-by-verse mode)
+        html += `
+            <div class="inline-menu">
+                <div class="menu-buttons">
+                    <button class="menu-btn" data-menu="highlight" onclick="toggleSubmenu(${verse.number}, 'highlight')">
+                        <i class="ph ph-highlighter-circle"></i> Highlight
+                    </button>
+                    <button class="menu-btn" data-menu="note" onclick="toggleSubmenu(${verse.number}, 'note')">
+                        <i class="ph ph-note-pencil"></i> Note
+                    </button>
+                    <button class="menu-btn" data-menu="tag" onclick="toggleSubmenu(${verse.number}, 'tag')">
+                        <i class="ph ph-tag"></i> Tag
+                    </button>
+                    <button class="menu-btn" onclick="copyVerse(${verse.number})">
+                        <i class="ph ph-copy"></i> Copy
+                    </button>
+                </div>
+
+                <!-- Highlight submenu -->
+                <div class="submenu" id="submenu-highlight-${verse.number}">
+                    <div class="submenu-title">Highlight</div>
+                    <div class="highlight-grid">
+                        <button class="highlight-btn ${annotation.highlight === 'yellow' ? 'selected' : ''}" style="background: var(--highlight-yellow)" onclick="setHighlight(${verse.number}, 'yellow')">H1</button>
+                        <button class="highlight-btn ${annotation.highlight === 'green' ? 'selected' : ''}" style="background: var(--highlight-green)" onclick="setHighlight(${verse.number}, 'green')">H2</button>
+                        <button class="highlight-btn ${annotation.highlight === 'blue' ? 'selected' : ''}" style="background: var(--highlight-blue)" onclick="setHighlight(${verse.number}, 'blue')">H3</button>
+                        <button class="highlight-btn ${annotation.highlight === 'pink' ? 'selected' : ''}" style="background: var(--highlight-pink)" onclick="setHighlight(${verse.number}, 'pink')">H4</button>
+                        <button class="highlight-btn ${annotation.highlight === 'purple' ? 'selected' : ''}" style="background: var(--highlight-purple)" onclick="setHighlight(${verse.number}, 'purple')">H5</button>
+                        <button class="highlight-btn ${annotation.highlight === 'orange' ? 'selected' : ''}" style="background: var(--highlight-orange)" onclick="setHighlight(${verse.number}, 'orange')">H6</button>
+                        <button class="highlight-btn clear" onclick="setHighlight(${verse.number}, null)">X</button>
+                    </div>
+                    <div class="submenu-title">Underline</div>
+                    <div class="underline-grid">
+                        <button class="underline-btn ${annotation.underline === 'yellow' ? 'selected' : ''}" style="--underline-color: var(--highlight-yellow)" onclick="setUnderline(${verse.number}, 'yellow')">U1</button>
+                        <button class="underline-btn ${annotation.underline === 'green' ? 'selected' : ''}" style="--underline-color: var(--highlight-green)" onclick="setUnderline(${verse.number}, 'green')">U2</button>
+                        <button class="underline-btn ${annotation.underline === 'blue' ? 'selected' : ''}" style="--underline-color: var(--highlight-blue)" onclick="setUnderline(${verse.number}, 'blue')">U3</button>
+                        <button class="underline-btn ${annotation.underline === 'pink' ? 'selected' : ''}" style="--underline-color: var(--highlight-pink)" onclick="setUnderline(${verse.number}, 'pink')">U4</button>
+                        <button class="underline-btn ${annotation.underline === 'purple' ? 'selected' : ''}" style="--underline-color: var(--highlight-purple)" onclick="setUnderline(${verse.number}, 'purple')">U5</button>
+                        <button class="underline-btn ${annotation.underline === 'orange' ? 'selected' : ''}" style="--underline-color: var(--highlight-orange)" onclick="setUnderline(${verse.number}, 'orange')">U6</button>
+                        <button class="underline-btn clear" onclick="setUnderline(${verse.number}, null)">X</button>
+                    </div>
+                </div>
+
+                <!-- Note submenu -->
+                <div class="submenu" id="submenu-note-${verse.number}">
+                    <textarea class="note-textarea" id="note-input-${verse.number}" placeholder="Add your thoughts... (Cmd+Enter to save)" onkeydown="handleNoteKeydown(event, ${verse.number})">${annotation.note || ''}</textarea>
+                    <div class="note-actions">
+                        <button class="note-delete" onclick="deleteNote(${verse.number})">Delete</button>
+                        <button class="note-save" onclick="saveNote(${verse.number})">Save</button>
+                    </div>
+                </div>
+
+                <!-- Tag submenu -->
+                <div class="submenu" id="submenu-tag-${verse.number}">
+                    <div class="tag-section">
+                        <div class="tag-section-title">Active tags (tap to remove)</div>
+                        <div class="active-tags" id="active-tags-${verse.number}">
+                            ${hasTags ? annotation.tags.map(tag => {
+                                const tagName = typeof tag === 'string' ? tag : tag.name;
+                                const tagColor = typeof tag === 'object' ? tag.color : knownTags[tagName.toLowerCase()] || '#ACE5CB';
+                                return `<span class="tag-item active" style="background: ${tagColor}" onclick="removeTag(${verse.number}, '${tagName}')">${tagName}</span>`;
+                            }).join('') : '<span style="color: var(--text-tertiary); font-size: 0.8em;">No tags</span>'}
+                        </div>
+                    </div>
+                    <div class="tag-section">
+                        <div class="tag-section-title">Add existing tag</div>
+                        <div class="existing-tags" id="existing-tags-${verse.number}">
+                            ${Object.keys(knownTags).length > 0 ?
+                                Object.entries(knownTags).map(([name, color]) => {
+                                    const isActive = hasTags && annotation.tags.some(t => (typeof t === 'string' ? t : t.name).toLowerCase() === name.toLowerCase());
+                                    if (isActive) return '';
+                                    return `<span class="tag-item" style="background: ${color}" onclick="addExistingTag(${verse.number}, '${name}', '${color}')">${name}</span>`;
+                                }).join('') || '<span style="color: var(--text-tertiary); font-size: 0.8em;">No saved tags</span>'
+                            : '<span style="color: var(--text-tertiary); font-size: 0.8em;">No saved tags</span>'}
+                        </div>
+                    </div>
+                    <div class="tag-section">
+                        <div class="tag-section-title">New tag</div>
+                        <div class="new-tag-row">
+                            <input type="text" id="new-tag-input-${verse.number}" placeholder="Tag name...">
+                            <div class="new-tag-color" id="new-tag-color-${verse.number}" style="background: #ACE5CB" onclick="event.stopPropagation(); showInlineColorPicker(${verse.number})"></div>
+                            <button class="new-tag-add" onclick="addNewTag(${verse.number})">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </span>`;
     });
 
     html += '</p>';
@@ -519,23 +607,37 @@ function displayChapter() {
         // Fluid reading mode: click on note indicators to show tooltip
         document.querySelectorAll('.verse-note-indicator').forEach(el => {
             el.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const verseNum = parseInt(el.dataset.verse);
                 showNoteTooltip(e, verseNum);
             });
         });
 
-        // Fluid reading mode: click on inline verse text to show annotation panel
-        document.querySelectorAll('[data-verse]').forEach(el => {
-            // Skip note indicators (handled above)
-            if (el.classList.contains('verse-note-indicator')) return;
-
+        // Fluid reading mode: click on verse wrapper to toggle inline menu
+        document.querySelectorAll('.verse-inline-wrapper').forEach(el => {
             el.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent event bubbling
+                // Don't handle click if it's on interactive elements
+                if (e.target.tagName === 'BUTTON' ||
+                    e.target.tagName === 'INPUT' ||
+                    e.target.tagName === 'TEXTAREA' ||
+                    e.target.closest('.inline-menu') ||
+                    e.target.classList.contains('verse-note-indicator')) {
+                    return;
+                }
+
                 const verseNum = parseInt(el.dataset.verse);
-                selectedVerse = verseNum;
-                openAnnotationPanel(verseNum);
+
+                // Deselect all verse wrappers
+                document.querySelectorAll('.verse-inline-wrapper').forEach(v => v.classList.remove('selected'));
+
+                // Toggle selection
+                if (selectedVerse === verseNum) {
+                    selectedVerse = null;
+                } else {
+                    selectedVerse = verseNum;
+                    el.classList.add('selected');
+                }
             });
-            el.style.cursor = 'pointer';
         });
     }
 
