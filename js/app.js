@@ -92,6 +92,16 @@ function setupEventListeners() {
         }
     });
 
+    // Theme selector
+    const themeSelect = document.getElementById('theme-select');
+    if (themeSelect) {
+        const savedTheme = localStorage.getItem('theme') || 'clean';
+        themeSelect.value = savedTheme;
+        themeSelect.addEventListener('change', (e) => {
+            changeTheme(e.target.value);
+        });
+    }
+
     // Annotation mode selector
     const annotationModeSelect = document.getElementById('annotation-mode');
     if (annotationModeSelect) {
