@@ -1455,4 +1455,71 @@
     .reading-mode-fluid .poetry-line.poetry3 { padding-left: 3em; }
     .reading-mode-fluid .poetry-line.poetry4 { padding-left: 4.5em; }
 }
+
+/* ===== Tag Manager ===== */
+.tag-manager-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+}
+
+.tag-manager-color {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+}
+
+.tag-manager-color:hover {
+    transform: scale(1.1);
+}
+
+.tag-manager-name {
+    flex: 1;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    color: var(--text-primary);
+}
+
+.tag-manager-name:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.tag-manager-count {
+    color: var(--text-tertiary);
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
+.tag-manager-delete {
+    background: var(--accent-negative);
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: opacity 0.2s;
+}
+
+.tag-manager-delete:hover {
+    opacity: 0.8;
+}
+
 /* Force rebuild Sun Dec  7 14:31:17 GMT 2025 */

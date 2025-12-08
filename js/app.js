@@ -249,6 +249,13 @@ function setupEventListeners() {
     });
     document.getElementById('export-annotation-set').addEventListener('change', loadExportData);
 
+    // Tag management
+    document.getElementById('manage-tags-btn').addEventListener('click', openTagManager);
+    document.getElementById('tag-manager-close').addEventListener('click', closeTagManager);
+    document.getElementById('tag-manager-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'tag-manager-modal') closeTagManager();
+    });
+
     // Annotation set management
     document.getElementById('close-set-modal').addEventListener('click', closeSetModal);
     document.getElementById('create-set-btn').addEventListener('click', createSet);
