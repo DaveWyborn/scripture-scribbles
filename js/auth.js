@@ -11,11 +11,23 @@ function showAuthModal(signUp = false) {
     document.getElementById('auth-toggle-text').innerHTML = signUp
         ? 'Already have an account? <a id="auth-toggle-link">Sign in</a>'
         : 'Don\'t have an account? <a id="auth-toggle-link">Sign up</a>';
+
     // Re-attach toggle listener
     document.getElementById('auth-toggle-link').addEventListener('click', toggleAuthMode);
     document.getElementById('auth-modal').classList.add('active');
     document.getElementById('auth-message').innerHTML = '';
     document.getElementById('auth-form').reset();
+
+    // Show/hide remember me checkbox (only for sign in) - after reset
+    const rememberGroup = document.getElementById('auth-remember').parentElement;
+    if (signUp) {
+        rememberGroup.style.display = 'none';
+    } else {
+        rememberGroup.style.display = 'flex';
+        // Restore remember me preference (default: true)
+        const rememberMe = localStorage.getItem('rememberMe') !== 'false';
+        document.getElementById('auth-remember').checked = rememberMe;
+    }
 }
 
 // Hide auth modal
@@ -34,6 +46,7 @@ async function handleAuth(e) {
     e.preventDefault();
     const email = document.getElementById('auth-email').value;
     const password = document.getElementById('auth-password').value;
+    const rememberMe = document.getElementById('auth-remember').checked;
     const messageEl = document.getElementById('auth-message');
 
     try {
@@ -48,6 +61,17 @@ async function handleAuth(e) {
         } else {
             const { data, error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) throw error;
+
+            // Store remember me preference
+            localStorage.setItem('rememberMe', rememberMe ? 'true' : 'false');
+
+            // If not remember me, sign out when browser closes
+            if (!rememberMe) {
+                window.addEventListener('beforeunload', () => {
+                    supabase.auth.signOut();
+                });
+            }
+
             hideAuthModal();
         }
     } catch (error) {
