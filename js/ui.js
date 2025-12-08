@@ -18,6 +18,7 @@ function changeTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     setTimeout(applyAutoContrast, 50);
+    debounceSavePreferences();
 }
 
 // Get theme-appropriate tag colors
@@ -40,6 +41,7 @@ function setAnnotationMode(mode) {
     content.classList.remove('annotation-mode-on', 'annotation-mode-subtle', 'annotation-mode-off');
     content.classList.add(`annotation-mode-${mode}`);
     localStorage.setItem('annotationMode', mode);
+    debounceSavePreferences();
 }
 
 // ===== Reading Mode =====
@@ -57,6 +59,7 @@ function setReadingMode(mode) {
     localStorage.setItem('readingMode', mode);
     updateVerseNumberStyleVisibility();
     displayChapter(); // Re-render with new mode
+    debounceSavePreferences();
 }
 
 function loadVerseNumberStyle() {
@@ -78,6 +81,7 @@ function setVerseNumberStyle(style) {
     }
 
     displayChapter(); // Re-render with new style
+    debounceSavePreferences();
 }
 
 function updateVerseNumberStyleVisibility() {

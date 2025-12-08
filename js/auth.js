@@ -71,6 +71,9 @@ async function handleAuthSuccess(user) {
     // Load annotations
     await loadAnnotations();
 
+    // Load user preferences from cloud
+    await loadUserPreferences();
+
     // Check if first visit
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
     const welcomeEl = document.querySelector('.welcome');

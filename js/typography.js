@@ -42,10 +42,11 @@ function loadTypography() {
 }
 
 /**
- * Save typography settings to localStorage
+ * Save typography settings to localStorage and cloud
  */
 function saveTypography() {
     localStorage.setItem('typography', JSON.stringify(currentTypography));
+    debounceSavePreferences();
 }
 
 /**
