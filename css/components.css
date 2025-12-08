@@ -1343,15 +1343,23 @@
 
 /* Highlighted text in reading mode */
 .reading-mode-fluid .highlighted-text {
-    padding: 2px 0;
-    border-radius: 2px;
+    padding: 2px 4px;
+    border-radius: 3px;
     cursor: pointer;
     transition: opacity 0.2s;
 }
 
 .reading-mode-fluid .highlighted-text:hover {
-    opacity: 0.8;
+    opacity: 0.85;
 }
+
+/* Highlight colors for fluid mode */
+.reading-mode-fluid .highlight-yellow { background: var(--highlight-yellow); }
+.reading-mode-fluid .highlight-green { background: var(--highlight-green); }
+.reading-mode-fluid .highlight-blue { background: var(--highlight-blue); }
+.reading-mode-fluid .highlight-pink { background: var(--highlight-pink); }
+.reading-mode-fluid .highlight-purple { background: var(--highlight-purple); }
+.reading-mode-fluid .highlight-orange { background: var(--highlight-orange); }
 
 /* Verse text inline (non-highlighted) */
 .reading-mode-fluid .verse-text-inline {
