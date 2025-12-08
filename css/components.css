@@ -1276,11 +1276,16 @@
     padding-left: 60px; /* Space for margin verse numbers */
 }
 
-/* Inline verse wrapper - block for menu placement */
+/* Inline verse wrapper - inline-block to flow with text */
 .reading-mode-fluid .verse-inline-wrapper {
-    display: block;
+    display: inline;
     position: relative;
     cursor: pointer;
+}
+
+/* When selected, become block to show menu below */
+.reading-mode-fluid .verse-inline-wrapper.selected {
+    display: block;
 }
 
 .reading-mode-fluid .verse-inline {
