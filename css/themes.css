@@ -458,3 +458,11 @@
     color: #000000 !important;
 }
 
+/* Fluid mode auto-contrast */
+.highlighted-text.highlight-light-text {
+    color: #FFFFFF !important;
+}
+.highlighted-text.highlight-dark-text {
+    color: #000000 !important;
+}
+

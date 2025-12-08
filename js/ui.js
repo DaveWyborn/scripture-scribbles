@@ -244,7 +244,7 @@ function getCSSVariable(name) {
 }
 
 function applyAutoContrast() {
-    // Apply to highlighted verses
+    // Apply to highlighted verses (verse-by-verse mode)
     const highlightedVerses = document.querySelectorAll('.verse[class*="highlight-"]');
 
     highlightedVerses.forEach(verse => {
@@ -279,6 +279,44 @@ function applyAutoContrast() {
             verse.classList.add('highlight-dark-text');
         } else {
             verse.classList.add('highlight-light-text');
+        }
+    });
+
+    // Apply to highlighted text (fluid mode)
+    const highlightedText = document.querySelectorAll('.highlighted-text[class*="highlight-"]');
+
+    highlightedText.forEach(span => {
+        // Get the highlight class
+        const classes = span.className.split(' ');
+        const highlightClass = classes.find(c => c.startsWith('highlight-') && c !== 'highlight-light-text' && c !== 'highlight-dark-text');
+
+        if (!highlightClass) return;
+
+        // Map highlight class to CSS variable
+        const colorMap = {
+            'highlight-yellow': 'highlight-yellow',
+            'highlight-green': 'highlight-green',
+            'highlight-blue': 'highlight-blue',
+            'highlight-pink': 'highlight-pink',
+            'highlight-purple': 'highlight-purple',
+            'highlight-orange': 'highlight-orange'
+        };
+
+        const varName = colorMap[highlightClass];
+        if (!varName) return;
+
+        const bgColour = getCSSVariable(varName);
+        const rgb = parseColour(bgColour);
+        const luminance = getLuminance(rgb[0], rgb[1], rgb[2]);
+
+        // Remove old classes
+        span.classList.remove('highlight-light-text', 'highlight-dark-text');
+
+        // Apply appropriate text colour
+        if (luminance > 0.179) {
+            span.classList.add('highlight-dark-text');
+        } else {
+            span.classList.add('highlight-light-text');
         }
     });
 
