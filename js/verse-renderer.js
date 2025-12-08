@@ -137,6 +137,9 @@ function renderParagraph(verses, bookNum, chapterNum) {
                             <button class="new-tag-add" onclick="addNewTag(${verse.number})">Add</button>
                         </div>
                     </div>
+                    <div style="padding: 8px; font-size: 0.75em; color: var(--text-tertiary); text-align: center; border-top: 1px solid var(--border); margin-top: 8px;">
+                        Edit colours or text: Settings > Manage Tags
+                    </div>
                 </div>
             </div>`;
         html += '</div>'; // Close verse-inline-wrapper
@@ -398,6 +401,9 @@ function renderVerseMode(chapter, book) {
                             <button class="new-tag-add" onclick="addNewTag(${verse.number})">Add</button>
                         </div>
                     </div>
+                    <div style="padding: 8px; font-size: 0.75em; color: var(--text-tertiary); text-align: center; border-top: 1px solid var(--border); margin-top: 8px;">
+                        Edit colours or text: Settings > Manage Tags
+                    </div>
                 </div>
             </div>
             </div>
@@ -563,6 +569,9 @@ function displayChapter() {
                             <div class="new-tag-color" id="new-tag-color-${verse.number}" style="background: #ACE5CB" onclick="event.stopPropagation(); showInlineColorPicker(${verse.number})"></div>
                             <button class="new-tag-add" onclick="addNewTag(${verse.number})">Add</button>
                         </div>
+                    </div>
+                    <div style="padding: 8px; font-size: 0.75em; color: var(--text-tertiary); text-align: center; border-top: 1px solid var(--border); margin-top: 8px;">
+                        Edit colours or text: Settings > Manage Tags
                     </div>
                 </div>
             </div>

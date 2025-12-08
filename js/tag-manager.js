@@ -1,7 +1,7 @@
 // Tag Manager Module - Edit and manage tags
 
 // Open tag manager modal
-function openTagManager() {
+async function openTagManager() {
     if (!currentUser) {
         alert('Please sign in to manage tags');
         return;
@@ -10,11 +10,13 @@ function openTagManager() {
     // Close settings menu
     document.getElementById('settings-menu').classList.remove('open');
 
-    // Populate tag list
-    populateTagManager();
+    // Show modal with loading state
+    const modal = document.getElementById('tag-manager-modal');
+    modal.classList.add('active');
+    document.getElementById('tag-manager-list').innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-tertiary);">Loading tags...</div>';
 
-    // Show modal
-    document.getElementById('tag-manager-modal').classList.add('active');
+    // Populate tag list
+    await populateTagManager();
 }
 
 // Close tag manager modal
@@ -23,7 +25,7 @@ function closeTagManager() {
 }
 
 // Populate tag list
-function populateTagManager() {
+async function populateTagManager() {
     const list = document.getElementById('tag-manager-list');
 
     if (Object.keys(knownTags).length === 0) {
@@ -31,11 +33,22 @@ function populateTagManager() {
         return;
     }
 
-    // Count usage of each tag
+    // Count usage of each tag by querying Supabase
     const tagUsage = {};
-    Object.values(allAnnotations).forEach(bookAnnotations => {
-        Object.values(bookAnnotations).forEach(chapterAnnotations => {
-            Object.values(chapterAnnotations).forEach(annotation => {
+
+    try {
+        const { data, error } = await supabase
+            .from('annotations')
+            .select('data')
+            .eq('user_id', currentUser.id)
+            .eq('bible_version', 'WEB')
+            .eq('annotation_set', currentAnnotationSet);
+
+        if (error) throw error;
+
+        // Count tag usage
+        data.forEach(row => {
+            Object.values(row.data || {}).forEach(annotation => {
                 if (annotation.tags) {
                     annotation.tags.forEach(tag => {
                         const tagName = (typeof tag === 'string' ? tag : tag.name).toLowerCase();
@@ -44,7 +57,11 @@ function populateTagManager() {
                 }
             });
         });
-    });
+    } catch (error) {
+        console.error('Error loading tag usage:', error);
+        list.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--accent-negative);">Error loading tags</div>';
+        return;
+    }
 
     // Build tag list HTML
     let html = '';
@@ -101,32 +118,50 @@ async function applyTagColor(oldName, newColor) {
     knownTags[oldName.toLowerCase()] = newColor;
     saveKnownTags();
 
-    // Update all annotations with this tag
-    let updated = false;
-    Object.keys(allAnnotations).forEach(book => {
-        Object.keys(allAnnotations[book]).forEach(chapter => {
-            Object.keys(allAnnotations[book][chapter]).forEach(verse => {
-                const annotation = allAnnotations[book][chapter][verse];
+    // Update all annotations with this tag in Supabase
+    try {
+        const { data: rows, error } = await supabase
+            .from('annotations')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .eq('bible_version', 'WEB')
+            .eq('annotation_set', currentAnnotationSet);
+
+        if (error) throw error;
+
+        // Update tags in each row
+        for (const row of rows) {
+            let modified = false;
+            const annotations = row.data || {};
+
+            Object.values(annotations).forEach(annotation => {
                 if (annotation.tags) {
                     annotation.tags.forEach(tag => {
                         if (typeof tag === 'object' && tag.name.toLowerCase() === oldName.toLowerCase()) {
                             tag.color = newColor;
-                            updated = true;
+                            modified = true;
                         }
                     });
                 }
             });
-        });
-    });
 
-    if (updated) {
-        // Save to Supabase
-        await syncAnnotations();
+            if (modified) {
+                await supabase
+                    .from('annotations')
+                    .update({ data: annotations })
+                    .eq('id', row.id);
+            }
+        }
+
+        // Refresh current chapter and display
+        await loadAnnotations(currentBook, currentChapter);
+        displayChapter();
+        await populateTagManager();
+
+    } catch (error) {
+        console.error('Error updating tag color:', error);
+        alert('Failed to update tag color');
     }
-
-    // Refresh display
-    displayChapter();
-    populateTagManager();
 
     // Remove color picker
     document.querySelector('.inline-color-picker')?.remove();
@@ -139,7 +174,7 @@ async function saveTagName(oldName, newName) {
     // Validation
     if (!newName) {
         alert('Tag name cannot be empty');
-        populateTagManager();
+        await populateTagManager();
         return;
     }
 
@@ -149,7 +184,7 @@ async function saveTagName(oldName, newName) {
 
     if (knownTags[newName.toLowerCase()]) {
         alert('A tag with this name already exists');
-        populateTagManager();
+        await populateTagManager();
         return;
     }
 
@@ -159,38 +194,56 @@ async function saveTagName(oldName, newName) {
     knownTags[newName.toLowerCase()] = color;
     saveKnownTags();
 
-    // Update all annotations with this tag
-    let updated = false;
-    Object.keys(allAnnotations).forEach(book => {
-        Object.keys(allAnnotations[book]).forEach(chapter => {
-            Object.keys(allAnnotations[book][chapter]).forEach(verse => {
-                const annotation = allAnnotations[book][chapter][verse];
+    // Update all annotations with this tag in Supabase
+    try {
+        const { data: rows, error } = await supabase
+            .from('annotations')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .eq('bible_version', 'WEB')
+            .eq('annotation_set', currentAnnotationSet);
+
+        if (error) throw error;
+
+        // Update tags in each row
+        for (const row of rows) {
+            let modified = false;
+            const annotations = row.data || {};
+
+            Object.values(annotations).forEach(annotation => {
                 if (annotation.tags) {
                     annotation.tags.forEach(tag => {
                         if (typeof tag === 'string' && tag.toLowerCase() === oldName.toLowerCase()) {
                             // Update string tag
                             const idx = annotation.tags.indexOf(tag);
                             annotation.tags[idx] = { name: newName, color: color };
-                            updated = true;
+                            modified = true;
                         } else if (typeof tag === 'object' && tag.name.toLowerCase() === oldName.toLowerCase()) {
                             // Update object tag
                             tag.name = newName;
-                            updated = true;
+                            modified = true;
                         }
                     });
                 }
             });
-        });
-    });
 
-    if (updated) {
-        // Save to Supabase
-        await syncAnnotations();
+            if (modified) {
+                await supabase
+                    .from('annotations')
+                    .update({ data: annotations })
+                    .eq('id', row.id);
+            }
+        }
+
+        // Refresh current chapter and display
+        await loadAnnotations(currentBook, currentChapter);
+        displayChapter();
+        await populateTagManager();
+
+    } catch (error) {
+        console.error('Error updating tag name:', error);
+        alert('Failed to update tag name');
     }
-
-    // Refresh display
-    displayChapter();
-    populateTagManager();
 }
 
 // Delete tag
@@ -205,12 +258,24 @@ async function deleteTag(tagName) {
     delete knownTags[tagName.toLowerCase()];
     saveKnownTags();
 
-    // Remove from all annotations
-    let updated = false;
-    Object.keys(allAnnotations).forEach(book => {
-        Object.keys(allAnnotations[book]).forEach(chapter => {
-            Object.keys(allAnnotations[book][chapter]).forEach(verse => {
-                const annotation = allAnnotations[book][chapter][verse];
+    // Remove from all annotations in Supabase
+    try {
+        const { data: rows, error } = await supabase
+            .from('annotations')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .eq('bible_version', 'WEB')
+            .eq('annotation_set', currentAnnotationSet);
+
+        if (error) throw error;
+
+        // Remove tag from each row
+        for (const row of rows) {
+            let modified = false;
+            const annotations = row.data || {};
+
+            Object.keys(annotations).forEach(verseNum => {
+                const annotation = annotations[verseNum];
                 if (annotation.tags) {
                     const originalLength = annotation.tags.length;
                     annotation.tags = annotation.tags.filter(tag => {
@@ -219,7 +284,7 @@ async function deleteTag(tagName) {
                     });
 
                     if (annotation.tags.length !== originalLength) {
-                        updated = true;
+                        modified = true;
                     }
 
                     // Clean up empty annotation
@@ -227,19 +292,26 @@ async function deleteTag(tagName) {
                         !annotation.highlight &&
                         !annotation.underline &&
                         !annotation.note) {
-                        delete allAnnotations[book][chapter][verse];
+                        delete annotations[verseNum];
                     }
                 }
             });
-        });
-    });
 
-    if (updated) {
-        // Save to Supabase
-        await syncAnnotations();
+            if (modified) {
+                await supabase
+                    .from('annotations')
+                    .update({ data: annotations })
+                    .eq('id', row.id);
+            }
+        }
+
+        // Refresh current chapter and display
+        await loadAnnotations(currentBook, currentChapter);
+        displayChapter();
+        await populateTagManager();
+
+    } catch (error) {
+        console.error('Error deleting tag:', error);
+        alert('Failed to delete tag');
     }
-
-    // Refresh display
-    displayChapter();
-    populateTagManager();
 }
