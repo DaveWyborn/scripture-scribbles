@@ -26,7 +26,7 @@ function renderParagraph(verses, bookNum, chapterNum) {
             verseText = `<span class="verse-text-inline" data-verse="${verse.number}">${verseText}</span>`;
         }
 
-        html += `<span class="verse-inline-wrapper" data-verse="${verse.number}">`;
+        html += `<div class="verse-inline-wrapper" data-verse="${verse.number}">`;
         html += `<span class="verse-inline">${verseNum}${verseText}`;
 
         // Add indicators
@@ -139,7 +139,7 @@ function renderParagraph(verses, bookNum, chapterNum) {
                     </div>
                 </div>
             </div>`;
-        html += '</span>'; // Close verse-inline-wrapper
+        html += '</div>'; // Close verse-inline-wrapper
         console.log(`  Verse ${verse.number} HTML built, wrapper closed`);
     });
 
@@ -171,7 +171,7 @@ function renderPoetry(verses, bookNum, chapterNum) {
             verseText = `<span class="verse-text-inline" data-verse="${verse.number}">${verseText}</span>`;
         }
 
-        html += `<div class="verse-inline-wrapper poetry-line ${poetryLevel}" data-verse="${verse.number}">${verseNum}${verseText}`;
+        html += `<div class="verse-inline-wrapper poetry-line ${poetryLevel}" data-verse="${verse.number}"><span class="verse-inline">${verseNum}${verseText}`;
 
         // Add indicators
         const hasNote = annotation.note && annotation.note.trim();
@@ -190,6 +190,8 @@ function renderPoetry(verses, bookNum, chapterNum) {
             html += '</span>';
         }
 
+        html += '</span>'; // Close verse-inline
+
         // Add note icon for user notes (opens inline menu)
         if (hasNote) {
             html += `<i class="ph ph-note-pencil indicator-icon-inline" style="color: var(--accent-info); margin-left: 4px; font-size: 0.9em; cursor: pointer;" data-verse="${verse.number}"></i>`;
@@ -197,7 +199,7 @@ function renderPoetry(verses, bookNum, chapterNum) {
 
         // TODO: Add inline menu for poetry (copy from paragraph renderer)
 
-        html += '</div>';
+        html += '</div>'; // Close verse-inline-wrapper
     });
 
     html += '</div>';
