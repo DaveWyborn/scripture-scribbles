@@ -320,8 +320,8 @@ function applyAutoContrast() {
         }
     });
 
-    // Apply to tags
-    const tags = document.querySelectorAll('.tag, .tag-item');
+    // Apply to tags (both verse-by-verse and fluid mode)
+    const tags = document.querySelectorAll('.tag, .tag-item, .tag-chip-inline');
     tags.forEach(tag => {
         const bg = getComputedStyle(tag).backgroundColor;
         const match = bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
