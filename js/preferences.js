@@ -134,8 +134,6 @@ async function saveUserPreferences() {
                 user_id: currentUser.id,
                 preferences: preferences,
                 updated_at: new Date().toISOString()
-            }, {
-                onConflict: 'user_id'
             });
 
         if (error) throw error;
