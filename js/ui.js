@@ -208,8 +208,8 @@ async function deleteSet(setName) {
 
     // Switch to first set if we deleted the current one
     if (setName === currentAnnotationSet) {
-        currentAnnotationSet = userAnnotationSets[0];
-        await switchAnnotationSet(currentAnnotationSet);
+        // Don't set currentAnnotationSet here - let switchAnnotationSet do it
+        await switchAnnotationSet(userAnnotationSets[0]);
     }
 
     saveAnnotationSets();
