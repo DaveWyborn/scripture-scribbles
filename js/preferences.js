@@ -127,13 +127,15 @@ async function saveUserPreferences() {
             annotationMode: document.getElementById('annotation-mode')?.value || 'on'
         };
 
-        // Upsert to Supabase
+        // Upsert to Supabase (use user_id for conflict detection, not primary key)
         const { error } = await supabase
             .from('user_preferences')
             .upsert({
                 user_id: currentUser.id,
                 preferences: preferences,
                 updated_at: new Date().toISOString()
+            }, {
+                onConflict: 'user_id'
             });
 
         if (error) throw error;
