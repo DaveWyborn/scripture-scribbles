@@ -6,7 +6,10 @@
 function renderParagraph(verses, bookNum, chapterNum) {
     let html = '<p class="paragraph">';
 
+    console.log('renderParagraph called with verses:', verses.map(v => v.number));
+
     verses.forEach(verse => {
+        console.log(`  Rendering verse ${verse.number}`);
         const annotation = currentAnnotations[verse.number] || {};
         const verseNumClass = verseNumberStyle === 'hidden' ? 'verse-number hidden' :
                                verseNumberStyle === 'margin' ? 'verse-number margin' :
@@ -51,6 +54,7 @@ function renderParagraph(verses, bookNum, chapterNum) {
         }
 
         // Add inline menu (same as verse-by-verse mode)
+        console.log(`  Adding inline menu for verse ${verse.number}`);
         html += `
             <div class="inline-menu">
                 <div class="menu-buttons">
@@ -136,6 +140,7 @@ function renderParagraph(verses, bookNum, chapterNum) {
                 </div>
             </div>`;
         html += '</span>'; // Close verse-inline-wrapper
+        console.log(`  Verse ${verse.number} HTML built, wrapper closed`);
     });
 
     html += '</p>';
