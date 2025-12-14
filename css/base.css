@@ -53,8 +53,9 @@ body {
 
     .toolbar-top {
         margin-bottom: 0;
+        width: 100%;
         display: flex;
-        gap: var(--space-l);
+        justify-content: space-between;
         align-items: center;
     }
 
@@ -63,17 +64,17 @@ body {
     }
 
     .navigation {
-        flex: 1;
-        position: relative;
-        justify-content: center;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
         gap: var(--space-s);
+        align-items: center;
     }
 
-    /* Set switcher absolutely positioned on the right */
+    /* Remove margin from set switcher on desktop */
     .annotation-set-switcher {
-        position: absolute;
-        right: 0;
-        margin-left: 0;
+        margin-left: var(--space-m);
     }
 
     .toolbar-menu-btn {
