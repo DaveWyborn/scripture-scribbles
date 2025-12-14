@@ -46,39 +46,41 @@ body {
 /* Desktop: Single line layout */
 @media (min-width: 768px) {
     .toolbar {
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
         align-items: center;
         gap: var(--space-l);
     }
 
     .toolbar-top {
         margin-bottom: 0;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        display: contents;
     }
 
     .toolbar-logo {
-        flex-shrink: 0;
+        grid-column: 1;
+        justify-self: start;
     }
 
     .navigation {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
+        grid-column: 2;
         display: flex;
         gap: var(--space-s);
         align-items: center;
+        justify-content: center;
+        position: relative;
     }
 
-    /* Remove margin from set switcher on desktop */
+    /* Pull annotation set switcher out with absolute positioning */
     .annotation-set-switcher {
-        margin-left: var(--space-m);
+        position: absolute;
+        left: calc(100% + var(--space-m));
+        margin-left: 0;
     }
 
     .toolbar-menu-btn {
-        flex-shrink: 0;
+        grid-column: 3;
+        justify-self: end;
     }
 }
 
