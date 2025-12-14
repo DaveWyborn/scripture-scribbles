@@ -730,13 +730,23 @@ function handleToolbarScroll() {
     lastScrollTop = currentScroll;
 }
 
-// Show toolbar on mouse movement near top of screen (desktop)
+// Show/hide toolbar on mouse movement (desktop)
 function handleMouseMove(e) {
     const toolbar = document.getElementById('toolbar');
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+    // Don't hide if at very top of page
+    if (currentScroll <= 100) {
+        return;
+    }
 
     // Show toolbar if mouse is in top 100px of viewport
     if (e.clientY < 100) {
         toolbar.classList.remove('toolbar-hidden');
+    }
+    // Hide toolbar if mouse moves away from top
+    else if (e.clientY > 150) {
+        toolbar.classList.add('toolbar-hidden');
     }
 }
 
