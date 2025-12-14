@@ -55,17 +55,31 @@ body {
     display: none;
 }
 
-/* Show light logo on dark themes */
-[data-theme="clean"] .logo-light,
-[data-theme="warm"] .logo-light,
-[data-theme="dyslexia-light"] .logo-light {
+/* Show dark logo on light themes */
+:root .logo-dark,
+[data-theme="clean"] .logo-dark,
+[data-theme="warm"] .logo-dark,
+[data-theme="dyslexia-light"] .logo-dark,
+[data-theme="high-contrast-light"] .logo-dark,
+[data-theme="github-light"] .logo-dark,
+[data-theme="paper"] .logo-dark,
+[data-theme="gruvbox-light"] .logo-dark {
     display: block;
 }
 
-/* Show dark logo on light themes */
-[data-theme="dark"] .logo-dark,
-[data-theme="slate"] .logo-dark,
-[data-theme="dyslexia-dark"] .logo-dark {
+/* Show light logo on dark themes */
+[data-theme="true-dark"] .logo-light,
+[data-theme="slate"] .logo-light,
+[data-theme="dyslexia-dark"] .logo-light,
+[data-theme="high-contrast-dark"] .logo-light,
+[data-theme="nord"] .logo-light,
+[data-theme="github-dark"] .logo-light,
+[data-theme="gruvbox-dark"] .logo-light,
+[data-theme="ocean-deep"] .logo-light,
+[data-theme="twilight"] .logo-light,
+[data-theme="monokai"] .logo-light,
+[data-theme="sunset"] .logo-light,
+[data-theme="luxury"] .logo-light {
     display: block;
 }
 
