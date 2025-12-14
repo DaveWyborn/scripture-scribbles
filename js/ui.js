@@ -706,16 +706,10 @@ document.addEventListener('click', (e) => {
 // ===== Auto-hide Toolbar on Scroll =====
 
 let lastScrollTop = 0;
-let scrollTimeout = null;
 
 function handleToolbarScroll() {
     const toolbar = document.getElementById('toolbar');
     const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-
-    // Clear any existing timeout
-    if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-    }
 
     // Don't hide if at very top
     if (currentScroll <= 100) {
@@ -734,11 +728,16 @@ function handleToolbarScroll() {
     }
 
     lastScrollTop = currentScroll;
+}
 
-    // Auto-show toolbar after 2s of no scrolling
-    scrollTimeout = setTimeout(() => {
+// Show toolbar on mouse movement near top of screen (desktop)
+function handleMouseMove(e) {
+    const toolbar = document.getElementById('toolbar');
+
+    // Show toolbar if mouse is in top 100px of viewport
+    if (e.clientY < 100) {
         toolbar.classList.remove('toolbar-hidden');
-    }, 2000);
+    }
 }
 
 // Throttle scroll events for better performance
@@ -748,6 +747,17 @@ window.addEventListener('scroll', () => {
         scrollThrottle = setTimeout(() => {
             handleToolbarScroll();
             scrollThrottle = null;
+        }, 100);
+    }
+});
+
+// Desktop: show toolbar on mouse movement near top
+let mouseMoveThrottle = null;
+window.addEventListener('mousemove', (e) => {
+    if (!mouseMoveThrottle) {
+        mouseMoveThrottle = setTimeout(() => {
+            handleMouseMove(e);
+            mouseMoveThrottle = null;
         }, 100);
     }
 });
