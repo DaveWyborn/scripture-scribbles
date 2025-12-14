@@ -702,3 +702,52 @@ document.addEventListener('click', (e) => {
         hideNoteTooltip();
     }
 });
+
+// ===== Auto-hide Toolbar on Scroll =====
+
+let lastScrollTop = 0;
+let scrollTimeout = null;
+
+function handleToolbarScroll() {
+    const toolbar = document.getElementById('toolbar');
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+    // Clear any existing timeout
+    if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+    }
+
+    // Don't hide if at very top
+    if (currentScroll <= 100) {
+        toolbar.classList.remove('toolbar-hidden');
+        lastScrollTop = currentScroll;
+        return;
+    }
+
+    // Scrolling down - hide toolbar
+    if (currentScroll > lastScrollTop && currentScroll > 100) {
+        toolbar.classList.add('toolbar-hidden');
+    }
+    // Scrolling up - show toolbar
+    else if (currentScroll < lastScrollTop) {
+        toolbar.classList.remove('toolbar-hidden');
+    }
+
+    lastScrollTop = currentScroll;
+
+    // Auto-show toolbar after 2s of no scrolling
+    scrollTimeout = setTimeout(() => {
+        toolbar.classList.remove('toolbar-hidden');
+    }, 2000);
+}
+
+// Throttle scroll events for better performance
+let scrollThrottle = null;
+window.addEventListener('scroll', () => {
+    if (!scrollThrottle) {
+        scrollThrottle = setTimeout(() => {
+            handleToolbarScroll();
+            scrollThrottle = null;
+        }, 100);
+    }
+});

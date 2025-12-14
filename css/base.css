@@ -29,6 +29,11 @@ body {
     top: 0;
     z-index: 100;
     box-shadow: 0 2px 5px var(--stroke);
+    transition: transform 0.3s ease;
+}
+
+.toolbar.toolbar-hidden {
+    transform: translateY(-100%);
 }
 
 .toolbar-top {
@@ -38,10 +43,30 @@ body {
     margin-bottom: 10px;
 }
 
-.toolbar h1 {
-    font-size: 1.4em;
-    font-weight: 600;
-    color: var(--bg-primary);
+.toolbar-logo {
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.toolbar-logo img {
+    height: 100%;
+    width: auto;
+    display: none;
+}
+
+/* Show light logo on dark themes */
+[data-theme="clean"] .logo-light,
+[data-theme="warm"] .logo-light,
+[data-theme="dyslexia-light"] .logo-light {
+    display: block;
+}
+
+/* Show dark logo on light themes */
+[data-theme="dark"] .logo-dark,
+[data-theme="slate"] .logo-dark,
+[data-theme="dyslexia-dark"] .logo-dark {
+    display: block;
 }
 
 .toolbar-menu-btn {
