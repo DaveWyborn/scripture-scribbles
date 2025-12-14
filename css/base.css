@@ -43,6 +43,39 @@ body {
     margin-bottom: 10px;
 }
 
+/* Desktop: Single line layout */
+@media (min-width: 768px) {
+    .toolbar {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: var(--space-l);
+    }
+
+    .toolbar-top {
+        grid-column: 1 / 4;
+        grid-row: 1;
+        display: contents;
+        margin-bottom: 0;
+    }
+
+    .toolbar-logo {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .navigation {
+        grid-column: 2;
+        grid-row: 1;
+        justify-content: center;
+    }
+
+    .toolbar-menu-btn {
+        grid-column: 3;
+        grid-row: 1;
+    }
+}
+
 .toolbar-logo {
     height: 40px;
     display: flex;
