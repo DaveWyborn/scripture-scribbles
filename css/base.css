@@ -47,7 +47,7 @@ body {
 @media (min-width: 768px) {
     .toolbar {
         display: grid;
-        grid-template-columns: auto 1fr auto;
+        grid-template-columns: 1fr auto 1fr;
         align-items: center;
         gap: var(--space-l);
     }
@@ -62,6 +62,7 @@ body {
     .toolbar-logo {
         grid-column: 1;
         grid-row: 1;
+        justify-self: start;
     }
 
     .navigation {
@@ -73,6 +74,7 @@ body {
     .toolbar-menu-btn {
         grid-column: 3;
         grid-row: 1;
+        justify-self: end;
     }
 }
 
