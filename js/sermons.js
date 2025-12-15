@@ -299,7 +299,39 @@ async function toggleNotesView() {
 
     if (!notesView) {
         console.error('❌ sermon-notes-view element not found!');
-        return;
+        console.log('Searching DOM for sermon elements:',
+            Array.from(document.querySelectorAll('[id*="sermon"]')).map(el => el.id));
+        console.log('Content children:',
+            Array.from(content?.children || []).map(el => `${el.tagName}#${el.id}.${el.className}`));
+
+        // Create element as fallback
+        console.warn('⚠️ Creating sermon-notes-view fallback...');
+        const newNotesView = document.createElement('div');
+        newNotesView.id = 'sermon-notes-view';
+        newNotesView.className = 'sermon-notes-view';
+        newNotesView.style.display = 'none';
+        newNotesView.innerHTML = `
+            <div class="sermon-metadata">
+                <input type="text" id="sermon-title" placeholder="Sermon title...">
+                <input type="date" id="sermon-date">
+                <input type="text" id="sermon-speaker" placeholder="Speaker...">
+                <input type="text" id="sermon-location" placeholder="Location...">
+                <input type="text" id="sermon-series" placeholder="Series/Theme...">
+                <input type="text" id="sermon-passage" placeholder="Passage...">
+            </div>
+            <div class="sermon-editor-container">
+                <trix-editor input="sermon-content" placeholder="Start typing..."></trix-editor>
+                <input type="hidden" id="sermon-content">
+            </div>
+            <div class="sermon-actions">
+                <button onclick="openSermonSelector()">My Sermons</button>
+                <button onclick="exportSermonMarkdown()">Export</button>
+            </div>
+        `;
+        content.appendChild(newNotesView);
+        console.log('✅ Created fallback element');
+        // Retry
+        return toggleNotesView();
     }
 
     if (sermonViewMode === 'single') {
