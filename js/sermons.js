@@ -337,6 +337,28 @@ async function toggleNotesView() {
     if (sermonViewMode === 'single') {
         // Show split view
         console.log('Switching to split view');
+
+        // Wrap Bible content if not already wrapped
+        let bibleWrapper = document.getElementById('bible-content-wrapper');
+        if (!bibleWrapper) {
+            console.log('Wrapping Bible content...');
+            bibleWrapper = document.createElement('div');
+            bibleWrapper.id = 'bible-content-wrapper';
+            bibleWrapper.className = 'bible-content-wrapper';
+
+            // Move all existing children (except sermon-notes-view) into wrapper
+            const children = Array.from(content.children);
+            children.forEach(child => {
+                if (child.id !== 'sermon-notes-view') {
+                    bibleWrapper.appendChild(child);
+                }
+            });
+
+            // Add wrapper as first child
+            content.insertBefore(bibleWrapper, notesView);
+            console.log('Bible content wrapped');
+        }
+
         content.classList.add('split-view');
         notesView.style.display = 'flex';
         sermonViewMode = 'split';

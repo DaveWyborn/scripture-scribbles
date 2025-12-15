@@ -64,6 +64,13 @@
     grid-template-columns: 40% 60%;
 }
 
+/* Bible content wrapper for split view */
+.bible-content-wrapper {
+    overflow-y: auto;
+    max-height: calc(100vh - 80px);
+    padding-right: var(--space-m);
+}
+
 /* Sermon notes view container */
 .sermon-notes-view {
     display: none;
