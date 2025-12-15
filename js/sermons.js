@@ -286,12 +286,25 @@ async function deleteSermon(sermonId) {
  * Toggle notes view (desktop split screen)
  */
 async function toggleNotesView() {
+    console.log('🔘 toggleNotesView called, current mode:', sermonViewMode);
     const content = document.getElementById('content');
     const notesView = document.getElementById('sermon-notes-view');
     const toggleBtn = document.getElementById('toggle-notes-btn');
 
+    console.log('Elements found:', {
+        content: !!content,
+        notesView: !!notesView,
+        toggleBtn: !!toggleBtn
+    });
+
+    if (!notesView) {
+        console.error('❌ sermon-notes-view element not found!');
+        return;
+    }
+
     if (sermonViewMode === 'single') {
         // Show split view
+        console.log('Switching to split view');
         content.classList.add('split-view');
         notesView.style.display = 'flex';
         sermonViewMode = 'split';
@@ -302,10 +315,12 @@ async function toggleNotesView() {
 
         // Load current sermon or create new
         if (!currentSermon) {
+            console.log('Creating new sermon...');
             await createSermon();
         }
     } else {
         // Return to single view
+        console.log('Switching to single view');
         content.classList.remove('split-view');
         notesView.style.display = 'none';
         sermonViewMode = 'single';

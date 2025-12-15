@@ -93,31 +93,19 @@ async function handleAuthSuccess(user) {
     document.getElementById('navigation').style.display = 'flex';
 
     // Show sermon notes toggle button (desktop)
+    const desktopToggleWrapper = document.getElementById('desktop-notes-toggle');
     const toggleNotesBtn = document.getElementById('toggle-notes-btn');
+
     console.log('🔍 Toggle button debug:', {
-        element: toggleNotesBtn,
+        wrapper: desktopToggleWrapper,
+        button: toggleNotesBtn,
         windowWidth: window.innerWidth,
-        isDesktop: window.innerWidth >= 768,
-        currentDisplay: toggleNotesBtn?.style.display
+        isDesktop: window.innerWidth >= 768
     });
 
-    if (toggleNotesBtn && window.innerWidth >= 768) {
-        toggleNotesBtn.style.display = 'flex';
-
-        // Force visibility with important inline styles
-        toggleNotesBtn.style.setProperty('display', 'flex', 'important');
-        toggleNotesBtn.style.visibility = 'visible';
-        toggleNotesBtn.style.opacity = '1';
-
-        console.log('✅ Desktop: Showing toggle button');
-        console.log('After setting display:', {
-            display: toggleNotesBtn.style.display,
-            visibility: toggleNotesBtn.style.visibility,
-            computedDisplay: window.getComputedStyle(toggleNotesBtn).display,
-            computedVisibility: window.getComputedStyle(toggleNotesBtn).visibility,
-            offsetWidth: toggleNotesBtn.offsetWidth,
-            offsetHeight: toggleNotesBtn.offsetHeight
-        });
+    if (desktopToggleWrapper && window.innerWidth >= 768) {
+        desktopToggleWrapper.style.display = 'block';
+        console.log('✅ Desktop: Showing toggle button wrapper');
     }
 
     // Show mobile view indicator (mobile)

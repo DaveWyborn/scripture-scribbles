@@ -444,7 +444,14 @@ trix-editor a {
     border-top: 1px solid var(--border);
 }
 
-/* Toggle notes button in toolbar */
+/* Desktop toggle button wrapper (temporary position) */
+.desktop-notes-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Toggle notes button */
 #toggle-notes-btn {
     background: var(--accent-primary);
     color: var(--bg-primary);
@@ -458,15 +465,6 @@ trix-editor a {
     gap: 6px;
     font-size: 0.95em;
     transition: opacity 0.2s;
-    margin-right: auto;
-    flex-shrink: 0;
-}
-
-@media (min-width: 768px) {
-    #toggle-notes-btn {
-        margin-right: 0;
-        margin-left: var(--space-m);
-    }
 }
 
 #toggle-notes-btn:hover {
