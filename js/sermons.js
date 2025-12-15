@@ -203,8 +203,9 @@ async function saveSermon() {
         return;
     }
 
-    const trixEditor = document.querySelector('trix-editor');
-    const content = trixEditor ? trixEditor.editor.getDocument().toString() : '';
+    // Get HTML content from Trix (not plain text)
+    const contentInput = document.getElementById('sermon-content');
+    const content = contentInput ? contentInput.value : '';
 
     const sermonData = {
         user_id: currentUser.id,
@@ -645,8 +646,9 @@ async function exportSermonMarkdown() {
         return;
     }
 
-    const trixEditor = document.querySelector('trix-editor');
-    const htmlContent = trixEditor ? trixEditor.editor.getDocument().toString() : '';
+    // Get HTML content from Trix
+    const contentInput = document.getElementById('sermon-content');
+    const htmlContent = contentInput ? contentInput.value : '';
 
     // Convert HTML to Markdown
     const mdContent = trixToMarkdown(htmlContent);
