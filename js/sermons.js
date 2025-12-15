@@ -320,8 +320,18 @@ async function toggleNotesView() {
  * Switch view on mobile (swipe navigation)
  */
 function switchMobileView(view) {
+    console.log('📱 switchMobileView called:', view);
     activeView = view;
     const indicator = document.getElementById('mobile-view-indicator');
+    const notesView = document.getElementById('sermon-notes-view');
+    const welcomeView = document.querySelector('.welcome');
+
+    console.log('Elements found:', {
+        indicator: !!indicator,
+        notesView: !!notesView,
+        welcomeView: !!welcomeView,
+        currentSermon: !!currentSermon
+    });
 
     // Update visual indicator
     if (indicator) {
@@ -331,22 +341,25 @@ function switchMobileView(view) {
     }
 
     // Show/hide sermon notes view
-    // On mobile, Bible content is always in main content area
-    // We just toggle the sermon notes overlay
-    const notesView = document.getElementById('sermon-notes-view');
-    const welcomeView = document.querySelector('.welcome');
-
     if (view === 'bible') {
-        // Show Bible, hide notes
-        if (notesView) notesView.style.display = 'none';
+        console.log('Switching to Bible view');
+        if (notesView) {
+            notesView.style.display = 'none';
+            console.log('Notes hidden');
+        }
     } else {
-        // Hide welcome if showing, show notes
-        if (welcomeView) welcomeView.style.display = 'none';
+        console.log('Switching to Notes view');
+        if (welcomeView) {
+            welcomeView.style.display = 'none';
+            console.log('Welcome hidden');
+        }
         if (notesView) {
             notesView.style.display = 'flex';
+            console.log('Notes shown with display:', notesView.style.display);
 
             // Load sermon if needed
             if (!currentSermon) {
+                console.log('Creating new sermon...');
                 createSermon();
             }
         }

@@ -103,7 +103,21 @@ async function handleAuthSuccess(user) {
 
     if (toggleNotesBtn && window.innerWidth >= 768) {
         toggleNotesBtn.style.display = 'flex';
+
+        // Force visibility with important inline styles
+        toggleNotesBtn.style.setProperty('display', 'flex', 'important');
+        toggleNotesBtn.style.visibility = 'visible';
+        toggleNotesBtn.style.opacity = '1';
+
         console.log('✅ Desktop: Showing toggle button');
+        console.log('After setting display:', {
+            display: toggleNotesBtn.style.display,
+            visibility: toggleNotesBtn.style.visibility,
+            computedDisplay: window.getComputedStyle(toggleNotesBtn).display,
+            computedVisibility: window.getComputedStyle(toggleNotesBtn).visibility,
+            offsetWidth: toggleNotesBtn.offsetWidth,
+            offsetHeight: toggleNotesBtn.offsetHeight
+        });
     }
 
     // Show mobile view indicator (mobile)
