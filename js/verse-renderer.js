@@ -70,6 +70,11 @@ function renderParagraph(verses, bookNum, chapterNum) {
                     <button class="menu-btn" onclick="copyVerse(${verse.number})">
                         <i class="ph ph-copy"></i> Copy
                     </button>
+                    ${(typeof sermonViewMode !== 'undefined' && (sermonViewMode === 'split' || activeView === 'notes')) ? `
+                    <button class="menu-btn" onclick="insertVerseReference(${verse.number})" title="Add to sermon notes">
+                        <i class="ph ph-arrow-right"></i> Add to Notes
+                    </button>
+                    ` : ''}
                 </div>
 
                 <!-- Highlight submenu -->
@@ -334,6 +339,11 @@ function renderVerseMode(chapter, book) {
                     <button class="menu-btn" onclick="copyVerse(${verse.number})">
                         <i class="ph ph-copy"></i> Copy
                     </button>
+                    ${(typeof sermonViewMode !== 'undefined' && (sermonViewMode === 'split' || activeView === 'notes')) ? `
+                    <button class="menu-btn" onclick="insertVerseReference(${verse.number})" title="Add to sermon notes">
+                        <i class="ph ph-arrow-right"></i> Add to Notes
+                    </button>
+                    ` : ''}
                 </div>
 
                 <!-- Highlight submenu -->
@@ -503,6 +513,11 @@ function displayChapter() {
                     <button class="menu-btn" onclick="copyVerse(${verse.number})">
                         <i class="ph ph-copy"></i> Copy
                     </button>
+                    ${(typeof sermonViewMode !== 'undefined' && (sermonViewMode === 'split' || activeView === 'notes')) ? `
+                    <button class="menu-btn" onclick="insertVerseReference(${verse.number})" title="Add to sermon notes">
+                        <i class="ph ph-arrow-right"></i> Add to Notes
+                    </button>
+                    ` : ''}
                 </div>
 
                 <!-- Highlight submenu -->

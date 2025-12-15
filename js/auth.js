@@ -92,6 +92,32 @@ async function handleAuthSuccess(user) {
     document.getElementById('settings-guest-buttons').style.display = 'none';
     document.getElementById('navigation').style.display = 'flex';
 
+    // Show sermon notes toggle button (desktop)
+    const toggleNotesBtn = document.getElementById('toggle-notes-btn');
+    console.log('🔍 Toggle button debug:', {
+        element: toggleNotesBtn,
+        windowWidth: window.innerWidth,
+        isDesktop: window.innerWidth >= 768,
+        currentDisplay: toggleNotesBtn?.style.display
+    });
+
+    if (toggleNotesBtn && window.innerWidth >= 768) {
+        toggleNotesBtn.style.display = 'flex';
+        console.log('✅ Desktop: Showing toggle button');
+    }
+
+    // Show mobile view indicator (mobile)
+    const mobileIndicator = document.getElementById('mobile-view-indicator');
+    console.log('🔍 Mobile indicator debug:', {
+        element: mobileIndicator,
+        isMobile: window.innerWidth < 768
+    });
+
+    if (mobileIndicator && window.innerWidth < 768) {
+        mobileIndicator.style.display = 'flex';
+        console.log('✅ Mobile: Showing view indicator');
+    }
+
     // Load annotations
     await loadAnnotations();
 

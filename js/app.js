@@ -64,6 +64,11 @@ async function initApp() {
     });
 
     setupEventListeners();
+
+    // Initialize sermon notes module (after user is loaded if applicable)
+    if (typeof initSermons === 'function') {
+        await initSermons();
+    }
 }
 
 // Setup all event listeners
@@ -254,6 +259,31 @@ function setupEventListeners() {
     document.getElementById('tag-manager-close').addEventListener('click', closeTagManager);
     document.getElementById('tag-manager-modal').addEventListener('click', (e) => {
         if (e.target.id === 'tag-manager-modal') closeTagManager();
+    });
+
+    // Sermon notes toggle button
+    const toggleNotesBtn = document.getElementById('toggle-notes-btn');
+    if (toggleNotesBtn) {
+        toggleNotesBtn.addEventListener('click', toggleNotesView);
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd+Shift+N - Toggle notes
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'n') {
+            e.preventDefault();
+            if (currentUser && typeof toggleNotesView === 'function') {
+                toggleNotesView();
+            }
+        }
+
+        // Ctrl/Cmd+S - Manual save sermon
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && currentSermon) {
+            e.preventDefault();
+            if (typeof saveSermon === 'function') {
+                saveSermon();
+            }
+        }
     });
 
     // Annotation set management

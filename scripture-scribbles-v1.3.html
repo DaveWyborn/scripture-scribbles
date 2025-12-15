@@ -14,6 +14,11 @@
     <link rel="stylesheet" href="css/base.css?v=1.3.38">
     <link rel="stylesheet" href="css/components.css?v=1.3.21">
     <link rel="stylesheet" href="css/themes.css?v=1.3.16">
+    <link rel="stylesheet" href="css/sermons.css?v=1.4.0">
+
+    <!-- Trix Rich Text Editor -->
+    <link rel="stylesheet" href="https://unpkg.com/trix@2.1.15/dist/trix.css">
+    <script src="https://unpkg.com/trix@2.1.15/dist/trix.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -23,6 +28,9 @@
                     <img src="Scripture Scribbles Logo - Light.png" alt="Scripture Scribbles" class="logo-light">
                     <img src="Scripture Scribbles Logo - Dark.png" alt="Scripture Scribbles" class="logo-dark">
                 </div>
+                <button id="toggle-notes-btn" aria-label="Toggle sermon notes" style="display: none;">
+                    <i class="ph ph-notebook"></i> Notes
+                </button>
                 <button class="toolbar-menu-btn" id="menu-btn" aria-label="Settings menu">
                     <i class="ph ph-list"></i>
                 </button>
@@ -215,6 +223,12 @@
             </div>
         </div>
 
+        <!-- Mobile view indicator (hidden on desktop) -->
+        <div class="mobile-view-indicator" id="mobile-view-indicator" style="display: none;">
+            <span class="view-tab active" data-view="bible" onclick="switchMobileView('bible')">Bible</span>
+            <span class="view-tab" data-view="notes" onclick="switchMobileView('notes')">Notes</span>
+        </div>
+
         <div class="content" id="content">
             <div class="welcome" style="display: none;">
                 <h2>Welcome to Scripture Scribbles</h2>
@@ -245,8 +259,40 @@
 
                 <button class="btn primary" id="get-started-btn" style="font-size: 1.2em; padding: 15px 40px;">Get Started</button>
             </div>
+
+            <!-- Sermon Notes View (hidden by default) -->
+            <div class="sermon-notes-view" id="sermon-notes-view" style="display: none;">
+                <!-- Metadata form -->
+                <div class="sermon-metadata">
+                    <input type="text" id="sermon-title" placeholder="Sermon title...">
+                    <input type="date" id="sermon-date">
+                    <input type="text" id="sermon-speaker" placeholder="Speaker...">
+                    <input type="text" id="sermon-location" placeholder="Location...">
+                    <input type="text" id="sermon-series" placeholder="Series/Theme...">
+                    <input type="text" id="sermon-passage" placeholder="Passage...">
+                </div>
+
+                <!-- Trix editor -->
+                <div class="sermon-editor-container">
+                    <trix-editor toolbar="sermon-toolbar" input="sermon-content" placeholder="Start typing your sermon notes..."></trix-editor>
+                    <input type="hidden" id="sermon-content">
+                </div>
+
+                <!-- Actions -->
+                <div class="sermon-actions">
+                    <button onclick="openSermonSelector()">
+                        <i class="ph ph-stack"></i> My Sermons
+                    </button>
+                    <button onclick="exportSermonMarkdown()">
+                        <i class="ph ph-download-simple"></i> Export
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Save Indicator -->
+    <div id="save-indicator"></div>
 
     <!-- Annotation Panel -->
     <div class="annotation-panel" id="annotation-panel">
@@ -413,6 +459,27 @@
         </div>
     </div>
 
+    <!-- Sermon Selector Modal -->
+    <div class="modal" id="sermon-selector-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>My Sermon Notes</h2>
+                <button class="modal-close" onclick="closeSermonSelector()" aria-label="Close">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="search" id="sermon-search" placeholder="Search sermons...">
+                <div id="sermon-list"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="createNewSermon()">
+                    <i class="ph ph-plus"></i> New Sermon
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Note Tooltip -->
     <div id="note-tooltip" class="note-tooltip">
         <button class="note-tooltip-close" onclick="hideNoteTooltip()">×</button>
@@ -435,6 +502,7 @@
     <script src="js/preferences.js?v=1.3.24"></script>
     <script src="js/tag-manager.js?v=1.3.19"></script>
     <script src="js/ui.js?v=1.3.28"></script>
+    <script src="js/sermons.js?v=1.4.0"></script>
     <script src="js/app.js?v=1.3.18"></script>
 </body>
 </html>

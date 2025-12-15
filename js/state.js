@@ -19,6 +19,14 @@ let isNavigating = false;
 let readingMode = 'verse'; // 'verse' or 'fluid'
 let verseNumberStyle = 'superscript'; // 'superscript', 'margin', or 'hidden'
 
+// Sermon notes state
+let sermonViewMode = 'single'; // 'single', 'split'
+let activeView = 'bible'; // 'bible', 'notes' (mobile only)
+let currentSermon = null; // Active sermon object
+let sermonList = []; // All user sermons
+let sermonSaveTimeout = null; // Debounce timer
+let splitRatio = 50; // Percentage for adjustable split
+
 // Annotation state
 let currentAnnotations = {};
 let selectedVerse = null;
@@ -115,6 +123,7 @@ if (typeof module !== 'undefined' && module.exports) {
         currentAnnotations, selectedVerse, currentAnnotationSet, userAnnotationSets,
         isSignUp, knownTags, currentTags, selectedTagColor, isNavigating,
         TAG_COLORS_PASTEL, TAG_COLORS_WCAG, WCAG_THEMES, TAG_COLORS,
-        BOOK_ABBR, OT_BOOKS
+        BOOK_ABBR, OT_BOOKS,
+        sermonViewMode, activeView, currentSermon, sermonList, sermonSaveTimeout, splitRatio
     };
 }

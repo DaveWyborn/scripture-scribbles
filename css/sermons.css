@@ -1,0 +1,530 @@
+/* Sermon Notes Styles */
+
+/* Mobile view indicator (only visible on mobile) */
+.mobile-view-indicator {
+    display: none !important;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 60px;
+    z-index: 99;
+}
+
+@media (max-width: 767px) {
+    .mobile-view-indicator {
+        display: flex !important;
+    }
+}
+
+/* Hide on desktop */
+@media (min-width: 768px) {
+    .mobile-view-indicator {
+        display: none !important;
+    }
+}
+
+.view-tab {
+    padding: 8px 20px;
+    border-radius: var(--radius-m);
+    font-size: 0.9em;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    border: 1px solid transparent;
+}
+
+.view-tab.active {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-color: var(--accent-primary);
+}
+
+.view-tab:hover:not(.active) {
+    background: var(--bg-primary);
+    border-color: var(--border);
+}
+
+/* Split view layout (desktop) */
+.content.split-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+}
+
+.content.split-view.bible-focused {
+    grid-template-columns: 60% 40%;
+}
+
+.content.split-view.notes-focused {
+    grid-template-columns: 40% 60%;
+}
+
+/* Sermon notes view container */
+.sermon-notes-view {
+    display: none;
+    flex-direction: column;
+    border-left: 1px solid var(--border);
+    background: var(--bg-primary);
+    overflow-y: auto;
+    max-height: calc(100vh - 80px);
+}
+
+@media (max-width: 767px) {
+    .sermon-notes-view {
+        border-left: none;
+        max-height: none;
+    }
+}
+
+.content.split-view .sermon-notes-view {
+    display: flex;
+}
+
+/* Sermon metadata form */
+.sermon-metadata {
+    padding: var(--space-l);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+}
+
+.sermon-metadata input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 0.95em;
+    font-family: var(--font-primary);
+    transition: border-color 0.2s;
+}
+
+.sermon-metadata input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.sermon-metadata input::placeholder {
+    color: var(--text-tertiary);
+}
+
+#sermon-title {
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+#sermon-date {
+    width: auto;
+}
+
+/* Trix editor container */
+.sermon-editor-container {
+    flex: 1;
+    padding: var(--space-l);
+    overflow-y: auto;
+}
+
+/* Trix toolbar customizations */
+trix-toolbar {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    padding: 8px;
+    margin-bottom: var(--space-m);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+trix-toolbar .trix-button-row {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+trix-toolbar .trix-button-group {
+    display: flex;
+    gap: 2px;
+    padding: 0 4px;
+    border-right: 1px solid var(--border);
+}
+
+trix-toolbar .trix-button-group:last-child {
+    border-right: none;
+}
+
+trix-toolbar .trix-button {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-s);
+    color: var(--text-primary);
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9em;
+}
+
+trix-toolbar .trix-button:hover {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-color: var(--accent-primary);
+}
+
+trix-toolbar .trix-button.trix-active {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-color: var(--accent-primary);
+}
+
+trix-toolbar .custom-verse-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Trix editor */
+trix-editor {
+    min-height: 300px;
+    padding: var(--space-l);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    color: var(--text-primary);
+    line-height: 1.8;
+    font-size: 1em;
+}
+
+trix-editor:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+/* Trix content styling */
+trix-editor h1 {
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    color: var(--text-primary);
+}
+
+trix-editor blockquote {
+    border-left: 4px solid var(--accent-primary);
+    padding-left: var(--space-l);
+    margin: var(--space-l) 0;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+trix-editor ul, trix-editor ol {
+    padding-left: 2em;
+    margin: var(--space-m) 0;
+}
+
+trix-editor li {
+    margin: 0.5em 0;
+}
+
+trix-editor a {
+    color: var(--accent-primary);
+    text-decoration: underline;
+}
+
+/* Sermon actions */
+.sermon-actions {
+    padding: var(--space-l);
+    border-top: 1px solid var(--border);
+    background: var(--bg-secondary);
+    display: flex;
+    gap: var(--space-m);
+    flex-wrap: wrap;
+}
+
+.sermon-actions button {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 16px;
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: var(--radius-m);
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.sermon-actions button:hover {
+    opacity: 0.9;
+}
+
+.sermon-actions button:active {
+    opacity: 0.7;
+}
+
+/* Save indicator */
+#save-indicator {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    padding: 8px 16px;
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-radius: var(--radius-m);
+    font-size: 0.9em;
+    font-weight: 500;
+    display: none;
+    z-index: 1001;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Sermon selector modal */
+#sermon-selector-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+}
+
+#sermon-selector-modal.open {
+    display: flex;
+}
+
+#sermon-selector-modal .modal-content {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+#sermon-selector-modal .modal-header {
+    padding: var(--space-l);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#sermon-selector-modal .modal-header h2 {
+    margin: 0;
+    font-size: 1.4em;
+}
+
+#sermon-selector-modal .modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+}
+
+#sermon-selector-modal .modal-close:hover {
+    color: var(--text-primary);
+}
+
+#sermon-selector-modal .modal-body {
+    padding: var(--space-l);
+    overflow-y: auto;
+    flex: 1;
+}
+
+#sermon-search {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: var(--space-m);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.95em;
+}
+
+#sermon-search:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+#sermon-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+}
+
+.sermon-list-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    padding: var(--space-m);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sermon-list-item:hover {
+    background: var(--bg-primary);
+    border-color: var(--accent-primary);
+}
+
+.sermon-list-item.active {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-color: var(--accent-primary);
+}
+
+.sermon-list-item.active h4,
+.sermon-list-item.active p {
+    color: var(--bg-primary);
+}
+
+.sermon-item-content {
+    flex: 1;
+}
+
+.sermon-item-content h4 {
+    margin: 0 0 4px 0;
+    font-size: 1.05em;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.sermon-item-content p {
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+.sermon-passage {
+    margin-top: 4px !important;
+    font-weight: 500;
+    color: var(--accent-primary) !important;
+}
+
+.sermon-list-item.active .sermon-passage {
+    color: var(--bg-primary) !important;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    font-size: 1.2em;
+    padding: 8px;
+    border-radius: var(--radius-m);
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    background: var(--accent-negative);
+    color: var(--bg-primary);
+}
+
+#sermon-selector-modal .modal-footer {
+    padding: var(--space-l);
+    border-top: 1px solid var(--border);
+}
+
+/* Toggle notes button in toolbar */
+#toggle-notes-btn {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius-m);
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95em;
+    transition: opacity 0.2s;
+    margin-right: auto;
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    #toggle-notes-btn {
+        margin-right: 0;
+        margin-left: var(--space-m);
+    }
+}
+
+#toggle-notes-btn:hover {
+    opacity: 0.9;
+}
+
+#toggle-notes-btn:active {
+    opacity: 0.7;
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+    /* On mobile, sermon notes takes full width when shown */
+    .sermon-notes-view {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 200;
+        border-left: none;
+        max-height: 100vh;
+        padding-top: 120px; /* Account for toolbar + mobile indicator */
+    }
+
+    .sermon-metadata {
+        padding: var(--space-m);
+    }
+
+    .sermon-editor-container {
+        padding: var(--space-m);
+    }
+
+    .sermon-actions {
+        padding: var(--space-m);
+    }
+
+    trix-editor {
+        min-height: 200px;
+        padding: var(--space-m);
+    }
+
+    #save-indicator {
+        top: auto;
+        bottom: 80px;
+        right: 50%;
+        transform: translateX(50%);
+    }
+
+    /* Disable split view on mobile */
+    .content.split-view {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Prevent double-tap zoom on buttons */
+.sermon-actions button,
+#toggle-notes-btn,
+.view-tab {
+    touch-action: manipulation;
+}
