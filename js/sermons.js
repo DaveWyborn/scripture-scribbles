@@ -376,6 +376,19 @@ async function toggleNotesView() {
     } else {
         // Return to single view
         console.log('Switching to single view');
+
+        // Unwrap Bible content
+        const bibleWrapper = document.getElementById('bible-content-wrapper');
+        if (bibleWrapper) {
+            console.log('Unwrapping Bible content...');
+            const children = Array.from(bibleWrapper.children);
+            children.forEach(child => {
+                content.insertBefore(child, notesView);
+            });
+            bibleWrapper.remove();
+            console.log('Bible content unwrapped');
+        }
+
         content.classList.remove('split-view');
         notesView.style.display = 'none';
         sermonViewMode = 'single';
