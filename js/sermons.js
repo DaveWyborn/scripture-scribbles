@@ -15,9 +15,45 @@ async function initSermons() {
         setupSwipeHandlers();
     }
 
+    // Restore metadata collapsed state
+    const metadataCollapsed = localStorage.getItem('metadataCollapsed') === 'true';
+    if (metadataCollapsed) {
+        const metadata = document.getElementById('sermon-metadata');
+        const header = document.querySelector('.sermon-metadata-header');
+        if (metadata && header) {
+            metadata.classList.add('collapsed');
+            header.classList.add('collapsed');
+        }
+    }
+
     // Load user's sermons if logged in
     if (currentUser) {
         await loadSermonList();
+    }
+}
+
+/**
+ * Toggle metadata section collapse/expand
+ */
+function toggleMetadata() {
+    const metadata = document.getElementById('sermon-metadata');
+    const header = document.querySelector('.sermon-metadata-header');
+    const icon = document.getElementById('metadata-toggle-icon');
+
+    if (!metadata || !header) return;
+
+    const isCollapsed = metadata.classList.contains('collapsed');
+
+    if (isCollapsed) {
+        // Expand
+        metadata.classList.remove('collapsed');
+        header.classList.remove('collapsed');
+        localStorage.setItem('metadataCollapsed', 'false');
+    } else {
+        // Collapse
+        metadata.classList.add('collapsed');
+        header.classList.add('collapsed');
+        localStorage.setItem('metadataCollapsed', 'true');
     }
 }
 
@@ -312,20 +348,26 @@ async function toggleNotesView() {
         newNotesView.className = 'sermon-notes-view';
         newNotesView.style.display = 'none';
         newNotesView.innerHTML = `
-            <div class="sermon-metadata">
-                <input type="text" id="sermon-title" placeholder="Sermon title...">
-                <input type="date" id="sermon-date">
-                <input type="text" id="sermon-speaker" placeholder="Speaker...">
-                <input type="text" id="sermon-location" placeholder="Location...">
-                <input type="text" id="sermon-series" placeholder="Series/Theme...">
-                <input type="text" id="sermon-passage" placeholder="Passage...">
+            <div class="sermon-metadata-wrapper">
+                <div class="sermon-metadata-header" onclick="toggleMetadata()">
+                    <span>Message Details</span>
+                    <i class="ph ph-caret-up" id="metadata-toggle-icon"></i>
+                </div>
+                <div class="sermon-metadata" id="sermon-metadata">
+                    <input type="text" id="sermon-title" placeholder="Message title...">
+                    <input type="date" id="sermon-date">
+                    <input type="text" id="sermon-speaker" placeholder="Speaker...">
+                    <input type="text" id="sermon-location" placeholder="Location...">
+                    <input type="text" id="sermon-series" placeholder="Series/Theme...">
+                    <input type="text" id="sermon-passage" placeholder="Passage...">
+                </div>
             </div>
             <div class="sermon-editor-container">
-                <trix-editor input="sermon-content" placeholder="Start typing..."></trix-editor>
+                <trix-editor input="sermon-content" placeholder="Start typing your notes..."></trix-editor>
                 <input type="hidden" id="sermon-content">
             </div>
             <div class="sermon-actions">
-                <button onclick="openSermonSelector()">My Sermons</button>
+                <button onclick="openSermonSelector()">Message Notes</button>
                 <button onclick="exportSermonMarkdown()">Export</button>
             </div>
         `;

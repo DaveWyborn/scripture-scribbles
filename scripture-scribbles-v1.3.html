@@ -266,26 +266,32 @@
 
             <!-- Sermon Notes View (hidden by default) -->
             <div class="sermon-notes-view" id="sermon-notes-view" style="display: none;">
-                <!-- Metadata form -->
-                <div class="sermon-metadata">
-                    <input type="text" id="sermon-title" placeholder="Sermon title...">
-                    <input type="date" id="sermon-date">
-                    <input type="text" id="sermon-speaker" placeholder="Speaker...">
-                    <input type="text" id="sermon-location" placeholder="Location...">
-                    <input type="text" id="sermon-series" placeholder="Series/Theme...">
-                    <input type="text" id="sermon-passage" placeholder="Passage...">
+                <!-- Metadata section with collapse -->
+                <div class="sermon-metadata-wrapper">
+                    <div class="sermon-metadata-header" onclick="toggleMetadata()">
+                        <span>Message Details</span>
+                        <i class="ph ph-caret-up" id="metadata-toggle-icon"></i>
+                    </div>
+                    <div class="sermon-metadata" id="sermon-metadata">
+                        <input type="text" id="sermon-title" placeholder="Message title...">
+                        <input type="date" id="sermon-date">
+                        <input type="text" id="sermon-speaker" placeholder="Speaker...">
+                        <input type="text" id="sermon-location" placeholder="Location...">
+                        <input type="text" id="sermon-series" placeholder="Series/Theme...">
+                        <input type="text" id="sermon-passage" placeholder="Passage...">
+                    </div>
                 </div>
 
                 <!-- Trix editor -->
                 <div class="sermon-editor-container">
-                    <trix-editor toolbar="sermon-toolbar" input="sermon-content" placeholder="Start typing your sermon notes..."></trix-editor>
+                    <trix-editor toolbar="sermon-toolbar" input="sermon-content" placeholder="Start typing your notes..."></trix-editor>
                     <input type="hidden" id="sermon-content">
                 </div>
 
                 <!-- Actions -->
                 <div class="sermon-actions">
                     <button onclick="openSermonSelector()">
-                        <i class="ph ph-stack"></i> My Sermons
+                        <i class="ph ph-stack"></i> Message Notes
                     </button>
                     <button onclick="exportSermonMarkdown()">
                         <i class="ph ph-download-simple"></i> Export
@@ -467,18 +473,18 @@
     <div class="modal" id="sermon-selector-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>My Sermon Notes</h2>
+                <h2>Message Notes</h2>
                 <button class="modal-close" onclick="closeSermonSelector()" aria-label="Close">
                     <i class="ph ph-x"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <input type="search" id="sermon-search" placeholder="Search sermons...">
+                <input type="search" id="sermon-search" placeholder="Search messages...">
                 <div id="sermon-list"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn primary" onclick="createNewSermon()">
-                    <i class="ph ph-plus"></i> New Sermon
+                    <i class="ph ph-plus"></i> New Message
                 </button>
             </div>
         </div>

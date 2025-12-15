@@ -92,11 +92,56 @@
     display: flex;
 }
 
+/* Sermon metadata wrapper and header */
+.sermon-metadata-wrapper {
+    border-bottom: 1px solid var(--border);
+}
+
+.sermon-metadata-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-m) var(--space-l);
+    background: var(--bg-secondary);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.sermon-metadata-header:hover {
+    background: var(--bg-tertiary);
+}
+
+.sermon-metadata-header span {
+    font-weight: 600;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+}
+
+.sermon-metadata-header i {
+    transition: transform 0.2s;
+    color: var(--text-tertiary);
+}
+
+.sermon-metadata-header.collapsed i {
+    transform: rotate(180deg);
+}
+
 /* Sermon metadata form */
 .sermon-metadata {
     padding: var(--space-l);
-    border-bottom: 1px solid var(--border);
+    transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
     background: var(--bg-secondary);
+    overflow: hidden;
+}
+
+.sermon-metadata.collapsed {
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    opacity: 0;
 }
 
 .sermon-metadata input {
