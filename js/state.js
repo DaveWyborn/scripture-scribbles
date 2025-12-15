@@ -26,6 +26,7 @@ let currentSermon = null; // Active sermon object
 let sermonList = []; // All user sermons
 let sermonSaveTimeout = null; // Debounce timer
 let splitRatio = 50; // Percentage for adjustable split
+let selectedVerses = new Set(); // Verses selected for insertion into notes
 
 // Annotation state
 let currentAnnotations = {};

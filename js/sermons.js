@@ -82,6 +82,125 @@ function setupTrixListeners() {
 }
 
 /**
+ * Toggle verse selection for insertion into notes
+ */
+function toggleVerseSelection(verseNum) {
+    if (!sermonViewMode || sermonViewMode === 'single') {
+        return; // Only allow selection when notes are open
+    }
+
+    if (selectedVerses.has(verseNum)) {
+        selectedVerses.delete(verseNum);
+    } else {
+        selectedVerses.add(verseNum);
+    }
+
+    updateVerseSelectionUI();
+}
+
+/**
+ * Update UI for selected verses
+ */
+function updateVerseSelectionUI() {
+    // Update visual state of verses
+    document.querySelectorAll('.verse, .verse-inline-wrapper').forEach(el => {
+        const verseNum = parseInt(el.dataset.verse);
+        if (selectedVerses.has(verseNum)) {
+            el.classList.add('selected-for-insertion');
+        } else {
+            el.classList.remove('selected-for-insertion');
+        }
+    });
+
+    // Show/hide insertion bar
+    const insertionBar = document.getElementById('verse-insertion-bar');
+    const label = document.getElementById('verses-selected-label');
+
+    if (selectedVerses.size > 0 && insertionBar) {
+        insertionBar.style.display = 'flex';
+        if (label) {
+            const count = selectedVerses.size;
+            label.textContent = `${count} verse${count > 1 ? 's' : ''} selected`;
+        }
+    } else if (insertionBar) {
+        insertionBar.style.display = 'none';
+    }
+}
+
+/**
+ * Clear all selected verses
+ */
+function clearVerseSelection() {
+    selectedVerses.clear();
+    updateVerseSelectionUI();
+}
+
+/**
+ * Insert selected verses as reference (e.g., "Gen 1:1-3")
+ */
+function insertSelectedAsReference() {
+    if (selectedVerses.size === 0) return;
+
+    const book = bibleData.books.find(b => b.id === currentBook);
+    if (!book) return;
+
+    // Sort verse numbers
+    const verses = Array.from(selectedVerses).sort((a, b) => a - b);
+
+    // Format reference
+    let reference;
+    if (verses.length === 1) {
+        reference = `${book.name} ${currentChapter}:${verses[0]}`;
+    } else if (verses.length === 2) {
+        reference = `${book.name} ${currentChapter}:${verses[0]}, ${verses[1]}`;
+    } else {
+        // Check for continuous range
+        const isContinuous = verses.every((v, i) => i === 0 || v === verses[i - 1] + 1);
+        if (isContinuous) {
+            reference = `${book.name} ${currentChapter}:${verses[0]}-${verses[verses.length - 1]}`;
+        } else {
+            reference = `${book.name} ${currentChapter}:${verses.join(', ')}`;
+        }
+    }
+
+    // Insert into Trix at cursor
+    const trixEditor = document.querySelector('trix-editor');
+    if (trixEditor && trixEditor.editor) {
+        trixEditor.editor.insertString(reference);
+    }
+
+    clearVerseSelection();
+}
+
+/**
+ * Insert selected verses as full text
+ */
+function insertSelectedAsText() {
+    if (selectedVerses.size === 0) return;
+
+    const book = bibleData.books.find(b => b.id === currentBook);
+    if (!book) return;
+
+    const chapter = book.chapters.find(c => c.number === currentChapter);
+    if (!chapter) return;
+
+    // Sort verse numbers and get text
+    const verses = Array.from(selectedVerses).sort((a, b) => a - b);
+    const verseTexts = verses.map(verseNum => {
+        const verse = chapter.verses.find(v => v.number === verseNum);
+        return verse ? `${verseNum} ${verse.text}` : '';
+    }).filter(t => t).join(' ');
+
+    // Insert into Trix at cursor
+    const trixEditor = document.querySelector('trix-editor');
+    if (trixEditor && trixEditor.editor) {
+        trixEditor.editor.insertHTML(`<blockquote>${verseTexts}<br><em>${book.name} ${currentChapter}:${verses[0]}${verses.length > 1 ? '-' + verses[verses.length - 1] : ''}</em></blockquote>`);
+    }
+
+    clearVerseSelection();
+}
+
+/**
  * Load list of user's sermons from Supabase
  */
 async function loadSermonList() {
@@ -360,6 +479,20 @@ async function toggleNotesView() {
                     <input type="text" id="sermon-location" placeholder="Location...">
                     <input type="text" id="sermon-series" placeholder="Series/Theme...">
                     <input type="text" id="sermon-passage" placeholder="Passage...">
+                </div>
+            </div>
+            <div class="verse-insertion-bar" id="verse-insertion-bar" style="display: none;">
+                <span class="verses-selected-label" id="verses-selected-label">0 verses selected</span>
+                <div class="insertion-buttons">
+                    <button class="btn-insert" onclick="insertSelectedAsReference()">
+                        <i class="ph ph-link"></i> Add as Reference
+                    </button>
+                    <button class="btn-insert" onclick="insertSelectedAsText()">
+                        <i class="ph ph-quotes"></i> Add Full Text
+                    </button>
+                    <button class="btn-clear-selection" onclick="clearVerseSelection()">
+                        <i class="ph ph-x"></i>
+                    </button>
                 </div>
             </div>
             <div class="sermon-editor-container">

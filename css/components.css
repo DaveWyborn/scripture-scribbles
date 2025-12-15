@@ -21,6 +21,31 @@
     border: 2px solid var(--accent-primary);
 }
 
+/* Verses selected for insertion into notes */
+.verse.selected-for-insertion .verse-body {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border: 2px solid var(--accent-primary);
+}
+
+.verse.selected-for-insertion .verse-number {
+    color: var(--bg-primary);
+    opacity: 0.8;
+}
+
+.verse-inline-wrapper.selected-for-insertion {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-radius: var(--radius-s);
+    padding: 2px 4px;
+    margin: -2px -4px;
+}
+
+.verse-inline-wrapper.selected-for-insertion .verse-number-inline {
+    color: var(--bg-primary);
+    opacity: 0.8;
+}
+
 .verse-content {
     display: flex;
     gap: var(--space-s);

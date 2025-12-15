@@ -283,6 +283,22 @@
                     </div>
                 </div>
 
+                <!-- Verse insertion buttons (shown when verses selected) -->
+                <div class="verse-insertion-bar" id="verse-insertion-bar" style="display: none;">
+                    <span class="verses-selected-label" id="verses-selected-label">0 verses selected</span>
+                    <div class="insertion-buttons">
+                        <button class="btn-insert" onclick="insertSelectedAsReference()">
+                            <i class="ph ph-link"></i> Add as Reference
+                        </button>
+                        <button class="btn-insert" onclick="insertSelectedAsText()">
+                            <i class="ph ph-quotes"></i> Add Full Text
+                        </button>
+                        <button class="btn-clear-selection" onclick="clearVerseSelection()">
+                            <i class="ph ph-x"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Trix editor -->
                 <div class="sermon-editor-container">
                     <trix-editor toolbar="sermon-toolbar" input="sermon-content" placeholder="Start typing your notes..."></trix-editor>

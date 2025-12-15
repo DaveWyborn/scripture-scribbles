@@ -652,6 +652,13 @@ function displayChapter() {
 
             const verseNum = parseInt(el.dataset.verse);
 
+            // Shift+click: toggle verse selection for insertion into notes
+            if (e.shiftKey && typeof toggleVerseSelection === 'function') {
+                e.preventDefault();
+                toggleVerseSelection(verseNum);
+                return;
+            }
+
             // Deselect all verses
             document.querySelectorAll('.verse').forEach(v => v.classList.remove('selected'));
 
@@ -679,6 +686,13 @@ function displayChapter() {
                 }
 
                 const verseNum = parseInt(el.dataset.verse);
+
+                // Shift+click: toggle verse selection for insertion into notes
+                if (e.shiftKey && typeof toggleVerseSelection === 'function') {
+                    e.preventDefault();
+                    toggleVerseSelection(verseNum);
+                    return;
+                }
 
                 // Deselect all verse wrappers
                 document.querySelectorAll('.verse-inline-wrapper').forEach(v => v.classList.remove('selected'));

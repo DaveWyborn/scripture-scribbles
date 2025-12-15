@@ -167,6 +167,62 @@
     opacity: 0;
 }
 
+/* Verse insertion bar */
+.verse-insertion-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-m) var(--space-l);
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+}
+
+.verses-selected-label {
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.insertion-buttons {
+    display: flex;
+    gap: var(--space-s);
+}
+
+.btn-insert {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--bg-primary);
+    padding: 6px 12px;
+    border-radius: var(--radius-s);
+    font-size: 0.85em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+}
+
+.btn-insert:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-clear-selection {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--bg-primary);
+    padding: 6px 10px;
+    border-radius: var(--radius-s);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.btn-clear-selection:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
 .sermon-metadata input {
     width: 100%;
     padding: 10px 12px;
