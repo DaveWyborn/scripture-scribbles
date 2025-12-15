@@ -604,11 +604,32 @@ function displayChapter() {
         </div>
     `;
 
-    contentEl.innerHTML = html;
+    // Check if we're in split view mode (sermon notes open)
+    const inSplitMode = typeof sermonViewMode !== 'undefined' && sermonViewMode === 'split';
+    const bibleWrapper = document.getElementById('bible-content-wrapper');
+    const notesView = document.getElementById('sermon-notes-view');
+
+    if (inSplitMode && bibleWrapper) {
+        // Update only the Bible wrapper content, preserve notes panel
+        bibleWrapper.innerHTML = html;
+    } else if (notesView && notesView.style.display !== 'none') {
+        // Notes panel exists but no wrapper - shouldn't happen but handle it
+        contentEl.innerHTML = html;
+        // Re-add notes view
+        contentEl.appendChild(notesView);
+    } else {
+        // Normal mode - replace everything
+        contentEl.innerHTML = html;
+    }
 
     // Re-apply annotation mode class (innerHTML wipes classes)
     const annotationMode = localStorage.getItem('annotationMode') || 'on';
     contentEl.classList.add(`annotation-mode-${annotationMode}`);
+
+    // Restore split-view class if needed
+    if (inSplitMode) {
+        contentEl.classList.add('split-view');
+    }
 
     // Add reading mode class
     contentEl.classList.toggle('reading-mode-fluid', readingMode === 'fluid');
