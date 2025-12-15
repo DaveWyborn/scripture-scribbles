@@ -268,12 +268,13 @@
             <div class="sermon-notes-view" id="sermon-notes-view" style="display: none;">
                 <!-- Metadata section with collapse -->
                 <div class="sermon-metadata-wrapper">
-                    <div class="sermon-metadata-header" onclick="toggleMetadata()">
-                        <span>Message Details</span>
-                        <i class="ph ph-caret-up" id="metadata-toggle-icon"></i>
+                    <div class="sermon-metadata-header">
+                        <input type="text" id="sermon-title" placeholder="Message title...">
+                        <button class="metadata-toggle-btn" onclick="toggleMetadata()" aria-label="Toggle details">
+                            <i class="ph ph-caret-down" id="metadata-toggle-icon"></i>
+                        </button>
                     </div>
                     <div class="sermon-metadata" id="sermon-metadata">
-                        <input type="text" id="sermon-title" placeholder="Message title...">
                         <input type="date" id="sermon-date">
                         <input type="text" id="sermon-speaker" placeholder="Speaker...">
                         <input type="text" id="sermon-location" placeholder="Location...">

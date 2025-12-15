@@ -19,10 +19,10 @@ async function initSermons() {
     const metadataCollapsed = localStorage.getItem('metadataCollapsed') === 'true';
     if (metadataCollapsed) {
         const metadata = document.getElementById('sermon-metadata');
-        const header = document.querySelector('.sermon-metadata-header');
-        if (metadata && header) {
+        const toggleBtn = document.querySelector('.metadata-toggle-btn');
+        if (metadata && toggleBtn) {
             metadata.classList.add('collapsed');
-            header.classList.add('collapsed');
+            toggleBtn.classList.add('collapsed');
         }
     }
 
@@ -37,22 +37,21 @@ async function initSermons() {
  */
 function toggleMetadata() {
     const metadata = document.getElementById('sermon-metadata');
-    const header = document.querySelector('.sermon-metadata-header');
-    const icon = document.getElementById('metadata-toggle-icon');
+    const toggleBtn = document.querySelector('.metadata-toggle-btn');
 
-    if (!metadata || !header) return;
+    if (!metadata || !toggleBtn) return;
 
     const isCollapsed = metadata.classList.contains('collapsed');
 
     if (isCollapsed) {
         // Expand
         metadata.classList.remove('collapsed');
-        header.classList.remove('collapsed');
+        toggleBtn.classList.remove('collapsed');
         localStorage.setItem('metadataCollapsed', 'false');
     } else {
         // Collapse
         metadata.classList.add('collapsed');
-        header.classList.add('collapsed');
+        toggleBtn.classList.add('collapsed');
         localStorage.setItem('metadataCollapsed', 'true');
     }
 }
@@ -349,12 +348,13 @@ async function toggleNotesView() {
         newNotesView.style.display = 'none';
         newNotesView.innerHTML = `
             <div class="sermon-metadata-wrapper">
-                <div class="sermon-metadata-header" onclick="toggleMetadata()">
-                    <span>Message Details</span>
-                    <i class="ph ph-caret-up" id="metadata-toggle-icon"></i>
+                <div class="sermon-metadata-header">
+                    <input type="text" id="sermon-title" placeholder="Message title...">
+                    <button class="metadata-toggle-btn" onclick="toggleMetadata()" aria-label="Toggle details">
+                        <i class="ph ph-caret-down" id="metadata-toggle-icon"></i>
+                    </button>
                 </div>
                 <div class="sermon-metadata" id="sermon-metadata">
-                    <input type="text" id="sermon-title" placeholder="Message title...">
                     <input type="date" id="sermon-date">
                     <input type="text" id="sermon-speaker" placeholder="Speaker...">
                     <input type="text" id="sermon-location" placeholder="Location...">

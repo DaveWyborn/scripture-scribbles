@@ -99,34 +99,57 @@
 
 .sermon-metadata-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: var(--space-s);
     padding: var(--space-m) var(--space-l);
     background: var(--bg-secondary);
-    cursor: pointer;
-    user-select: none;
-    transition: background 0.2s;
 }
 
-.sermon-metadata-header:hover {
-    background: var(--bg-tertiary);
-}
-
-.sermon-metadata-header span {
+.sermon-metadata-header input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 0;
+    font-size: 1.1em;
     font-weight: 600;
-    font-size: 0.9em;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
-.sermon-metadata-header i {
-    transition: transform 0.2s;
+.sermon-metadata-header input:focus {
+    outline: none;
+    color: var(--accent-primary);
+}
+
+.sermon-metadata-header input::placeholder {
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.metadata-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-s);
+    transition: background 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: var(--text-tertiary);
 }
 
-.sermon-metadata-header.collapsed i {
-    transform: rotate(180deg);
+.metadata-toggle-btn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.metadata-toggle-btn i {
+    font-size: 1.2em;
+    transition: transform 0.3s;
+}
+
+.metadata-toggle-btn.collapsed i {
+    transform: rotate(-90deg);
 }
 
 /* Sermon metadata form */
