@@ -261,6 +261,13 @@ async function loadSermon(sermonId) {
         currentSermon = data;
         localStorage.setItem('lastSermonId', sermonId);
 
+        console.log('📝 Loading sermon data:', {
+            id: data.id,
+            title: data.title,
+            contentLength: (data.content || '').length,
+            contentPreview: (data.content || '').substring(0, 100)
+        });
+
         // Populate form fields (only if they exist)
         const titleField = document.getElementById('sermon-title');
         const dateField = document.getElementById('sermon-date');
@@ -276,17 +283,40 @@ async function loadSermon(sermonId) {
         if (seriesField) seriesField.value = data.series || '';
         if (passageField) passageField.value = data.passage || '';
 
-        // Load content into Trix (wait for initialization)
+        // Load content into Trix (wait for initialization if needed)
         const trixEditor = document.querySelector('trix-editor');
         if (trixEditor) {
-            // Wait for Trix to initialize if not ready
+            console.log('Loading content into Trix, editor ready:', !!trixEditor.editor);
+
+            // If editor not ready, wait with timeout
             if (!trixEditor.editor) {
-                await new Promise(resolve => {
-                    trixEditor.addEventListener('trix-initialize', resolve, { once: true });
-                });
+                await Promise.race([
+                    new Promise(resolve => {
+                        trixEditor.addEventListener('trix-initialize', resolve, { once: true });
+                    }),
+                    new Promise(resolve => setTimeout(resolve, 500)) // 500ms timeout
+                ]);
             }
+
+            // Try loading content
             if (trixEditor.editor) {
+                console.log('Loading HTML content, length:', (data.content || '').length);
+
+                // Clear existing content first
+                const editorElement = trixEditor.editor.element;
+                const currentContent = trixEditor.editor.getDocument().toString();
+                console.log('Current content before load:', currentContent.substring(0, 50));
+
+                // Load new content
                 trixEditor.editor.loadHTML(data.content || '');
+
+                // Verify it loaded
+                setTimeout(() => {
+                    const newContent = trixEditor.editor.getDocument().toString();
+                    console.log('Content after load:', newContent.substring(0, 50));
+                }, 100);
+            } else {
+                console.warn('Trix editor still not ready after timeout');
             }
         }
 
