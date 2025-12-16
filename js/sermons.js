@@ -582,11 +582,11 @@ async function toggleNotesView() {
  * Switch view on mobile (swipe navigation)
  * Note: Must be globally accessible for onclick handlers
  */
-window.switchMobileView = function(view) {
+window.switchMobileView = async function(view) {
     console.log('📱 switchMobileView called:', view);
     activeView = view;
     const indicator = document.getElementById('mobile-view-indicator');
-    const notesView = document.getElementById('sermon-notes-view');
+    let notesView = document.getElementById('sermon-notes-view');
     const welcomeView = document.querySelector('.welcome');
 
     console.log('Elements found:', {
@@ -595,6 +595,57 @@ window.switchMobileView = function(view) {
         welcomeView: !!welcomeView,
         currentSermon: !!currentSermon
     });
+
+    // Create notes view if it doesn't exist
+    if (!notesView && view === 'notes') {
+        console.warn('⚠️ sermon-notes-view missing on mobile, creating...');
+        const content = document.getElementById('content');
+        notesView = document.createElement('div');
+        notesView.id = 'sermon-notes-view';
+        notesView.className = 'sermon-notes-view';
+        notesView.style.display = 'none';
+        notesView.innerHTML = `
+            <div class="sermon-metadata-wrapper">
+                <div class="sermon-metadata-header">
+                    <input type="text" id="sermon-title" placeholder="Message title...">
+                    <button class="metadata-toggle-btn" onclick="toggleMetadata()" aria-label="Toggle details">
+                        <i class="ph ph-caret-down" id="metadata-toggle-icon"></i>
+                    </button>
+                </div>
+                <div class="sermon-metadata" id="sermon-metadata">
+                    <input type="date" id="sermon-date">
+                    <input type="text" id="sermon-speaker" placeholder="Speaker...">
+                    <input type="text" id="sermon-location" placeholder="Location...">
+                    <input type="text" id="sermon-series" placeholder="Series/Theme...">
+                    <input type="text" id="sermon-passage" placeholder="Passage...">
+                </div>
+            </div>
+            <div class="verse-insertion-bar" id="verse-insertion-bar" style="display: none;">
+                <span class="verses-selected-label" id="verses-selected-label">0 verses selected</span>
+                <div class="insertion-buttons">
+                    <button class="btn-insert" onclick="insertSelectedAsReference()">
+                        <i class="ph ph-link"></i> Add as Reference
+                    </button>
+                    <button class="btn-insert" onclick="insertSelectedAsText()">
+                        <i class="ph ph-quotes"></i> Add Full Text
+                    </button>
+                    <button class="btn-clear-selection" onclick="clearVerseSelection()">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="sermon-editor-container">
+                <trix-editor input="sermon-content" placeholder="Start typing your notes..."></trix-editor>
+                <input type="hidden" id="sermon-content">
+            </div>
+            <div class="sermon-actions">
+                <button onclick="openSermonSelector()">Message Notes</button>
+                <button onclick="exportSermonMarkdown()">Export</button>
+            </div>
+        `;
+        content.appendChild(notesView);
+        console.log('✅ Created sermon-notes-view for mobile');
+    }
 
     // Update visual indicator
     if (indicator) {
@@ -628,7 +679,7 @@ window.switchMobileView = function(view) {
             // Load sermon if needed
             if (!currentSermon) {
                 console.log('Creating new sermon...');
-                createSermon();
+                await createSermon();
             }
         } else {
             console.error('❌ sermon-notes-view NOT FOUND! Cannot show notes on mobile.');
