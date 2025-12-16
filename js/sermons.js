@@ -645,6 +645,12 @@ window.switchMobileView = async function(view) {
         `;
         content.appendChild(notesView);
         console.log('✅ Created sermon-notes-view for mobile');
+
+        // Wait for Trix to initialize
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Setup event listeners for the dynamically created metadata fields
+        setupTrixListeners();
     }
 
     // Update visual indicator

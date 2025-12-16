@@ -612,10 +612,10 @@ function displayChapter() {
     if (inSplitMode && bibleWrapper) {
         // Update only the Bible wrapper content, preserve notes panel
         bibleWrapper.innerHTML = html;
-    } else if (notesView && notesView.style.display !== 'none') {
-        // Notes panel exists but no wrapper - shouldn't happen but handle it
+    } else if (notesView) {
+        // Notes panel exists - preserve it regardless of visibility
         contentEl.innerHTML = html;
-        // Re-add notes view
+        // Re-add notes view (whether visible or not)
         contentEl.appendChild(notesView);
     } else {
         // Normal mode - replace everything
