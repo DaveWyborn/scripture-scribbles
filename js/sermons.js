@@ -34,8 +34,9 @@ async function initSermons() {
 
 /**
  * Toggle metadata section collapse/expand
+ * Note: Must be globally accessible for onclick handlers
  */
-function toggleMetadata() {
+window.toggleMetadata = function() {
     const metadata = document.getElementById('sermon-metadata');
     const toggleBtn = document.querySelector('.metadata-toggle-btn');
 
@@ -129,16 +130,18 @@ function updateVerseSelectionUI() {
 
 /**
  * Clear all selected verses
+ * Note: Must be globally accessible for onclick handlers
  */
-function clearVerseSelection() {
+window.clearVerseSelection = function() {
     selectedVerses.clear();
     updateVerseSelectionUI();
 }
 
 /**
  * Insert selected verses as reference (e.g., "Gen 1:1-3")
+ * Note: Must be globally accessible for onclick handlers
  */
-function insertSelectedAsReference() {
+window.insertSelectedAsReference = function() {
     if (selectedVerses.size === 0) return;
 
     const book = bibleData.books.find(b => b.id === currentBook);
@@ -174,8 +177,9 @@ function insertSelectedAsReference() {
 
 /**
  * Insert selected verses as full text
+ * Note: Must be globally accessible for onclick handlers
  */
-function insertSelectedAsText() {
+window.insertSelectedAsText = function() {
     if (selectedVerses.size === 0) return;
 
     const book = bibleData.books.find(b => b.id === currentBook);
@@ -576,8 +580,9 @@ async function toggleNotesView() {
 
 /**
  * Switch view on mobile (swipe navigation)
+ * Note: Must be globally accessible for onclick handlers
  */
-function switchMobileView(view) {
+window.switchMobileView = function(view) {
     console.log('📱 switchMobileView called:', view);
     activeView = view;
     const indicator = document.getElementById('mobile-view-indicator');
@@ -723,7 +728,7 @@ function insertVerseReference(verseNum) {
 /**
  * Open sermon selector modal
  */
-function openSermonSelector() {
+window.openSermonSelector = function() {
     const modal = document.getElementById('sermon-selector-modal');
     if (!modal) return;
 
@@ -764,7 +769,7 @@ function openSermonSelector() {
 /**
  * Close sermon selector modal
  */
-function closeSermonSelector() {
+window.closeSermonSelector = function() {
     const modal = document.getElementById('sermon-selector-modal');
     if (modal) {
         modal.classList.remove('open');
@@ -782,7 +787,7 @@ async function selectSermon(sermonId) {
 /**
  * Create new sermon and open it
  */
-async function createNewSermon() {
+window.createNewSermon = async function() {
     const sermon = await createSermon();
     if (sermon) {
         closeSermonSelector();
@@ -828,7 +833,7 @@ function showErrorIndicator(message) {
 /**
  * Export sermon to Markdown
  */
-async function exportSermonMarkdown() {
+window.exportSermonMarkdown = async function() {
     if (!currentSermon) {
         alert('No sermon to export');
         return;
