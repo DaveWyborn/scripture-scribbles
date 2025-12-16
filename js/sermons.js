@@ -276,10 +276,18 @@ async function loadSermon(sermonId) {
         if (seriesField) seriesField.value = data.series || '';
         if (passageField) passageField.value = data.passage || '';
 
-        // Load content into Trix (only if it exists)
+        // Load content into Trix (wait for initialization)
         const trixEditor = document.querySelector('trix-editor');
-        if (trixEditor && trixEditor.editor) {
-            trixEditor.editor.loadHTML(data.content || '');
+        if (trixEditor) {
+            // Wait for Trix to initialize if not ready
+            if (!trixEditor.editor) {
+                await new Promise(resolve => {
+                    trixEditor.addEventListener('trix-initialize', resolve, { once: true });
+                });
+            }
+            if (trixEditor.editor) {
+                trixEditor.editor.loadHTML(data.content || '');
+            }
         }
 
         console.log('Loaded sermon:', data.title || 'Untitled');
