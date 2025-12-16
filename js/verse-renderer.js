@@ -609,16 +609,28 @@ function displayChapter() {
     const bibleWrapper = document.getElementById('bible-content-wrapper');
     const notesView = document.getElementById('sermon-notes-view');
 
+    console.log('📖 displayChapter() preservation check:', {
+        inSplitMode,
+        bibleWrapper: !!bibleWrapper,
+        notesView: !!notesView,
+        notesViewParent: notesView ? notesView.parentElement?.id : 'no parent',
+        notesViewDisplay: notesView ? notesView.style.display : 'N/A'
+    });
+
     if (inSplitMode && bibleWrapper) {
         // Update only the Bible wrapper content, preserve notes panel
+        console.log('✅ Split mode: updating bible-content-wrapper only');
         bibleWrapper.innerHTML = html;
     } else if (notesView) {
         // Notes panel exists - preserve it regardless of visibility
+        console.log('✅ Preserving sermon-notes-view by re-appending');
         contentEl.innerHTML = html;
         // Re-add notes view (whether visible or not)
         contentEl.appendChild(notesView);
+        console.log('✅ sermon-notes-view re-appended, parent:', notesView.parentElement?.id);
     } else {
         // Normal mode - replace everything
+        console.log('⚠️ No sermon-notes-view found, replacing all content');
         contentEl.innerHTML = html;
     }
 

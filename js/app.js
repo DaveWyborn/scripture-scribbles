@@ -301,4 +301,15 @@ function setupEventListeners() {
 }
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', initApp);
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🔍 DOM loaded - checking for sermon-notes-view...');
+    const notesView = document.getElementById('sermon-notes-view');
+    console.log('sermon-notes-view in initial HTML:', {
+        exists: !!notesView,
+        parent: notesView ? notesView.parentElement?.id : 'N/A',
+        display: notesView ? notesView.style.display : 'N/A',
+        classList: notesView ? Array.from(notesView.classList) : []
+    });
+
+    initApp();
+});

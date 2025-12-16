@@ -261,17 +261,24 @@ async function loadSermon(sermonId) {
         currentSermon = data;
         localStorage.setItem('lastSermonId', sermonId);
 
-        // Populate form fields
-        document.getElementById('sermon-title').value = data.title || '';
-        document.getElementById('sermon-date').value = data.date || '';
-        document.getElementById('sermon-speaker').value = data.speaker || '';
-        document.getElementById('sermon-location').value = data.location || '';
-        document.getElementById('sermon-series').value = data.series || '';
-        document.getElementById('sermon-passage').value = data.passage || '';
+        // Populate form fields (only if they exist)
+        const titleField = document.getElementById('sermon-title');
+        const dateField = document.getElementById('sermon-date');
+        const speakerField = document.getElementById('sermon-speaker');
+        const locationField = document.getElementById('sermon-location');
+        const seriesField = document.getElementById('sermon-series');
+        const passageField = document.getElementById('sermon-passage');
 
-        // Load content into Trix
+        if (titleField) titleField.value = data.title || '';
+        if (dateField) dateField.value = data.date || '';
+        if (speakerField) speakerField.value = data.speaker || '';
+        if (locationField) locationField.value = data.location || '';
+        if (seriesField) seriesField.value = data.series || '';
+        if (passageField) passageField.value = data.passage || '';
+
+        // Load content into Trix (only if it exists)
         const trixEditor = document.querySelector('trix-editor');
-        if (trixEditor) {
+        if (trixEditor && trixEditor.editor) {
             trixEditor.editor.loadHTML(data.content || '');
         }
 
@@ -589,17 +596,31 @@ window.switchMobileView = async function(view) {
     let notesView = document.getElementById('sermon-notes-view');
     const welcomeView = document.querySelector('.welcome');
 
-    console.log('Elements found:', {
+    console.log('📱 switchMobileView - Elements found:', {
         indicator: !!indicator,
         notesView: !!notesView,
+        notesViewParent: notesView ? notesView.parentElement?.id : 'no parent',
+        notesViewDisplay: notesView ? notesView.style.display : 'N/A',
         welcomeView: !!welcomeView,
         currentSermon: !!currentSermon
     });
+
+    // Debug: List all children of content div
+    const contentDiv = document.getElementById('content');
+    if (contentDiv) {
+        console.log('📱 Content div children:', Array.from(contentDiv.children).map(el => ({
+            tag: el.tagName,
+            id: el.id,
+            class: el.className,
+            display: el.style.display
+        })));
+    }
 
     // Create notes view if it doesn't exist
     if (!notesView && view === 'notes') {
         console.warn('⚠️ sermon-notes-view missing on mobile, creating...');
         const content = document.getElementById('content');
+        console.log('Content element:', !!content);
         notesView = document.createElement('div');
         notesView.id = 'sermon-notes-view';
         notesView.className = 'sermon-notes-view';
