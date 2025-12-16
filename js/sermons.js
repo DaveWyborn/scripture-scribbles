@@ -619,12 +619,21 @@ window.switchMobileView = function(view) {
         if (notesView) {
             notesView.style.display = 'flex';
             console.log('Notes shown with display:', notesView.style.display);
+            console.log('Notes computed display:', window.getComputedStyle(notesView).display);
+            console.log('Notes z-index:', window.getComputedStyle(notesView).zIndex);
+            console.log('Notes position:', window.getComputedStyle(notesView).position);
+            console.log('Notes visibility:', window.getComputedStyle(notesView).visibility);
+            console.log('Notes opacity:', window.getComputedStyle(notesView).opacity);
 
             // Load sermon if needed
             if (!currentSermon) {
                 console.log('Creating new sermon...');
                 createSermon();
             }
+        } else {
+            console.error('❌ sermon-notes-view NOT FOUND! Cannot show notes on mobile.');
+            console.log('Available elements:',
+                Array.from(document.querySelectorAll('[id*="sermon"]')).map(el => el.id));
         }
     }
 }
