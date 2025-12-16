@@ -58,6 +58,46 @@ window.toggleMetadata = function() {
 }
 
 /**
+ * Wait for Trix editor to be fully initialized
+ * Returns the editor instance when ready
+ */
+async function waitForTrix(timeout = 2000) {
+    const trixEditor = document.querySelector('trix-editor');
+    if (!trixEditor) {
+        console.warn('No trix-editor element found');
+        return null;
+    }
+
+    // If already initialized, return immediately
+    if (trixEditor.editor) {
+        console.log('✅ Trix already ready');
+        return trixEditor.editor;
+    }
+
+    console.log('⏳ Waiting for Trix to initialize...');
+
+    // Wait for initialization with timeout
+    return new Promise((resolve) => {
+        const timeoutId = setTimeout(() => {
+            console.warn('⚠️ Trix initialization timeout');
+            resolve(trixEditor.editor || null);
+        }, timeout);
+
+        trixEditor.addEventListener('trix-initialize', () => {
+            console.log('✅ Trix initialized');
+            clearTimeout(timeoutId);
+            resolve(trixEditor.editor);
+        }, { once: true });
+
+        // Check if it initialized while we were setting up the listener
+        if (trixEditor.editor) {
+            clearTimeout(timeoutId);
+            resolve(trixEditor.editor);
+        }
+    });
+}
+
+/**
  * Setup Trix editor event listeners
  */
 function setupTrixListeners() {
@@ -284,40 +324,24 @@ async function loadSermon(sermonId) {
         if (passageField) passageField.value = data.passage || '';
 
         // Load content into Trix (wait for initialization if needed)
-        const trixEditor = document.querySelector('trix-editor');
-        if (trixEditor) {
-            console.log('Loading content into Trix, editor ready:', !!trixEditor.editor);
+        const editor = await waitForTrix();
+        if (editor) {
+            console.log('📝 Loading HTML content, length:', (data.content || '').length);
 
-            // If editor not ready, wait with timeout
-            if (!trixEditor.editor) {
-                await Promise.race([
-                    new Promise(resolve => {
-                        trixEditor.addEventListener('trix-initialize', resolve, { once: true });
-                    }),
-                    new Promise(resolve => setTimeout(resolve, 500)) // 500ms timeout
-                ]);
-            }
+            // Log current content
+            const currentContent = editor.getDocument().toString();
+            console.log('Current content:', currentContent.substring(0, 50));
 
-            // Try loading content
-            if (trixEditor.editor) {
-                console.log('Loading HTML content, length:', (data.content || '').length);
+            // Load new content
+            editor.loadHTML(data.content || '');
 
-                // Clear existing content first
-                const editorElement = trixEditor.editor.element;
-                const currentContent = trixEditor.editor.getDocument().toString();
-                console.log('Current content before load:', currentContent.substring(0, 50));
-
-                // Load new content
-                trixEditor.editor.loadHTML(data.content || '');
-
-                // Verify it loaded
-                setTimeout(() => {
-                    const newContent = trixEditor.editor.getDocument().toString();
-                    console.log('Content after load:', newContent.substring(0, 50));
-                }, 100);
-            } else {
-                console.warn('Trix editor still not ready after timeout');
-            }
+            // Verify it loaded
+            setTimeout(() => {
+                const newContent = editor.getDocument().toString();
+                console.log('✅ Content loaded:', newContent.substring(0, 50));
+            }, 100);
+        } else {
+            console.error('❌ Could not initialize Trix editor');
         }
 
         console.log('Loaded sermon:', data.title || 'Untitled');
@@ -735,16 +759,18 @@ window.switchMobileView = async function(view) {
         if (notesView) {
             notesView.style.display = 'flex';
             console.log('Notes shown with display:', notesView.style.display);
-            console.log('Notes computed display:', window.getComputedStyle(notesView).display);
-            console.log('Notes z-index:', window.getComputedStyle(notesView).zIndex);
-            console.log('Notes position:', window.getComputedStyle(notesView).position);
-            console.log('Notes visibility:', window.getComputedStyle(notesView).visibility);
-            console.log('Notes opacity:', window.getComputedStyle(notesView).opacity);
+
+            // Wait for Trix to be ready before loading content
+            await waitForTrix();
 
             // Load sermon if needed
             if (!currentSermon) {
                 console.log('Creating new sermon...');
                 await createSermon();
+            } else {
+                console.log('Current sermon exists, ensuring content is loaded');
+                // Reload current sermon to ensure content is displayed
+                await loadSermon(currentSermon.id);
             }
         } else {
             console.error('❌ sermon-notes-view NOT FOUND! Cannot show notes on mobile.');
