@@ -323,25 +323,34 @@ async function loadSermon(sermonId) {
         if (seriesField) seriesField.value = data.series || '';
         if (passageField) passageField.value = data.passage || '';
 
-        // Load content into Trix (wait for initialization if needed)
-        const editor = await waitForTrix();
-        if (editor) {
-            console.log('📝 Loading HTML content, length:', (data.content || '').length);
+        // Load content into Trix (only if notes view is visible)
+        const notesView = document.getElementById('sermon-notes-view');
+        const notesVisible = notesView && (
+            window.getComputedStyle(notesView).display !== 'none' ||
+            sermonViewMode === 'split'
+        );
 
-            // Log current content
-            const currentContent = editor.getDocument().toString();
-            console.log('Current content:', currentContent.substring(0, 50));
+        console.log('Notes view visible:', notesVisible);
 
-            // Load new content
-            editor.loadHTML(data.content || '');
+        if (notesVisible) {
+            // Notes view is visible, load content into Trix
+            const editor = await waitForTrix();
+            if (editor) {
+                console.log('📝 Loading HTML content, length:', (data.content || '').length);
 
-            // Verify it loaded
-            setTimeout(() => {
-                const newContent = editor.getDocument().toString();
-                console.log('✅ Content loaded:', newContent.substring(0, 50));
-            }, 100);
+                // Load new content
+                editor.loadHTML(data.content || '');
+
+                // Verify it loaded
+                setTimeout(() => {
+                    const newContent = editor.getDocument().toString();
+                    console.log('✅ Content loaded:', newContent.substring(0, 50));
+                }, 100);
+            } else {
+                console.error('❌ Could not initialize Trix editor');
+            }
         } else {
-            console.error('❌ Could not initialize Trix editor');
+            console.log('⏭️ Notes hidden, skipping Trix load (will load when switching to notes)');
         }
 
         console.log('Loaded sermon:', data.title || 'Untitled');
