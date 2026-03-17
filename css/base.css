@@ -43,7 +43,34 @@ body {
     margin-bottom: 10px;
 }
 
-/* Desktop: Single line layout */
+/* Single-row toolbar on both mobile and desktop */
+@media (max-width: 767px) {
+    .toolbar {
+        display: flex;
+        align-items: center;
+        gap: var(--space-s);
+        padding: var(--space-s) var(--space-m);
+    }
+
+    .toolbar-top {
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+
+    .toolbar-logo {
+        display: none;
+    }
+
+    .navigation {
+        flex: 1;
+        display: flex;
+        gap: var(--space-s);
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+    }
+}
+
 @media (min-width: 768px) {
     .toolbar {
         display: flex;

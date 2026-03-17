@@ -626,7 +626,7 @@ trix-editor a {
         z-index: 200;
         border-left: none;
         max-height: 100vh;
-        padding-top: 160px; /* Account for toolbar (110px) + mobile indicator (50px) */
+        padding-top: max(16px, env(safe-area-inset-top));
     }
 
     .sermon-metadata {
