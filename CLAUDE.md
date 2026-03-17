@@ -31,23 +31,31 @@ Make Bible reading accessible and beautiful for people with dyslexia.
 - Future: May expand to serve dyslexic readers beyond Bible (v2.5.0+ if traction)
 - Charity: Transition to UK charity funding Bible translation (v2.0.0 at 10k users)
 
-## Current Version: v1.1.0 (LIVE) ✅
+## Current Version: v1.3.26 (LIVE) ✅
 
 **Features:**
 - Supabase authentication + cloud sync
-- WEB Bible embedded (all 66 books)
+- WEB, ASV, KJV Bibles embedded (all 66 books, fluid + verse-by-verse modes)
 - Visual navigation (modal with book/chapter grids)
+- Full typography controls (font, size, line/letter/word spacing, dyslexia fonts)
+- Full colour customisation (background, text, annotation)
 - 6-colour highlighting + underlines
 - Verse notes and tags
 - Multiple annotation sets (Study, Church, Personal)
-- 24 themes
+- 24 themes + dyslexia-optimised themes
 - Export annotations (Markdown + JSON)
 - Works on all devices (mobile + desktop)
+- Cloud-synced preferences
+
+**In progress (v1.4.0):**
+- Sermon / message notes (Trix editor, split-view, verse insertion, Supabase persistence)
 
 **Architecture:**
-- Supabase backend (auth + storage)
-- Vanilla JavaScript
-- IndexedDB for browser storage
+- Supabase backend (auth + PostgreSQL storage)
+- Vanilla JavaScript — no framework, no build step
+- Separate JS modules in `js/` directory (see Key Files)
+- Separate CSS in `css/` directory
+- IndexedDB for local annotation storage
 - GitHub Pages hosting
 
 ## Strategic Milestone: Prove Concept Before Scaling
@@ -98,9 +106,12 @@ Make Bible reading accessible and beautiful for people with dyslexia.
 ## Key Files
 
 **Application:**
-- `index.html` - Landing page
-- `scripture-scribbles-reader.html` - Main application
-- `bible-viewer-prototype.html` - Early prototype (reference only)
+- `index.html` - Landing page (links to v1.3 live app)
+- `scripture-scribbles-v1.3.html` - Main application (current live, v1.3.26)
+- `scripture-scribbles-v1.3-test.html` - Baseline v1.3.0 (Dec 2025, pre-sermon-notes)
+- `preview.html` - Redirects to current live file
+- `js/` - JavaScript modules (app, annotations, auth, bible-loader, navigation, preferences, sermons, state, tag-manager, typography, ui, verse-renderer)
+- `css/` - Stylesheets (base, components, sermons, themes)
 
 **Bible Data:**
 - `WEB/` - World English Bible (public domain, markdown)
@@ -173,17 +184,14 @@ He opened his mouth and taught them, saying,
 
 ## Technology Stack
 
-**Current (v1.0.0):**
-- Vanilla JavaScript
-- File System Access API
-- localStorage for settings
+**Current (v1.3.x):**
+- Vanilla JavaScript — no framework, no build step
+- Separate JS modules (`js/`) and CSS (`css/`)
+- Supabase (PostgreSQL + Auth) — auth and cloud sync
+- Row Level Security for data isolation
+- IndexedDB for local annotation storage
 - GitHub Pages hosting
-
-**v1.1.0 (adding):**
-- Supabase (PostgreSQL + Auth + Storage)
-- Row Level Security for data protection
-- Email/password + Google OAuth
-- IndexedDB for browser storage (fallback)
+- Trix (Basecamp) for rich text in sermon notes (v1.4, in progress)
 
 ## Design System
 
@@ -346,12 +354,14 @@ See `scripture-scribbles-roadmap.md` for complete details.
 
 ## Current Status
 
-**v1.1.0:** ✅ LIVE - Auth, sync, WEB Bible, visual navigation
-**v1.2.0:** Next focus - Beautiful reading + fluid mode + multiple Bibles
-**v1.3.0:** After that - Full dyslexia controls + reading bar
+**v1.1.0:** ✅ SHIPPED - Auth, sync, WEB Bible, visual navigation
+**v1.2.0:** ✅ SHIPPED - Fluid reading mode, ASV/KJV, UI simplification
+**v1.3.0:** ✅ LIVE (v1.3.26) - Full typography + dyslexia controls, cloud-synced prefs
+**v1.4.0:** ⚡ IN PROGRESS - Sermon/message notes (Trix mobile init is current blocker)
+**Reading bar:** ⏳ DEFERRED from v1.3 — still to build, highest priority after v1.4
 
-**Strategic milestone:** Get to 1,000 users
-**Timeline:** v1.2.0 (3-4 weeks) + v1.3.0 (2-3 weeks) = ~6 weeks to validation point
+**Strategic milestone:** Get to 1,000 users (gate for paid features)
+**Last updated:** 2026-02-23
 
 ## Contact & Support
 
@@ -359,3 +369,14 @@ See `scripture-scribbles-roadmap.md` for complete details.
 **Email:** (via bug report form)
 **GitHub Issues:** https://github.com/DaveWyborn/scripture-scribbles/issues
 **Formspree:** mblqkwye (bug reports)
+
+## Session Maintenance
+
+**DECISIONS.md:** When a significant decision is made (architecture, tooling, strategy, UX approach), add an entry before ending the session. Format: date, short title, decision, rationale, consequences. (In Obsidian — see ## Notes.)
+
+**PROJECT_SUMMARY.md:** At the end of any session where meaningful progress was made, offer to update it and note the date. Keep "What's Done", "What's Next", and "Blockers" accurate — these are read by a fresh Claude instance with no other context. (In Obsidian — see ## Notes.)
+
+## Notes
+Project notes live in Obsidian:
+`/Users/davewyborn/Documents/2_Obsidian/KingdomOfGodWorkingNotes/1. Wants/10 - Scripture Scribbles/`
+Filenames: `Scripture Scribbles - PROJECT_SUMMARY.md` and `Scripture Scribbles - DECISIONS.md`

@@ -15,7 +15,9 @@
 
 ## Current Status
 
-### v1.1.0 (LIVE) ✅
+### v1.3.26 (LIVE) ✅ — Last updated: 2026-02-23
+
+### v1.1.0 ✅
 - ✅ Supabase authentication
 - ✅ Embedded WEB Bible (all 66 books)
 - ✅ Cloud sync for annotations
@@ -54,154 +56,84 @@
 
 ## Version Roadmap
 
-### v1.2.0 - Beautiful Minimal Reading + Fluid Mode
-**Goal:** "Clean, distraction-free reading with paragraphs"
+### v1.2.0 - Beautiful Minimal Reading + Fluid Mode ✅ SHIPPED
 
 **UI Simplification:**
-- [ ] Remove all unnecessary screen clutter
-- [ ] Hide UI chrome by default (auto-hide after 3s)
-- [ ] Tap verse for actions (keep key actions close)
-- [ ] Configurable tap behaviour:
-  - [ ] Tap vs long-press to reduce accidental triggers
-  - [ ] Action menu: immediate / 1s delay / require second tap
-- [ ] Clean, minimal settings menu (not 16+ items like YouVersion)
+- ✅ Remove all unnecessary screen clutter
+- ✅ Hide UI chrome by default (auto-hide after 3s)
+- ✅ Tap verse for actions (keep key actions close)
+- ✅ Configurable tap behaviour
+- ✅ Clean, minimal settings menu
 
 **Fluid Reading Mode:**
-- [ ] USFM → Enhanced JSON converter script
-- [ ] Convert WEB, ASV, KJV from USFM format
-- [ ] Render paragraphs (natural flow, not verse-by-verse blocks)
-- [ ] Section headings (styled, toggleable)
-- [ ] Verse numbers: margin or superscript (user choice, not intrusive)
-- [ ] Toggle: Verse-by-verse mode vs Reading mode
+- ✅ USFM → Enhanced JSON converter script
+- ✅ Convert WEB, ASV, KJV from USFM format
+- ✅ Render paragraphs (natural flow, not verse-by-verse blocks)
+- ✅ Section headings (styled, toggleable)
+- ✅ Toggle: Verse-by-verse mode vs Reading mode
 
 **Multiple Bible Versions (Public Domain):**
-- [ ] Add American Standard Version (ASV 1901)
-- [ ] Add King James Version (KJV)
-- [ ] Bible version selector (easy to find, not buried in menus)
-- [ ] All versions support fluid reading mode
+- ✅ American Standard Version (ASV 1901)
+- ✅ King James Version (KJV)
+- ✅ Bible version selector
 
 **Gentle Animations:**
-- [ ] Smooth page/chapter transitions
-- [ ] Gentle fade-ins for text (300ms, not jarring)
-- [ ] Subtle scroll behaviour
-- [ ] No aggressive animations or flashing
-
-**Maintain Existing Features:**
-- ✅ Verse highlights still work (in both modes)
-- ✅ Notes and tags still work
-- ✅ All annotation features preserved
-- ✅ Tap verse for inline actions (no clutter)
-
-**Timeline:** 3-4 weeks
+- ✅ Smooth transitions and fade-ins
 
 ---
 
-### v1.3.0 - Full Dyslexia Controls + Reading Bar
-**Goal:** "Complete text control + innovative focus aids"
+### v1.3.0 - Full Dyslexia Controls + Reading Bar ✅ SHIPPED (partial)
 
 **Typography & Spacing (Full User Control):**
-- [ ] Font selection (4-5 options):
-  - [ ] OpenDyslexic (primary)
-  - [ ] Atkinson Hyperlegible
-  - [ ] System serif
-  - [ ] System sans-serif
-- [ ] Spacing controls (research-backed):
-  - [ ] Font size slider (12px - 32px+)
-  - [ ] Line spacing adjustment (1.0x - 2.5x)
-  - [ ] Letter spacing adjustment (0x - 0.2em)
-  - [ ] Word spacing adjustment (optional)
-  - [ ] Bold toggle
+- ✅ Font selection (OpenDyslexic, Atkinson Hyperlegible, system serif/sans)
+- ✅ Font size slider
+- ✅ Line spacing adjustment
+- ✅ Letter spacing adjustment
+- ✅ Word spacing adjustment
+- ✅ Cloud-synced preferences
 
-**Colour Controls (Full User Choice):**
-- [ ] Full colour customisation:
-  - [ ] Background colour picker
-  - [ ] Text colour picker
-  - [ ] Annotation colour picker
-- [ ] Dyslexia-optimised themes:
-  - [ ] Yellow on black
-  - [ ] Cream on dark blue
-  - [ ] High contrast options
-- [ ] Warm backgrounds (cream, beige) for reduced visual stress
+**Colour Controls:**
+- ✅ Full colour customisation (background, text, annotation)
+- ✅ Dyslexia-optimised themes
+- ✅ Warm backgrounds for reduced visual stress
 
-**Reading Bar (NEW - Innovative Focus Aid):**
+**Reading Bar (Innovative Focus Aid) — NOT YET SHIPPED:**
+> Planned for v1.3 but deferred. Still to build. This is the killer differentiator.
 - [ ] Adjustable focus bar (mimics physical ruler for dyslexic readers)
-- [ ] Bar height options:
-  - [ ] 1 line (single sentence focus)
-  - [ ] 3 lines
-  - [ ] 5 lines
-  - [ ] 7 lines
-  - [ ] 1 paragraph
-  - [ ] Custom height (user-defined)
-- [ ] Visual styles:
-  - [ ] Overlay (coloured transparent overlay on focused area)
-  - [ ] Underline (single/double line under current line)
-  - [ ] Mask (dim everything except focused area)
-  - [ ] Blur (text above/below blurred)
-  - [ ] Fade (text above/below greyed 50%)
-  - [ ] Ruler (clean lines top/bottom with subtle colour)
-  - [ ] Reading Guide (combination of underline + mask)
-- [ ] Positioning:
-  - [ ] Fixed top (ruler stays at top)
-  - [ ] Fixed centre (ruler stays in middle)
-  - [ ] Fixed bottom (ruler stays at bottom)
-  - [ ] Follows scroll (moves with content)
-  - [ ] Follows mouse/finger (desktop/mobile)
-  - [ ] User-anchored (click to position)
-- [ ] Customisation:
-  - [ ] Colour picker for overlay/ruler/underline
-  - [ ] Opacity control (0-100%)
-  - [ ] Thickness control (for underline/ruler)
-  - [ ] Margin/padding around focused area
-  - [ ] Blur intensity (for blur mode)
-- [ ] Keyboard controls (desktop):
-  - [ ] Arrow up/down to move ruler
-  - [ ] Spacebar to toggle on/off
-  - [ ] +/- to adjust height
-- [ ] Touch controls (mobile):
-  - [ ] Drag to reposition
-  - [ ] Pinch to adjust height
-  - [ ] Double-tap to toggle
-- [ ] Easy toggle on/off (not forced on users who don't need it)
-- [ ] Save preferences per device
+- [ ] Height options: 1/3/5/7 lines, paragraph, custom
+- [ ] Visual styles: Overlay, Underline, Mask, Blur, Fade, Ruler, Reading Guide
+- [ ] Positioning: Fixed top/centre/bottom, follows scroll, follows cursor, user-anchored
+- [ ] Customisation: colour picker, opacity, thickness, blur intensity
+- [ ] Keyboard controls (desktop) + touch controls (mobile)
+- [ ] Easy toggle on/off, save preferences
 
-**Settings UI:**
-```
-Reading Bar:
-□ Enable reading bar
-
-Height: [1] [3] [5] [7 lines] [paragraph] [custom ▼]
-Style: [Overlay] [Underline] [Mask] [Blur] [Fade] [Ruler] [Guide]
-Position: [Top] [Centre] [Bottom] [Follow scroll] [Follow cursor] [Anchored]
-
-Customisation:
-  Colour: [colour picker]
-  Opacity: [━━━━━━━○━━] 70%
-  Thickness: [━━━○━━━━━━] 3px
-  Blur intensity: [━━━━━○━━━━] 5px
-  Margin: [━━○━━━━━━━] 10px
-
-Keyboard shortcuts: [Configure]
-```
-
-**Timeline:** 2-3 weeks
+**Timeline:** 2-3 weeks (next available slot after v1.4)
 
 ---
 
-### v1.4.0 - Sermon Notes
+### v1.4.0 - Sermon / Message Notes ⚡ IN PROGRESS (Feb 2026)
 **Goal:** "Capture sermon notes alongside Bible reading"
 
-**Sermon notes features:**
-- [ ] Side-by-side view (desktop: Bible + Notes)
-- [ ] Swipe left/right (mobile: switch Bible ↔ Notes)
-- [ ] Large clean text editor
-- [ ] Markdown toolbar (headers, links, lists, bold, italic)
-- [ ] Sermon templates with metadata:
-  - [ ] Speaker, date, location, series
-  - [ ] Passage reference
-- [ ] Quick add verse:
-  - [ ] Select verse(s) in Bible
-  - [ ] Click "Add to Notes"
-  - [ ] Inserts formatted verse
+**Done:**
+- ✅ Side-by-side view (desktop: Bible left, Notes right)
+- ✅ Mobile tab switching (Bible ↔ Notes)
+- ✅ Trix rich-text editor (headers, lists, bold, italic)
+- ✅ Collapsible sermon metadata (speaker, date, passage, renamed to "Message Notes")
+- ✅ Quick verse insertion (select verse → insert into notes)
+- ✅ Verse formatting styles
+- ✅ Supabase persistence
+
+**Blocking:**
+- [ ] Trix mobile initialisation — editor fails when element hidden on load; not yet fully resolved
+
+**Remaining:**
+- [ ] Continuous scroll navigation (auto-load next chapter)
+- [ ] Export sermon notes to Markdown
+
+**Quick add verse (done):**
+- ✅ Select verse(s) in Bible
+- ✅ Click "Add to Notes"
+- ✅ Inserts formatted verse
 - [ ] Verse formatting styles (user selectable)
 - [ ] Continuous scroll navigation (auto-load next chapter)
 - [ ] Export sermon notes to Markdown
