@@ -256,8 +256,11 @@ function renderFluidMode(chapter, book) {
                 currentPoetry = [];
             }
 
-            // Start new paragraph on paragraph marker
-            if (verse.type === 'paragraph' && currentParagraph.length > 0) {
+            // Start new paragraph on paragraph marker, but only if the verse
+            // starts a new sentence (capital letter). Lowercase means mid-sentence
+            // continuation — USFM \p markers sometimes fall mid-sentence.
+            const startsNewSentence = verse.text && verse.text[0] === verse.text[0].toUpperCase() && verse.text[0] !== verse.text[0].toLowerCase();
+            if (verse.type === 'paragraph' && currentParagraph.length > 0 && startsNewSentence) {
                 html += renderParagraph(currentParagraph, book.number, chapter.number);
                 currentParagraph = [];
             }
