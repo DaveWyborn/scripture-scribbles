@@ -1,15 +1,16 @@
 /* Sermon Notes Styles */
 
-/* Mobile view indicator (only visible on mobile) */
+/* Mobile view indicator — bottom tab bar, only visible on mobile when notes active */
 .mobile-view-indicator {
-    display: none !important;
+    display: none;
     justify-content: center;
     gap: 8px;
     padding: 10px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
     background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
     position: fixed;
-    top: 60px; /* Desktop - single row toolbar */
+    bottom: 0;
     left: 0;
     right: 0;
     z-index: 250;
@@ -18,16 +19,15 @@
 @media (max-width: 767px) {
     .mobile-view-indicator.active {
         display: flex;
-        top: 110px;
-        transition: top 0.3s ease;
     }
 
-    .mobile-view-indicator.active.indicator-up {
-        top: 0;
+    /* Push content up so it's not hidden behind the tab bar */
+    body:has(.mobile-view-indicator.active) #content,
+    body:has(.mobile-view-indicator.active) .sermon-notes-view {
+        padding-bottom: 70px;
     }
 }
 
-/* Hide on desktop */
 @media (min-width: 768px) {
     .mobile-view-indicator {
         display: none !important;
