@@ -16,13 +16,13 @@
 }
 
 @media (max-width: 767px) {
-    .mobile-view-indicator {
-        display: flex !important;
-        top: 110px; /* Mobile - account for two-row toolbar */
+    .mobile-view-indicator.active {
+        display: flex;
+        top: 110px;
         transition: top 0.3s ease;
     }
 
-    .mobile-view-indicator.indicator-up {
+    .mobile-view-indicator.active.indicator-up {
         top: 0;
     }
 }

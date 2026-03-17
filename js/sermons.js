@@ -757,8 +757,9 @@ window.switchMobileView = async function(view) {
         setupTrixListeners();
     }
 
-    // Update visual indicator
+    // Show and update visual indicator (once notes mode is active, keep visible)
     if (indicator) {
+        indicator.classList.add('active');
         indicator.querySelectorAll('.view-tab').forEach(tab => {
             tab.classList.toggle('active', tab.dataset.view === view);
         });
