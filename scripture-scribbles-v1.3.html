@@ -299,9 +299,9 @@
                     </div>
                 </div>
 
-                <!-- Trix editor -->
+                <!-- Trix editor (mounted dynamically when notes become visible) -->
                 <div class="sermon-editor-container">
-                    <trix-editor toolbar="sermon-toolbar" input="sermon-content" placeholder="Start typing your notes..."></trix-editor>
+                    <div id="trix-mount"></div>
                     <input type="hidden" id="sermon-content">
                 </div>
 
@@ -529,7 +529,7 @@
     <script src="js/preferences.js?v=1.3.24"></script>
     <script src="js/tag-manager.js?v=1.3.19"></script>
     <script src="js/ui.js?v=1.3.28"></script>
-    <script src="js/sermons.js?v=1.4.4"></script>
+    <script src="js/sermons.js?v=1.4.5"></script>
     <script src="js/app.js?v=1.3.19"></script>
 </body>
 </html>

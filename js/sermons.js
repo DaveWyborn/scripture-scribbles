@@ -58,41 +58,50 @@ window.toggleMetadata = function() {
 }
 
 /**
- * Wait for Trix editor to be fully initialized
- * Returns the editor instance when ready
+ * Ensure Trix editor is mounted and initialized.
+ * Injects the trix-editor element into #trix-mount only when called
+ * (notes view must already be visible), then waits for trix-initialize.
  */
-async function waitForTrix(timeout = 2000) {
-    const trixEditor = document.querySelector('trix-editor');
-    if (!trixEditor) {
-        console.warn('No trix-editor element found');
+async function ensureTrixEditor() {
+    // Already mounted and ready
+    const existing = document.querySelector('trix-editor');
+    if (existing && existing.editor) return existing.editor;
+
+    // Already mounted but not yet initialized — wait for it
+    if (existing) {
+        return new Promise((resolve) => {
+            const timeout = setTimeout(() => resolve(existing.editor || null), 3000);
+            existing.addEventListener('trix-initialize', () => {
+                clearTimeout(timeout);
+                resolve(existing.editor);
+            }, { once: true });
+        });
+    }
+
+    // Not mounted yet — inject into mount point (notes view must be visible)
+    const mount = document.getElementById('trix-mount');
+    if (!mount) {
+        console.warn('No #trix-mount found');
         return null;
     }
 
-    // If already initialized, return immediately
-    if (trixEditor.editor) {
-        console.log('✅ Trix already ready');
-        return trixEditor.editor;
-    }
+    const trix = document.createElement('trix-editor');
+    trix.setAttribute('input', 'sermon-content');
+    trix.setAttribute('placeholder', 'Start typing your notes...');
+    mount.appendChild(trix);
 
-    console.log('⏳ Waiting for Trix to initialize...');
-
-    // Wait for initialization with timeout
     return new Promise((resolve) => {
-        const timeoutId = setTimeout(() => {
-            console.warn('⚠️ Trix initialization timeout');
-            resolve(trixEditor.editor || null);
-        }, timeout);
-
-        trixEditor.addEventListener('trix-initialize', () => {
-            console.log('✅ Trix initialized');
-            clearTimeout(timeoutId);
-            resolve(trixEditor.editor);
+        const timeout = setTimeout(() => {
+            console.warn('Trix init timeout');
+            resolve(trix.editor || null);
+        }, 3000);
+        trix.addEventListener('trix-initialize', () => {
+            clearTimeout(timeout);
+            resolve(trix.editor);
         }, { once: true });
-
-        // Check if it initialized while we were setting up the listener
-        if (trixEditor.editor) {
-            clearTimeout(timeoutId);
-            resolve(trixEditor.editor);
+        if (trix.editor) {
+            clearTimeout(timeout);
+            resolve(trix.editor);
         }
     });
 }
@@ -334,7 +343,7 @@ async function loadSermon(sermonId) {
 
         if (notesVisible) {
             // Notes view is visible, load content into Trix
-            const editor = await waitForTrix();
+            const editor = await ensureTrixEditor();
             if (editor) {
                 console.log('📝 Loading HTML content, length:', (data.content || '').length);
 
@@ -406,10 +415,10 @@ async function createSermon() {
         document.getElementById('sermon-series').value = '';
         document.getElementById('sermon-passage').value = data.passage;
 
-        // Clear Trix editor
-        const trixEditor = document.querySelector('trix-editor');
-        if (trixEditor) {
-            trixEditor.editor.loadHTML('');
+        // Clear Trix editor if mounted
+        const trixEl = document.querySelector('trix-editor');
+        if (trixEl && trixEl.editor) {
+            trixEl.editor.loadHTML('');
         }
 
         console.log('Created new sermon:', data.title);
@@ -625,6 +634,9 @@ async function toggleNotesView() {
             toggleBtn.innerHTML = '<i class="ph ph-x"></i> Close Notes';
         }
 
+        // Mount and initialise Trix now that notes are visible
+        await ensureTrixEditor();
+
         // Load current sermon or create new
         if (!currentSermon) {
             console.log('Creating new sermon...');
@@ -769,8 +781,8 @@ window.switchMobileView = async function(view) {
             notesView.style.display = 'flex';
             console.log('Notes shown with display:', notesView.style.display);
 
-            // Wait for Trix to be ready before loading content
-            await waitForTrix();
+            // Mount and initialise Trix now that notes are visible
+            await ensureTrixEditor();
 
             // Load sermon if needed
             if (!currentSermon) {
