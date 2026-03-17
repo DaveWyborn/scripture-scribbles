@@ -19,6 +19,11 @@
     .mobile-view-indicator {
         display: flex !important;
         top: 110px; /* Mobile - account for two-row toolbar */
+        transition: top 0.3s ease;
+    }
+
+    .mobile-view-indicator.indicator-up {
+        top: 0;
     }
 }
 

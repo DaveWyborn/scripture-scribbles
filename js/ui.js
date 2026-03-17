@@ -709,11 +709,13 @@ let lastScrollTop = 0;
 
 function handleToolbarScroll() {
     const toolbar = document.getElementById('toolbar');
+    const indicator = document.getElementById('mobile-view-indicator');
     const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
     // Don't hide if at very top
     if (currentScroll <= 100) {
         toolbar.classList.remove('toolbar-hidden');
+        if (indicator) indicator.classList.remove('indicator-up');
         lastScrollTop = currentScroll;
         return;
     }
@@ -721,10 +723,12 @@ function handleToolbarScroll() {
     // Scrolling down - hide toolbar
     if (currentScroll > lastScrollTop && currentScroll > 100) {
         toolbar.classList.add('toolbar-hidden');
+        if (indicator) indicator.classList.add('indicator-up');
     }
     // Scrolling up - show toolbar
     else if (currentScroll < lastScrollTop) {
         toolbar.classList.remove('toolbar-hidden');
+        if (indicator) indicator.classList.remove('indicator-up');
     }
 
     lastScrollTop = currentScroll;
