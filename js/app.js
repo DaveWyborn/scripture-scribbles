@@ -28,11 +28,10 @@ async function initApp() {
     const bibleLoadPromise = loadBibleData();
 
     if (session) {
-        // Returning user - show loading message if Bible not ready yet
-        const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
-        if (hasSeenWelcome && !bibleData) {
-            // Show loading message for returning users
-            document.getElementById('bible-loading-message').style.display = 'block';
+        // Show loading message while Bible loads
+        if (!bibleData) {
+            const loadingMsg = document.getElementById('bible-loading-message');
+            if (loadingMsg) loadingMsg.style.display = 'block';
         }
 
         // Wait for Bible to load before showing content

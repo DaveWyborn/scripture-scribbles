@@ -5,13 +5,19 @@
  * Load gzipped Bible JSON file
  * Falls back to uncompressed if gzip fails
  */
+function fetchWithTimeout(url, timeoutMs = 20000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timer));
+}
+
 async function loadGzippedBible(version = 'web') {
     const gzippedUrl = `data/${version}-bible-enhanced.json.gz`;
     const fallbackUrl = `data/${version}-bible-enhanced.json`;
 
     try {
         console.log(`Loading ${version.toUpperCase()} Bible (gzipped)...`);
-        const response = await fetch(gzippedUrl);
+        const response = await fetchWithTimeout(gzippedUrl, 20000);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -30,7 +36,7 @@ async function loadGzippedBible(version = 'web') {
         console.warn(`Gzipped version failed (${error.message}), trying uncompressed...`);
 
         // Fallback to uncompressed JSON
-        const response = await fetch(fallbackUrl);
+        const response = await fetchWithTimeout(fallbackUrl, 30000);
         if (!response.ok) {
             throw new Error(`Failed to load Bible: ${response.status}`);
         }
