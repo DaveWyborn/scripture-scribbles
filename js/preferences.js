@@ -1,7 +1,7 @@
 // User Preferences Module - Cloud-synced settings
 
 const DEFAULT_PREFERENCES = {
-    theme: 'clean',
+    theme: 'paper',
     fontFamily: 'system',
     fontSize: 16,
     lineSpacing: 1.5,
@@ -116,7 +116,7 @@ async function saveUserPreferences() {
     try {
         // Gather current preferences
         const preferences = {
-            theme: document.documentElement.getAttribute('data-theme') || 'clean',
+            theme: document.documentElement.getAttribute('data-theme') || 'paper',
             fontFamily: document.getElementById('font-family')?.value || 'system',
             fontSize: parseInt(document.getElementById('font-size')?.value || 16),
             lineSpacing: parseFloat(document.getElementById('line-spacing')?.value || 1.5),

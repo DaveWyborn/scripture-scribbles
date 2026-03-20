@@ -7,8 +7,7 @@ async function openTagManager() {
         return;
     }
 
-    // Close settings menu
-    document.getElementById('settings-menu').classList.remove('open');
+    closeSettingsPanel();
 
     // Show modal with loading state
     const modal = document.getElementById('tag-manager-modal');

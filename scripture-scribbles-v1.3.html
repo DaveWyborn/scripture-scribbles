@@ -6,8 +6,8 @@
     <title>Scripture Scribbles v1.3</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Dyslexia-friendly fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+    <!-- Reading fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/opendyslexic@3.0.0/opendyslexic-regular.min.css">
 
     <!-- Modular CSS -->
@@ -60,8 +60,15 @@
             </div>
         </div>
 
-        <!-- Settings Menu -->
-        <div class="settings-menu" id="settings-menu">
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settings-panel">
+            <div class="settings-panel-header">
+                <span class="settings-panel-title">Settings</span>
+                <button class="settings-panel-close" id="close-panel-btn" aria-label="Close settings">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="settings-panel-body">
             <div class="settings-item settings-toggle">
                 <div>
                     <i class="ph ph-stack"></i>
@@ -78,25 +85,14 @@
                     <span>Theme</span>
                 </div>
                 <select id="theme-select">
+                    <option value="paper">Paper (Default)</option>
                     <option value="clean">Clean</option>
-                    <option value="warm">Warm</option>
                     <option value="dyslexia-light">Dyslexia Light</option>
-                    <option value="true-dark">True Dark</option>
-                    <option value="slate">Slate</option>
-                    <option value="dyslexia-dark">Dyslexia Dark</option>
                     <option value="high-contrast-light">High Contrast Light</option>
+                    <option value="slate">Slate</option>
+                    <option value="warm-dark">Warm Dark</option>
+                    <option value="dyslexia-dark">Dyslexia Dark</option>
                     <option value="high-contrast-dark">High Contrast Dark</option>
-                    <option value="nord">Nord</option>
-                    <option value="github-light">GitHub Light</option>
-                    <option value="github-dark">GitHub Dark</option>
-                    <option value="paper">Paper</option>
-                    <option value="gruvbox-light">Gruvbox Light</option>
-                    <option value="gruvbox-dark">Gruvbox Dark</option>
-                    <option value="ocean-deep">Ocean Deep</option>
-                    <option value="twilight">Twilight</option>
-                    <option value="monokai">Monokai</option>
-                    <option value="sunset">Sunset</option>
-                    <option value="luxury">Luxury</option>
                 </select>
             </div>
             <div class="settings-item settings-toggle">
@@ -142,9 +138,10 @@
                 </div>
                 <select id="font-family">
                     <option value="system">System (Default)</option>
+                    <option value="lora">Lora (Serif)</option>
                     <option value="atkinson">Atkinson Hyperlegible</option>
                     <option value="opendyslexic">OpenDyslexic</option>
-                    <option value="serif">Serif</option>
+                    <option value="serif">Georgia (Serif)</option>
                 </select>
             </div>
 
@@ -218,7 +215,9 @@
                 <button class="btn primary" id="sign-in-btn">Sign In</button>
                 <button class="btn" id="sign-up-btn">Sign Up</button>
             </div>
-        </div>
+            </div><!-- end settings-panel-body -->
+        </div><!-- end settings-panel -->
+        <div class="settings-overlay" id="settings-overlay"></div>
 
         <!-- Desktop toggle button (temporary position for testing) -->
         <div class="desktop-notes-toggle" id="desktop-notes-toggle" style="display: none; padding: 10px; background: var(--bg-secondary); border-bottom: 1px solid var(--border);">

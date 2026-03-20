@@ -17,18 +17,18 @@ body {
     margin: 0 auto;
     background: var(--bg-primary);
     min-height: 100vh;
-    box-shadow: 0 0 20px var(--stroke);
+    box-shadow: 0 0 40px var(--stroke);
 }
 
 /* Header / Toolbar */
 .toolbar {
-    background: var(--text-secondary);
-    color: var(--bg-primary);
-    padding: var(--space-m) var(--space-xl);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    padding: var(--space-s) var(--space-xl);
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 5px var(--stroke);
+    border-bottom: 1px solid var(--border);
     transition: transform 0.3s ease;
 }
 
@@ -168,41 +168,110 @@ body {
 .toolbar-menu-btn {
     background: none;
     border: none;
-    color: var(--bg-primary);
-    font-size: 1.5em;
+    color: var(--text-secondary);
+    font-size: 1.4em;
     cursor: pointer;
     padding: var(--space-s);
     border-radius: var(--radius-m);
-    transition: background var(--transition-fast);
+    transition: background var(--transition-fast), color var(--transition-fast);
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
-    position: relative;
-    z-index: 101;
+    flex-shrink: 0;
 }
 
 .toolbar-menu-btn:hover,
 .toolbar-menu-btn:active {
-    background: rgba(255,255,255,0.1);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
 }
 
-/* Settings Menu */
-.settings-menu {
-    display: none;
+/* Settings Panel — slides in from right */
+.settings-panel {
     position: fixed;
-    top: 60px;
-    right: var(--space-m);
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100vh;
+    height: 100dvh;
     background: var(--bg-primary);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-m);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    min-width: 220px;
-    max-height: calc(100vh - 80px);
-    overflow-y: auto;
-    z-index: 1000;
+    border-left: 1px solid var(--border);
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.12);
+    transform: translateX(100%);
+    transition: transform var(--transition-normal);
+    z-index: 600;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.settings-menu.open {
-    display: block;
+.settings-panel.open {
+    transform: translateX(0);
+}
+
+.settings-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-normal);
+    z-index: 599;
+}
+
+.settings-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.settings-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-m) var(--space-m);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.settings-panel-title {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.settings-panel-close {
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: var(--radius-s);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.settings-panel-close:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.settings-panel-body {
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: var(--space-xl);
+}
+
+@media (max-width: 400px) {
+    .settings-panel {
+        width: 100%;
+    }
 }
 
 .settings-item {
@@ -355,15 +424,11 @@ body {
     flex-wrap: wrap;
 }
 
-.annotation-set-switcher {
-    margin-left: var(--space-m);
-}
-
 .set-switcher-btn {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
     border-radius: var(--radius-s);
-    color: var(--bg-primary);
+    color: var(--text-primary);
     padding: 4px 12px;
     font-size: 0.85em;
     cursor: pointer;
@@ -374,7 +439,7 @@ body {
 }
 
 .set-switcher-btn:hover {
-    background: rgba(255,255,255,0.15);
+    background: var(--border);
 }
 
 .set-switcher-btn i {
@@ -394,9 +459,20 @@ body {
 }
 
 .nav-btn.nav-arrow {
-    padding: var(--space-s) var(--space-m);
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
     font-size: 1.1em;
-    min-width: 44px;
+    padding: var(--space-s);
+    min-width: 36px;
+    border-radius: var(--radius-s);
+    transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.nav-btn.nav-arrow:hover:not(:disabled) {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    filter: none;
 }
 
 .nav-btn:hover:not(:disabled) {
@@ -404,40 +480,46 @@ body {
 }
 
 .nav-btn:disabled {
-    opacity: 0.5;
+    opacity: 0.3;
     cursor: not-allowed;
-    background: var(--text-tertiary);
+    background: none;
+}
+
+.nav-btn.nav-arrow:disabled {
+    background: none;
 }
 
 .chapter-info {
     background: transparent;
-    border: 2px solid var(--accent-primary);
-    color: var(--bg-primary);
-    padding: var(--space-s) var(--space-m);
-    border-radius: var(--radius-m);
-    font-size: 1.1em;
+    border: none;
+    color: var(--text-primary);
+    padding: var(--space-xs) var(--space-s);
+    font-size: 1em;
     font-weight: 500;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: color var(--transition-fast);
     min-width: 140px;
     text-align: center;
 }
 
 .chapter-info:hover {
-    background: var(--accent-primary);
+    color: var(--accent-primary);
+    background: none;
 }
 
 /* Content area */
 .content {
     padding: var(--space-xxl);
+    max-width: 720px;
+    margin: 0 auto;
 }
 
 .chapter-title {
-    font-size: 2em;
+    font-size: 1.9em;
+    font-weight: 600;
     margin-bottom: var(--space-xl);
     color: var(--text-primary);
-    border-bottom: 2px solid var(--accent-primary);
-    padding-bottom: var(--space-s);
+    letter-spacing: -0.01em;
 }
 
 
@@ -514,7 +596,11 @@ input[type="range"]::-moz-range-thumb:hover {
 
 /* Font family classes */
 .content[data-font="system"] {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.content[data-font="lora"] {
+    font-family: 'Lora', Georgia, serif;
 }
 
 .content[data-font="atkinson"] {

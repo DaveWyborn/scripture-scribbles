@@ -1,15 +1,29 @@
 // UI Module - Settings, themes, annotation sets, export functionality
 
-// ===== Settings Menu =====
+// ===== Settings Panel =====
 
-function toggleSettingsMenu() {
-    document.getElementById('settings-menu').classList.toggle('open');
+function toggleSettingsPanel() {
+    const panel = document.getElementById('settings-panel');
+    const overlay = document.getElementById('settings-overlay');
+    const isOpen = panel.classList.contains('open');
+    panel.classList.toggle('open');
+    overlay.classList.toggle('open');
+    document.body.style.overflow = isOpen ? '' : 'hidden';
 }
+
+function closeSettingsPanel() {
+    document.getElementById('settings-panel').classList.remove('open');
+    document.getElementById('settings-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// Keep old name as alias for any remaining references
+function toggleSettingsMenu() { toggleSettingsPanel(); }
 
 // ===== Theme Functions =====
 
 function loadTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'clean';
+    const savedTheme = localStorage.getItem('theme') || 'paper';
     document.documentElement.setAttribute('data-theme', savedTheme);
     setTimeout(applyAutoContrast, 50);
 }
@@ -23,7 +37,7 @@ function changeTheme(theme) {
 
 // Get theme-appropriate tag colors
 function getTagColors() {
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'clean';
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'paper';
     return WCAG_THEMES.includes(currentTheme) ? TAG_COLORS_WCAG : TAG_COLORS_PASTEL;
 }
 
@@ -363,8 +377,8 @@ async function openExportModal() {
         return;
     }
 
-    // Close settings menu
-    document.getElementById('settings-menu').classList.remove('open');
+    // Close settings panel
+    closeSettingsPanel();
 
     // Populate annotation sets
     const setSelect = document.getElementById('export-annotation-set');

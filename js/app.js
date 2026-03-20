@@ -74,32 +74,35 @@ async function initApp() {
 function setupEventListeners() {
     console.log('Setting up event listeners...');
 
-    // Settings menu toggle - add both click and touchend for mobile
+    // Settings panel toggle
     const menuBtn = document.getElementById('menu-btn');
     menuBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        toggleSettingsMenu();
+        toggleSettingsPanel();
     });
     menuBtn.addEventListener('touchend', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        toggleSettingsMenu();
+        toggleSettingsPanel();
     });
 
-    // Close settings menu when clicking outside
-    document.addEventListener('click', (e) => {
-        const menu = document.getElementById('settings-menu');
-        const btn = document.getElementById('menu-btn');
-        if (!menu.contains(e.target) && !btn.contains(e.target)) {
-            menu.classList.remove('open');
-        }
-    });
+    // Close panel via close button
+    const closePanelBtn = document.getElementById('close-panel-btn');
+    if (closePanelBtn) {
+        closePanelBtn.addEventListener('click', closeSettingsPanel);
+    }
+
+    // Close panel via overlay click
+    const overlay = document.getElementById('settings-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', closeSettingsPanel);
+    }
 
     // Theme selector
     const themeSelect = document.getElementById('theme-select');
     if (themeSelect) {
-        const savedTheme = localStorage.getItem('theme') || 'clean';
+        const savedTheme = localStorage.getItem('theme') || 'paper';
         themeSelect.value = savedTheme;
         themeSelect.addEventListener('change', (e) => {
             changeTheme(e.target.value);
