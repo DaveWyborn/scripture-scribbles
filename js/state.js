@@ -16,7 +16,9 @@ let currentChapter = 1;
 let isNavigating = false;
 
 // Reading mode state
-let readingMode = 'verse'; // 'verse' or 'fluid'
+let readingMode = 'verse'; // 'verse', 'fluid', or 'passage'
+let passageChunks = []; // Built chunks for current chapter in passage mode
+let currentPassageIndex = 0; // Index into passageChunks
 let verseNumberStyle = 'superscript'; // 'superscript', 'margin', or 'hidden'
 
 // Sermon notes state

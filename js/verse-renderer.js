@@ -215,6 +215,112 @@ function renderPoetry(verses, bookNum, chapterNum) {
 }
 
 /**
+ * Build natural paragraph chunks from chapter verses using USFM boundary markers
+ */
+function buildNaturalChunks(verses) {
+    const chunks = [];
+    let currentVerses = [];
+    let pendingHeading = null;
+    let currentIsPoetry = false;
+
+    verses.forEach(verse => {
+        const isPoetry = verse.type && verse.type.startsWith('poetry');
+        const startsNewSentence = verse.text &&
+            verse.text[0] === verse.text[0].toUpperCase() &&
+            verse.text[0] !== verse.text[0].toLowerCase();
+
+        if (verse.heading) {
+            if (currentVerses.length > 0) {
+                chunks.push({ verses: currentVerses, heading: pendingHeading });
+                currentVerses = [];
+                currentIsPoetry = false;
+            }
+            pendingHeading = verse.heading;
+        }
+
+        if (currentVerses.length > 0 && isPoetry !== currentIsPoetry) {
+            chunks.push({ verses: currentVerses, heading: pendingHeading });
+            currentVerses = [];
+            pendingHeading = null;
+        }
+
+        if (!isPoetry && verse.type === 'paragraph' && currentVerses.length > 0 && startsNewSentence) {
+            chunks.push({ verses: currentVerses, heading: pendingHeading });
+            currentVerses = [];
+            pendingHeading = null;
+        }
+
+        currentVerses.push(verse);
+        currentIsPoetry = isPoetry;
+    });
+
+    if (currentVerses.length > 0) {
+        chunks.push({ verses: currentVerses, heading: pendingHeading });
+    }
+
+    return chunks;
+}
+
+/**
+ * Build passage chunks for a chapter with orphan handling.
+ * targetSize / minSize are soft guides; natural breaks take priority.
+ * Orphan rule: if the last chunk is below minSize, halve the combined
+ * last-two chunks if both halves meet minSize, otherwise absorb.
+ */
+function buildPassageChunks(chapter, targetSize = 5, minSize = 3) {
+    const natural = buildNaturalChunks(chapter.verses);
+
+    // Merge chunks below minSize (that have no heading) backward into previous
+    const merged = [];
+    for (const chunk of natural) {
+        if (chunk.verses.length < minSize && !chunk.heading && merged.length > 0) {
+            merged[merged.length - 1].verses.push(...chunk.verses);
+        } else {
+            merged.push({ verses: [...chunk.verses], heading: chunk.heading });
+        }
+    }
+
+    // Orphan rule: if last chunk is below minSize, halve or absorb
+    if (merged.length >= 2) {
+        const last = merged[merged.length - 1];
+        const prev = merged[merged.length - 2];
+        if (last.verses.length < minSize) {
+            const all = [...prev.verses, ...last.verses];
+            const half = Math.ceil(all.length / 2);
+            if (half >= minSize && (all.length - half) >= minSize) {
+                merged[merged.length - 2] = { verses: all.slice(0, half), heading: prev.heading };
+                merged[merged.length - 1] = { verses: all.slice(half), heading: null };
+            } else {
+                prev.verses.push(...last.verses);
+                merged.pop();
+            }
+        }
+    }
+
+    return merged;
+}
+
+/**
+ * Render the current passage chunk in passage mode
+ */
+function renderPassageMode(chapter, book) {
+    if (passageChunks.length === 0) {
+        passageChunks = buildPassageChunks(chapter);
+        currentPassageIndex = Math.max(0, Math.min(currentPassageIndex, passageChunks.length - 1));
+    }
+
+    const chunk = passageChunks[currentPassageIndex];
+    const pseudoChapter = { ...chapter, verses: chunk.verses };
+
+    let html = '';
+    if (chunk.heading) {
+        html += `<div class="section-heading">${chunk.heading}</div>`;
+    }
+    html += renderFluidMode(pseudoChapter, book);
+    return html;
+}
+
+/**
  * Render chapter in fluid reading mode
  */
 function renderFluidMode(chapter, book) {
@@ -445,17 +551,27 @@ function displayChapter() {
         return;
     }
 
-    document.getElementById('chapter-info').textContent = `${book.name} ${currentChapter}`;
-
     const contentEl = document.getElementById('content');
 
-    let html = `<div class="chapter-title">${book.name} ${currentChapter}</div>`;
+    let html;
 
-    // Choose renderer based on reading mode
-    if (readingMode === 'fluid') {
-        html += renderFluidMode(chapter, book);
+    if (readingMode === 'passage') {
+        if (passageChunks.length === 0) {
+            passageChunks = buildPassageChunks(chapter);
+            currentPassageIndex = Math.max(0, Math.min(currentPassageIndex, passageChunks.length - 1));
+        }
+        document.getElementById('chapter-info').textContent =
+            `${book.name} ${currentChapter} · ${currentPassageIndex + 1}/${passageChunks.length}`;
+        html = `<div class="chapter-title">${book.name} ${currentChapter}</div>`;
+        html += renderPassageMode(chapter, book);
     } else {
-        html += renderVerseMode(chapter, book);
+        document.getElementById('chapter-info').textContent = `${book.name} ${currentChapter}`;
+        html = `<div class="chapter-title">${book.name} ${currentChapter}</div>`;
+        if (readingMode === 'fluid') {
+            html += renderFluidMode(chapter, book);
+        } else {
+            html += renderVerseMode(chapter, book);
+        }
     }
 
     // OLD VERSE-BY-VERSE CODE BELOW - NOW HANDLED BY renderVerseMode()
@@ -647,7 +763,7 @@ function displayChapter() {
     }
 
     // Add reading mode class
-    contentEl.classList.toggle('reading-mode-fluid', readingMode === 'fluid');
+    contentEl.classList.toggle('reading-mode-fluid', readingMode === 'fluid' || readingMode === 'passage');
     contentEl.classList.toggle('reading-mode-verse', readingMode === 'verse');
 
     // Add click handlers based on reading mode
@@ -745,19 +861,60 @@ function displayChapter() {
 
     // Update navigation buttons
     const book_obj = bibleData.books.find(b => b.id === currentBook);
-    document.getElementById('prev-chapter').disabled = currentChapter === 1;
-    document.getElementById('next-chapter').disabled = currentChapter === book_obj.chapters.length;
+    if (readingMode === 'passage') {
+        document.getElementById('prev-chapter').disabled =
+            currentChapter === 1 && currentPassageIndex === 0;
+        document.getElementById('next-chapter').disabled =
+            currentChapter === book_obj.chapters.length &&
+            currentPassageIndex === passageChunks.length - 1;
+    } else {
+        document.getElementById('prev-chapter').disabled = currentChapter === 1;
+        document.getElementById('next-chapter').disabled = currentChapter === book_obj.chapters.length;
+    }
 
     // Apply auto-contrast to highlights and tags
     setTimeout(applyAutoContrast, 50);
 }
 
-// Navigate to previous/next chapter
+// Navigate to previous/next chapter (or passage in passage mode)
 async function navigateChapter(delta) {
     if (isNavigating) return;
+
+    // Passage mode: navigate within chunks first, cross chapter at boundaries
+    if (readingMode === 'passage' && passageChunks.length > 0) {
+        const newIndex = currentPassageIndex + delta;
+        if (newIndex >= 0 && newIndex < passageChunks.length) {
+            currentPassageIndex = newIndex;
+            displayChapter();
+            return;
+        }
+        // At chapter boundary — move to adjacent chapter
+        isNavigating = true;
+        try {
+            currentChapter += delta;
+            passageChunks = [];
+            await loadAnnotations();
+            // Build chunks now so we can land on last passage when going back
+            const book = bibleData.books.find(b => b.id === currentBook);
+            const chapter = book && book.chapters.find(c => c.number === currentChapter);
+            if (chapter) {
+                passageChunks = buildPassageChunks(chapter);
+                currentPassageIndex = delta > 0 ? 0 : passageChunks.length - 1;
+            }
+            displayChapter();
+        } catch (error) {
+            console.error('Error in navigateChapter:', error);
+        } finally {
+            isNavigating = false;
+        }
+        return;
+    }
+
     isNavigating = true;
     try {
         currentChapter += delta;
+        passageChunks = [];
+        currentPassageIndex = 0;
         await loadAnnotations();
         displayChapter();
     } catch (error) {

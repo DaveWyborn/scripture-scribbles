@@ -70,9 +70,11 @@ function loadReadingMode() {
 
 function setReadingMode(mode) {
     readingMode = mode;
+    passageChunks = [];
+    currentPassageIndex = 0;
     localStorage.setItem('readingMode', mode);
     updateVerseNumberStyleVisibility();
-    displayChapter(); // Re-render with new mode
+    displayChapter();
     debounceSavePreferences();
 }
 
@@ -101,8 +103,8 @@ function setVerseNumberStyle(style) {
 function updateVerseNumberStyleVisibility() {
     const container = document.getElementById('verse-number-style-container');
     if (container) {
-        // Only show verse number style in fluid mode
-        container.style.display = readingMode === 'fluid' ? 'flex' : 'none';
+        // Show verse number style in fluid and passage modes
+        container.style.display = (readingMode === 'fluid' || readingMode === 'passage') ? 'flex' : 'none';
     }
 }
 
