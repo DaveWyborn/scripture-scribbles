@@ -84,7 +84,9 @@ function renderChapterGrid() {
     let html = '';
     for (let i = 1; i <= book.chapters.length; i++) {
         const isCurrent = i === currentChapter ? 'current' : '';
-        html += `<button class="chapter-btn ${isCurrent}" data-chapter="${i}">${i}</button>`;
+        const chapterStatus = typeof getChapterStatus === 'function' ? getChapterStatus(currentBook, i) : 'unread';
+        const statusClass = chapterStatus === 'complete' ? 'chapter-complete' : chapterStatus === 'partial' ? 'chapter-partial' : '';
+        html += `<button class="chapter-btn ${isCurrent} ${statusClass}" data-chapter="${i}">${i}</button>`;
     }
 
     document.getElementById('chapter-grid').innerHTML = html;

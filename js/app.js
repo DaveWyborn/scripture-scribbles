@@ -21,6 +21,11 @@ async function initApp() {
     // Load known tags from localStorage
     loadKnownTags();
 
+    // Load reading history (localStorage for guests, Supabase for logged-in users)
+    if (typeof initReadingHistory === 'function') {
+        await initReadingHistory();
+    }
+
     // Check auth status
     const { data: { session } } = await supabase.auth.getSession();
 
@@ -54,6 +59,10 @@ async function initApp() {
     // Listen for auth changes
     supabase.auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' && session && !currentUser) {
+            // Merge any guest reading history before handling auth
+            if (typeof mergeGuestHistoryToSupabase === 'function') {
+                await mergeGuestHistoryToSupabase();
+            }
             // Ensure Bible is loaded before showing content
             await bibleLoadPromise;
             await handleAuthSuccess(session.user);

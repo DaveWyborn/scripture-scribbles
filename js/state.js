@@ -41,6 +41,9 @@ let knownTags = {}; // { tagName: color } - persisted to localStorage
 let currentTags = []; // Tags being edited in annotation panel
 let selectedTagColor = '#ACE5CB'; // Default tag colour
 
+// Reading history state (used by reading-plans.js)
+let readingHistory = {};
+
 // Auth modal state
 let isSignUp = false;
 

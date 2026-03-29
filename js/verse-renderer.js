@@ -262,15 +262,17 @@ function buildNaturalChunks(verses) {
 }
 
 /**
- * Build passage chunks for a chapter with orphan handling.
- * targetSize / minSize are soft guides; natural breaks take priority.
- * Orphan rule: if the last chunk is below minSize, halve the combined
- * last-two chunks if both halves meet minSize, otherwise absorb.
+ * Build passage chunks for a chapter.
+ * Rules (in order):
+ *   1. Merge small non-heading chunks backward into previous (min = 3)
+ *   2. Merge first chunk forward if below min (can't go backward)
+ *   3. Split chunks above maxSize (10) at paragraph boundaries, targeting ~targetSize (5)
+ *   4. Orphan rule: last chunk below min → halve or absorb
  */
-function buildPassageChunks(chapter, targetSize = 5, minSize = 3) {
+function buildPassageChunks(chapter, targetSize = 5, minSize = 3, maxSize = 10) {
     const natural = buildNaturalChunks(chapter.verses);
 
-    // Merge chunks below minSize (that have no heading) backward into previous
+    // Pass 1: Merge small non-heading chunks backward
     const merged = [];
     for (const chunk of natural) {
         if (chunk.verses.length < minSize && !chunk.heading && merged.length > 0) {
@@ -280,24 +282,117 @@ function buildPassageChunks(chapter, targetSize = 5, minSize = 3) {
         }
     }
 
-    // Orphan rule: if last chunk is below minSize, halve or absorb
-    if (merged.length >= 2) {
-        const last = merged[merged.length - 1];
-        const prev = merged[merged.length - 2];
+    // Pass 2: Merge first chunk forward if below min
+    if (merged.length >= 2 && merged[0].verses.length < minSize) {
+        merged[1].verses = [...merged[0].verses, ...merged[1].verses];
+        if (!merged[1].heading) merged[1].heading = merged[0].heading;
+        merged.shift();
+    }
+
+    // Pass 3: Split chunks above maxSize at paragraph boundaries
+    const split = [];
+    for (const chunk of merged) {
+        if (chunk.verses.length <= maxSize) {
+            split.push(chunk);
+            continue;
+        }
+        let remaining = chunk.verses;
+        let isFirst = true;
+        while (remaining.length > maxSize) {
+            // Scan for a paragraph boundary between minSize and maxSize, prefer near targetSize
+            let splitAt = Math.min(targetSize, remaining.length - minSize);
+            for (let i = minSize; i <= Math.min(maxSize - 1, remaining.length - minSize); i++) {
+                const v = remaining[i];
+                const text = v.text || '';
+                const startsNew = text && text[0] === text[0].toUpperCase() && text[0] !== text[0].toLowerCase();
+                if (v.type === 'paragraph' && startsNew) {
+                    splitAt = i;
+                    if (i >= targetSize) break;
+                }
+            }
+            split.push({ verses: remaining.slice(0, splitAt), heading: isFirst ? chunk.heading : null });
+            remaining = remaining.slice(splitAt);
+            isFirst = false;
+        }
+        split.push({ verses: remaining, heading: isFirst ? chunk.heading : null });
+    }
+
+    // Pass 4: Orphan rule — last chunk below min → halve or absorb
+    if (split.length >= 2) {
+        const last = split[split.length - 1];
+        const prev = split[split.length - 2];
         if (last.verses.length < minSize) {
             const all = [...prev.verses, ...last.verses];
             const half = Math.ceil(all.length / 2);
             if (half >= minSize && (all.length - half) >= minSize) {
-                merged[merged.length - 2] = { verses: all.slice(0, half), heading: prev.heading };
-                merged[merged.length - 1] = { verses: all.slice(half), heading: null };
+                split[split.length - 2] = { verses: all.slice(0, half), heading: prev.heading };
+                split[split.length - 1] = { verses: all.slice(half), heading: null };
             } else {
                 prev.verses.push(...last.verses);
-                merged.pop();
+                split.pop();
             }
         }
     }
 
-    return merged;
+    return split;
+}
+
+/**
+ * Split verses into heading-delimited sections for read tracking.
+ * Each new heading starts a new section. Chapters with no headings = one section.
+ */
+function buildReadingSections(verses) {
+    const sections = [];
+    let current = null;
+    verses.forEach(verse => {
+        if (current === null) {
+            current = { heading: verse.heading || null, verses: [] };
+        } else if (verse.heading) {
+            sections.push(current);
+            current = { heading: verse.heading, verses: [] };
+        }
+        current.verses.push(verse);
+    });
+    if (current && current.verses.length > 0) sections.push(current);
+    return sections;
+}
+
+/**
+ * Render verse content (paragraphs + poetry) without section headings or mark buttons.
+ * Called by renderFluidMode (per section) and renderPassageMode.
+ */
+function renderFluidModeContent(verses, bookNum, chapterNum) {
+    let html = '';
+    let currentParagraph = [];
+    let currentPoetry = [];
+
+    verses.forEach(verse => {
+        if (verse.type && verse.type.startsWith('poetry')) {
+            if (currentParagraph.length > 0) {
+                html += renderParagraph(currentParagraph, bookNum, chapterNum);
+                currentParagraph = [];
+            }
+            currentPoetry.push(verse);
+        } else {
+            if (currentPoetry.length > 0) {
+                html += renderPoetry(currentPoetry, bookNum, chapterNum);
+                currentPoetry = [];
+            }
+            const startsNewSentence = verse.text &&
+                verse.text[0] === verse.text[0].toUpperCase() &&
+                verse.text[0] !== verse.text[0].toLowerCase();
+            if (verse.type === 'paragraph' && currentParagraph.length > 0 && startsNewSentence) {
+                html += renderParagraph(currentParagraph, bookNum, chapterNum);
+                currentParagraph = [];
+            }
+            currentParagraph.push(verse);
+        }
+    });
+
+    if (currentParagraph.length > 0) html += renderParagraph(currentParagraph, bookNum, chapterNum);
+    if (currentPoetry.length > 0) html += renderPoetry(currentPoetry, bookNum, chapterNum);
+
+    return html;
 }
 
 /**
@@ -310,78 +405,59 @@ function renderPassageMode(chapter, book) {
     }
 
     const chunk = passageChunks[currentPassageIndex];
-    const pseudoChapter = { ...chapter, verses: chunk.verses };
 
     let html = '';
     if (chunk.heading) {
-        html += `<div class="section-heading">${chunk.heading}</div>`;
+        const isHebrewLetter = chunk.heading.length < 20 && chunk.heading === chunk.heading.toUpperCase();
+        html += `<div class="${isHebrewLetter ? 'hebrew-heading' : 'section-heading'}">${chunk.heading}</div>`;
     }
-    html += renderFluidMode(pseudoChapter, book);
+    // Strip heading from first verse (already rendered above) before passing to content renderer
+    const verses = chunk.verses.map((v, i) => i === 0 ? Object.assign({}, v, { heading: undefined }) : v);
+    html += renderFluidModeContent(verses, book.number, chapter.number);
+
+    // Mark button: map passage chunk to its heading section index
+    if (typeof renderMarkButton === 'function') {
+        const headingSections = buildReadingSections(chapter.verses);
+        const firstVerseNum = chunk.verses[0].number;
+        let sectionIndex = 0;
+        for (let i = 0; i < headingSections.length; i++) {
+            if (headingSections[i].verses.some(v => v.number === firstVerseNum)) {
+                sectionIndex = i;
+                break;
+            }
+        }
+        html += renderMarkButton(currentBook, chapter.number, sectionIndex, headingSections.length);
+    }
+
     return html;
 }
 
 /**
- * Render chapter in fluid reading mode
+ * Render chapter in fluid reading mode.
+ * Splits into heading-delimited sections, each with a mark-as-read button.
  */
 function renderFluidMode(chapter, book) {
+    const sections = buildReadingSections(chapter.verses);
     let html = '';
-    let currentParagraph = [];
-    let currentPoetry = [];
 
-    chapter.verses.forEach((verse, index) => {
-        // Check for section heading
-        if (verse.heading) {
-            // Flush current paragraph/poetry
-            if (currentParagraph.length > 0) {
-                html += renderParagraph(currentParagraph, book.number, chapter.number);
-                currentParagraph = [];
-            }
-            if (currentPoetry.length > 0) {
-                html += renderPoetry(currentPoetry, book.number, chapter.number);
-                currentPoetry = [];
-            }
+    sections.forEach((section, sectionIndex) => {
+        html += `<div class="reading-section">`;
 
-            // Check if it's a Hebrew letter heading (Psalm 119 style)
-            const isHebrewLetter = verse.heading.length < 20 && verse.heading === verse.heading.toUpperCase();
-            const headingClass = isHebrewLetter ? 'hebrew-heading' : 'section-heading';
-            html += `<div class="${headingClass}">${verse.heading}</div>`;
+        if (section.heading) {
+            const isHebrewLetter = section.heading.length < 20 && section.heading === section.heading.toUpperCase();
+            html += `<div class="${isHebrewLetter ? 'hebrew-heading' : 'section-heading'}">${section.heading}</div>`;
         }
 
-        // Handle poetry
-        if (verse.type && verse.type.startsWith('poetry')) {
-            // Flush paragraph if switching from paragraph to poetry
-            if (currentParagraph.length > 0) {
-                html += renderParagraph(currentParagraph, book.number, chapter.number);
-                currentParagraph = [];
-            }
-            currentPoetry.push(verse);
-        } else {
-            // Flush poetry if switching from poetry to paragraph
-            if (currentPoetry.length > 0) {
-                html += renderPoetry(currentPoetry, book.number, chapter.number);
-                currentPoetry = [];
-            }
+        // Strip heading from first verse (already rendered above)
+        const verses = section.verses.map((v, i) => i === 0 ? Object.assign({}, v, { heading: undefined }) : v);
+        html += renderFluidModeContent(verses, book.number, chapter.number);
 
-            // Start new paragraph on paragraph marker, but only if the verse
-            // starts a new sentence (capital letter). Lowercase means mid-sentence
-            // continuation — USFM \p markers sometimes fall mid-sentence.
-            const startsNewSentence = verse.text && verse.text[0] === verse.text[0].toUpperCase() && verse.text[0] !== verse.text[0].toLowerCase();
-            if (verse.type === 'paragraph' && currentParagraph.length > 0 && startsNewSentence) {
-                html += renderParagraph(currentParagraph, book.number, chapter.number);
-                currentParagraph = [];
-            }
-
-            currentParagraph.push(verse);
+        if (typeof renderMarkButton === 'function') {
+            html += renderMarkButton(currentBook, chapter.number, sectionIndex, sections.length);
         }
+
+        html += '</div>';
     });
-
-    // Flush remaining content
-    if (currentParagraph.length > 0) {
-        html += renderParagraph(currentParagraph, book.number, chapter.number);
-    }
-    if (currentPoetry.length > 0) {
-        html += renderPoetry(currentPoetry, book.number, chapter.number);
-    }
 
     return html;
 }
@@ -571,6 +647,10 @@ function displayChapter() {
             html += renderFluidMode(chapter, book);
         } else {
             html += renderVerseMode(chapter, book);
+            if (typeof renderMarkAllButton === 'function') {
+                const sections = buildReadingSections(chapter.verses);
+                html += renderMarkAllButton(currentBook, currentChapter, sections.length);
+            }
         }
     }
 

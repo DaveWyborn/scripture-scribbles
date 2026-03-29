@@ -517,6 +517,69 @@
     border-color: var(--accent-primary);
 }
 
+/* ─── Reading sections (fluid mode) ───────────────────────────── */
+.reading-section {
+    margin-bottom: var(--space-l);
+}
+
+/* ─── Mark as read button ──────────────────────────────────────── */
+.read-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: var(--space-m) 0 var(--space-s);
+    margin-top: var(--space-s);
+    cursor: pointer;
+    color: var(--text-tertiary);
+    font-size: 0.82em;
+    border-top: 1px solid var(--border);
+    transition: color var(--transition-fast);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.read-marker:hover {
+    color: var(--text-secondary);
+}
+
+.read-marker i {
+    font-size: 1.1em;
+    flex-shrink: 0;
+}
+
+.read-marker.read {
+    color: var(--accent-primary);
+}
+
+.read-marker.partial {
+    color: var(--text-secondary);
+}
+
+/* ─── Chapter grid read status dots ───────────────────────────── */
+.chapter-btn {
+    position: relative;
+}
+
+.chapter-btn.chapter-complete::after,
+.chapter-btn.chapter-partial::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+}
+
+.chapter-btn.chapter-complete::after {
+    background: var(--accent-primary);
+}
+
+.chapter-btn.chapter-partial::after {
+    background: var(--text-tertiary);
+}
+
 /* Visual Navigation Modal */
 .nav-modal {
     position: fixed;
