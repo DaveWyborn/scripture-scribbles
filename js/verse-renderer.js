@@ -982,6 +982,7 @@ async function navigateChapter(delta) {
             currentPassageIndex = newIndex;
             saveLastPosition();
             displayChapter();
+            window.scrollTo(0, 0);
             return;
         }
         // At chapter boundary — move to adjacent chapter
@@ -999,6 +1000,7 @@ async function navigateChapter(delta) {
             }
             saveLastPosition();
             displayChapter();
+            window.scrollTo(0, 0);
         } catch (error) {
             console.error('Error in navigateChapter:', error);
         } finally {
@@ -1015,6 +1017,7 @@ async function navigateChapter(delta) {
         saveLastPosition();
         await loadAnnotations();
         displayChapter();
+        window.scrollTo(0, 0);
     } catch (error) {
         console.error('Error in navigateChapter:', error);
     } finally {
