@@ -810,8 +810,13 @@ function displayChapter() {
     */
     // END OF OLD COMMENTED CODE
 
-    // Add footer
+    // Bottom navigation + footer
     html += `
+        <div class="bottom-nav">
+            <button class="nav-btn nav-arrow" id="prev-chapter-bottom" aria-label="Previous chapter" onclick="navigateChapter(-1)">←</button>
+            <button class="chapter-info" onclick="openNavModal()">${book.name} ${currentChapter}</button>
+            <button class="nav-btn nav-arrow" id="next-chapter-bottom" aria-label="Next chapter" onclick="navigateChapter(1)">→</button>
+        </div>
         <div class="footer">
             <p>Scripture Scribbles v1.1.0 | World English Bible (WEB) | <a href="https://github.com/DaveWyborn/scripture-scribbles" target="_blank">GitHub</a></p>
             <p>Made with ❤️ for people with dyslexia</p>
@@ -954,18 +959,22 @@ function displayChapter() {
         });
     }
 
-    // Update navigation buttons
+    // Update navigation buttons (top + bottom)
     const book_obj = bibleData.books.find(b => b.id === currentBook);
+    let prevDisabled, nextDisabled;
     if (readingMode === 'passage') {
-        document.getElementById('prev-chapter').disabled =
-            currentChapter === 1 && currentPassageIndex === 0;
-        document.getElementById('next-chapter').disabled =
-            currentChapter === book_obj.chapters.length &&
-            currentPassageIndex === passageChunks.length - 1;
+        prevDisabled = currentChapter === 1 && currentPassageIndex === 0;
+        nextDisabled = currentChapter === book_obj.chapters.length && currentPassageIndex === passageChunks.length - 1;
     } else {
-        document.getElementById('prev-chapter').disabled = currentChapter === 1;
-        document.getElementById('next-chapter').disabled = currentChapter === book_obj.chapters.length;
+        prevDisabled = currentChapter === 1;
+        nextDisabled = currentChapter === book_obj.chapters.length;
     }
+    document.getElementById('prev-chapter').disabled = prevDisabled;
+    document.getElementById('next-chapter').disabled = nextDisabled;
+    const prevBottom = document.getElementById('prev-chapter-bottom');
+    const nextBottom = document.getElementById('next-chapter-bottom');
+    if (prevBottom) prevBottom.disabled = prevDisabled;
+    if (nextBottom) nextBottom.disabled = nextDisabled;
 
     // Apply auto-contrast to highlights and tags
     setTimeout(applyAutoContrast, 50);

@@ -510,6 +510,7 @@ body {
 /* Content area */
 .content {
     padding: var(--space-xxl);
+    padding-bottom: 0;
     max-width: 720px;
     margin: 0 auto;
 }

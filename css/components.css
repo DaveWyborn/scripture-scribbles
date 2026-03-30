@@ -1219,14 +1219,24 @@
     margin-bottom: var(--space-s);
 }
 
+/* Bottom navigation */
+.bottom-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-m);
+    padding: var(--space-xxl) 0 var(--space-l);
+    margin-top: var(--space-xl);
+    border-top: 1px solid var(--border);
+}
+
 /* Footer */
 .footer {
-    padding: var(--space-xxl) var(--space-l);
+    padding: var(--space-l) var(--space-l) var(--space-xxl);
     text-align: center;
     color: var(--text-tertiary);
     font-size: 0.9em;
-    background: var(--bg-secondary);
-    border-top: 1px solid var(--border);
+    border-top: none;
 }
 
 .footer a {
