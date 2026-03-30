@@ -4,8 +4,7 @@
 
 const READING_HISTORY_KEY = 'readingHistory';
 
-// In-memory cache: { bookId: { chapter: { marked: Set<sectionIndex>, total: N } } }
-let readingHistory = {};
+// In-memory cache lives in state.js: readingHistory = {}
 
 // ─── Init ────────────────────────────────────────────────────────────────────
 
