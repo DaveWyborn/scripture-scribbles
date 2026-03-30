@@ -1,5 +1,20 @@
 // Verse renderer module - Supports both verse-by-verse and fluid reading modes
 
+function saveLastPosition() {
+    localStorage.setItem('lastPosition', JSON.stringify({ book: currentBook, chapter: currentChapter }));
+}
+
+function loadLastPosition() {
+    try {
+        const saved = localStorage.getItem('lastPosition');
+        if (saved) {
+            const { book, chapter } = JSON.parse(saved);
+            if (book) currentBook = book;
+            if (chapter) currentChapter = chapter;
+        }
+    } catch (e) {}
+}
+
 /**
  * Render a paragraph in fluid reading mode
  */
@@ -995,6 +1010,7 @@ async function navigateChapter(delta) {
         currentChapter += delta;
         passageChunks = [];
         currentPassageIndex = 0;
+        saveLastPosition();
         await loadAnnotations();
         displayChapter();
     } catch (error) {

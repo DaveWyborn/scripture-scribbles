@@ -2,6 +2,9 @@
 
 // Initialize application
 async function initApp() {
+    // Restore last reading position
+    loadLastPosition();
+
     // Load theme preference
     loadTheme();
 
