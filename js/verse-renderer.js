@@ -1,16 +1,17 @@
 // Verse renderer module - Supports both verse-by-verse and fluid reading modes
 
 function saveLastPosition() {
-    localStorage.setItem('lastPosition', JSON.stringify({ book: currentBook, chapter: currentChapter }));
+    localStorage.setItem('lastPosition', JSON.stringify({ book: currentBook, chapter: currentChapter, passageIndex: currentPassageIndex }));
 }
 
 function loadLastPosition() {
     try {
         const saved = localStorage.getItem('lastPosition');
         if (saved) {
-            const { book, chapter } = JSON.parse(saved);
+            const { book, chapter, passageIndex } = JSON.parse(saved);
             if (book) currentBook = book;
             if (chapter) currentChapter = chapter;
+            if (passageIndex != null) currentPassageIndex = passageIndex;
         }
     } catch (e) {}
 }
@@ -430,18 +431,8 @@ function renderPassageMode(chapter, book) {
     const verses = chunk.verses.map((v, i) => i === 0 ? Object.assign({}, v, { heading: undefined }) : v);
     html += renderFluidModeContent(verses, book.number, chapter.number);
 
-    // Mark button: map passage chunk to its heading section index
     if (typeof renderMarkButton === 'function') {
-        const headingSections = buildReadingSections(chapter.verses);
-        const firstVerseNum = chunk.verses[0].number;
-        let sectionIndex = 0;
-        for (let i = 0; i < headingSections.length; i++) {
-            if (headingSections[i].verses.some(v => v.number === firstVerseNum)) {
-                sectionIndex = i;
-                break;
-            }
-        }
-        html += renderMarkButton(currentBook, chapter.number, sectionIndex, headingSections.length);
+        html += renderMarkButton(currentBook, chapter.number, currentPassageIndex, passageChunks.length);
     }
 
     return html;
@@ -989,6 +980,7 @@ async function navigateChapter(delta) {
         const newIndex = currentPassageIndex + delta;
         if (newIndex >= 0 && newIndex < passageChunks.length) {
             currentPassageIndex = newIndex;
+            saveLastPosition();
             displayChapter();
             return;
         }
@@ -1005,6 +997,7 @@ async function navigateChapter(delta) {
                 passageChunks = buildPassageChunks(chapter);
                 currentPassageIndex = delta > 0 ? 0 : passageChunks.length - 1;
             }
+            saveLastPosition();
             displayChapter();
         } catch (error) {
             console.error('Error in navigateChapter:', error);
