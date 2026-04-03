@@ -111,7 +111,7 @@
 
 ---
 
-### v1.4.0 - Sermon / Message Notes ⚡ IN PROGRESS (Feb 2026)
+### v1.4.0 - Sermon / Message Notes ✅ COMPLETE (Apr 2026)
 **Goal:** "Capture sermon notes alongside Bible reading"
 
 **Done:**
@@ -122,23 +122,12 @@
 - ✅ Quick verse insertion (select verse → insert into notes)
 - ✅ Verse formatting styles
 - ✅ Supabase persistence
+- ✅ Trix mobile initialisation fix (deferred editor mounting)
+- ✅ Export sermon notes to Markdown
 
-**Blocking:**
-- [ ] Trix mobile initialisation — editor fails when element hidden on load; not yet fully resolved
-
-**Remaining:**
+**Deferred to v1.4.1:**
 - [ ] Continuous scroll navigation (auto-load next chapter)
-- [ ] Export sermon notes to Markdown
-
-**Quick add verse (done):**
-- ✅ Select verse(s) in Bible
-- ✅ Click "Add to Notes"
-- ✅ Inserts formatted verse
 - [ ] Verse formatting styles (user selectable)
-- [ ] Continuous scroll navigation (auto-load next chapter)
-- [ ] Export sermon notes to Markdown
-
-**Timeline:** 3-4 weeks
 
 ---
 
