@@ -5,7 +5,6 @@
  * Initialize sermon notes module
  */
 async function initSermons() {
-    console.log('Initializing sermon notes module...');
 
     // Setup Trix event listeners
     setupTrixListeners();
@@ -268,7 +267,6 @@ async function loadSermonList() {
         if (error) throw error;
 
         sermonList = data || [];
-        console.log(`Loaded ${sermonList.length} sermon(s)`);
 
         // Load most recent sermon
         const lastSermonId = localStorage.getItem('lastSermonId');
@@ -284,11 +282,8 @@ async function loadSermonList() {
         }
     } catch (error) {
         console.error('Error loading sermon list:', error);
-        console.error('Error details:', error.message, error.code, error.details);
-
-        // If table doesn't exist, show helpful message
         if (error.code === '42P01' || error.message?.includes('does not exist')) {
-            console.warn('⚠️ Sermons table does not exist. Please create it in Supabase.');
+            console.warn('Sermons table does not exist — create it in Supabase');
         }
     }
 }
@@ -309,13 +304,6 @@ async function loadSermon(sermonId) {
 
         currentSermon = data;
         localStorage.setItem('lastSermonId', sermonId);
-
-        console.log('📝 Loading sermon data:', {
-            id: data.id,
-            title: data.title,
-            contentLength: (data.content || '').length,
-            contentPreview: (data.content || '').substring(0, 100)
-        });
 
         // Populate form fields (only if they exist)
         const titleField = document.getElementById('sermon-title');
@@ -339,30 +327,14 @@ async function loadSermon(sermonId) {
             sermonViewMode === 'split'
         );
 
-        console.log('Notes view visible:', notesVisible);
-
         if (notesVisible) {
-            // Notes view is visible, load content into Trix
             const editor = await ensureTrixEditor();
             if (editor) {
-                console.log('📝 Loading HTML content, length:', (data.content || '').length);
-
-                // Load new content
                 editor.loadHTML(data.content || '');
-
-                // Verify it loaded
-                setTimeout(() => {
-                    const newContent = editor.getDocument().toString();
-                    console.log('✅ Content loaded:', newContent.substring(0, 50));
-                }, 100);
             } else {
-                console.error('❌ Could not initialize Trix editor');
+                console.error('Could not initialise Trix editor');
             }
-        } else {
-            console.log('⏭️ Notes hidden, skipping Trix load (will load when switching to notes)');
         }
-
-        console.log('Loaded sermon:', data.title || 'Untitled');
     } catch (error) {
         console.error('Error loading sermon:', error);
     }
@@ -421,7 +393,6 @@ async function createSermon() {
             trixEl.editor.loadHTML('');
         }
 
-        console.log('Created new sermon:', data.title);
         return data;
     } catch (error) {
         console.error('Error creating sermon:', error);
@@ -480,7 +451,6 @@ async function saveSermon() {
             // Update local copy
             Object.assign(currentSermon, sermonData);
 
-            console.log('Sermon saved:', sermonData.title);
             showSaveIndicator();
         }
     } catch (error) {
@@ -520,7 +490,6 @@ async function deleteSermon(sermonId) {
             }
         }
 
-        console.log('Sermon deleted');
         return true;
     } catch (error) {
         console.error('Error deleting sermon:', error);
@@ -532,26 +501,12 @@ async function deleteSermon(sermonId) {
  * Toggle notes view (desktop split screen)
  */
 async function toggleNotesView() {
-    console.log('🔘 toggleNotesView called, current mode:', sermonViewMode);
     const content = document.getElementById('content');
     const notesView = document.getElementById('sermon-notes-view');
     const toggleBtn = document.getElementById('toggle-notes-btn');
 
-    console.log('Elements found:', {
-        content: !!content,
-        notesView: !!notesView,
-        toggleBtn: !!toggleBtn
-    });
-
     if (!notesView) {
-        console.error('❌ sermon-notes-view element not found!');
-        console.log('Searching DOM for sermon elements:',
-            Array.from(document.querySelectorAll('[id*="sermon"]')).map(el => el.id));
-        console.log('Content children:',
-            Array.from(content?.children || []).map(el => `${el.tagName}#${el.id}.${el.className}`));
-
-        // Create element as fallback
-        console.warn('⚠️ Creating sermon-notes-view fallback...');
+        console.warn('sermon-notes-view not found, creating fallback');
         const newNotesView = document.createElement('div');
         newNotesView.id = 'sermon-notes-view';
         newNotesView.className = 'sermon-notes-view';
@@ -587,7 +542,7 @@ async function toggleNotesView() {
                 </div>
             </div>
             <div class="sermon-editor-container">
-                <trix-editor input="sermon-content" placeholder="Start typing your notes..."></trix-editor>
+                <div id="trix-mount"></div>
                 <input type="hidden" id="sermon-content">
             </div>
             <div class="sermon-actions">
@@ -596,24 +551,18 @@ async function toggleNotesView() {
             </div>
         `;
         content.appendChild(newNotesView);
-        console.log('✅ Created fallback element');
-        // Retry
+        // Retry with deferred Trix mounting
         return toggleNotesView();
     }
 
     if (sermonViewMode === 'single') {
         // Show split view
-        console.log('Switching to split view');
-
-        // Wrap Bible content if not already wrapped
         let bibleWrapper = document.getElementById('bible-content-wrapper');
         if (!bibleWrapper) {
-            console.log('Wrapping Bible content...');
             bibleWrapper = document.createElement('div');
             bibleWrapper.id = 'bible-content-wrapper';
             bibleWrapper.className = 'bible-content-wrapper';
 
-            // Move all existing children (except sermon-notes-view) into wrapper
             const children = Array.from(content.children);
             children.forEach(child => {
                 if (child.id !== 'sermon-notes-view') {
@@ -621,9 +570,7 @@ async function toggleNotesView() {
                 }
             });
 
-            // Add wrapper as first child
             content.insertBefore(bibleWrapper, notesView);
-            console.log('Bible content wrapped');
         }
 
         content.classList.add('split-view');
@@ -637,25 +584,18 @@ async function toggleNotesView() {
         // Mount and initialise Trix now that notes are visible
         await ensureTrixEditor();
 
-        // Load current sermon or create new
         if (!currentSermon) {
-            console.log('Creating new sermon...');
             await createSermon();
         }
     } else {
         // Return to single view
-        console.log('Switching to single view');
-
-        // Unwrap Bible content
         const bibleWrapper = document.getElementById('bible-content-wrapper');
         if (bibleWrapper) {
-            console.log('Unwrapping Bible content...');
             const children = Array.from(bibleWrapper.children);
             children.forEach(child => {
                 content.insertBefore(child, notesView);
             });
             bibleWrapper.remove();
-            console.log('Bible content unwrapped');
         }
 
         content.classList.remove('split-view');
@@ -673,37 +613,15 @@ async function toggleNotesView() {
  * Note: Must be globally accessible for onclick handlers
  */
 window.switchMobileView = async function(view) {
-    console.log('📱 switchMobileView called:', view);
     activeView = view;
     const indicator = document.getElementById('mobile-view-indicator');
     let notesView = document.getElementById('sermon-notes-view');
     const welcomeView = document.querySelector('.welcome');
 
-    console.log('📱 switchMobileView - Elements found:', {
-        indicator: !!indicator,
-        notesView: !!notesView,
-        notesViewParent: notesView ? notesView.parentElement?.id : 'no parent',
-        notesViewDisplay: notesView ? notesView.style.display : 'N/A',
-        welcomeView: !!welcomeView,
-        currentSermon: !!currentSermon
-    });
-
-    // Debug: List all children of content div
-    const contentDiv = document.getElementById('content');
-    if (contentDiv) {
-        console.log('📱 Content div children:', Array.from(contentDiv.children).map(el => ({
-            tag: el.tagName,
-            id: el.id,
-            class: el.className,
-            display: el.style.display
-        })));
-    }
-
     // Create notes view if it doesn't exist
     if (!notesView && view === 'notes') {
-        console.warn('⚠️ sermon-notes-view missing on mobile, creating...');
+        console.warn('sermon-notes-view missing on mobile, creating fallback');
         const content = document.getElementById('content');
-        console.log('Content element:', !!content);
         notesView = document.createElement('div');
         notesView.id = 'sermon-notes-view';
         notesView.className = 'sermon-notes-view';
@@ -739,7 +657,7 @@ window.switchMobileView = async function(view) {
                 </div>
             </div>
             <div class="sermon-editor-container">
-                <trix-editor input="sermon-content" placeholder="Start typing your notes..."></trix-editor>
+                <div id="trix-mount"></div>
                 <input type="hidden" id="sermon-content">
             </div>
             <div class="sermon-actions">
@@ -748,10 +666,6 @@ window.switchMobileView = async function(view) {
             </div>
         `;
         content.appendChild(notesView);
-        console.log('✅ Created sermon-notes-view for mobile');
-
-        // Wait for Trix to initialize
-        await new Promise(resolve => setTimeout(resolve, 100));
 
         // Setup event listeners for the dynamically created metadata fields
         setupTrixListeners();
@@ -767,37 +681,26 @@ window.switchMobileView = async function(view) {
 
     // Show/hide sermon notes view
     if (view === 'bible') {
-        console.log('Switching to Bible view');
         if (notesView) {
             notesView.style.display = 'none';
-            console.log('Notes hidden');
         }
     } else {
-        console.log('Switching to Notes view');
         if (welcomeView) {
             welcomeView.style.display = 'none';
-            console.log('Welcome hidden');
         }
         if (notesView) {
             notesView.style.display = 'flex';
-            console.log('Notes shown with display:', notesView.style.display);
 
             // Mount and initialise Trix now that notes are visible
             await ensureTrixEditor();
 
-            // Load sermon if needed
             if (!currentSermon) {
-                console.log('Creating new sermon...');
                 await createSermon();
             } else {
-                console.log('Current sermon exists, ensuring content is loaded');
-                // Reload current sermon to ensure content is displayed
                 await loadSermon(currentSermon.id);
             }
         } else {
-            console.error('❌ sermon-notes-view NOT FOUND! Cannot show notes on mobile.');
-            console.log('Available elements:',
-                Array.from(document.querySelectorAll('[id*="sermon"]')).map(el => el.id));
+            console.error('sermon-notes-view not found after fallback creation');
         }
     }
 }
@@ -891,11 +794,7 @@ function insertVerseReference(verseNum) {
     }
 
     trixEditor.editor.insertHTML(html);
-
-    // Auto-save after insertion
     debounceSaveSermon();
-
-    console.log('Inserted verse:', reference);
 }
 
 /**
@@ -1043,7 +942,6 @@ window.exportSermonMarkdown = async function() {
     a.click();
     URL.revokeObjectURL(url);
 
-    console.log('Exported sermon to Markdown');
 }
 
 /**
