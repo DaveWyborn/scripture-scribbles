@@ -18,6 +18,11 @@ async function initApp() {
     // Load typography preferences
     loadTypography();
 
+    // Initialise reading bar
+    if (typeof initReadingBar === 'function') {
+        initReadingBar();
+    }
+
     // Load annotation sets
     loadAnnotationSets();
 

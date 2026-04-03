@@ -1626,4 +1626,90 @@
     opacity: 0.8;
 }
 
-/* Force rebuild Sun Dec  7 14:31:17 GMT 2025 */
+/* Reading Bar */
+.reading-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    pointer-events: auto;
+    cursor: grab;
+    touch-action: none;
+    transition: box-shadow 0.2s, background-color 0.2s, opacity 0.2s;
+}
+
+.reading-bar--dragging {
+    cursor: grabbing;
+    transition: none;
+}
+
+.reading-bar-handle {
+    position: absolute;
+    left: 50%;
+    top: -10px;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--text-tertiary, #999);
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+}
+
+.reading-bar:hover .reading-bar-handle,
+.reading-bar--dragging .reading-bar-handle {
+    opacity: 0.6;
+}
+
+/* Reading bar settings controls */
+.reading-bar-controls {
+    display: none;
+}
+
+.reading-bar-controls.active {
+    display: block;
+}
+
+/* Toggle switch for reading bar */
+.toggle-switch {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--border);
+    border-radius: 22px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: var(--accent-primary);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(18px);
+}

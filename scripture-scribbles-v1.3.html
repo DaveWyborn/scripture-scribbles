@@ -12,7 +12,7 @@
 
     <!-- Modular CSS -->
     <link rel="stylesheet" href="css/base.css?v=1.3.40">
-    <link rel="stylesheet" href="css/components.css?v=1.3.23">
+    <link rel="stylesheet" href="css/components.css?v=1.3.24">
     <link rel="stylesheet" href="css/themes.css?v=1.3.16">
     <link rel="stylesheet" href="css/sermons.css?v=1.4.3">
 
@@ -181,6 +181,65 @@
             <div class="settings-item" style="padding: 8px 15px; display: flex; gap: 8px;">
                 <button class="btn" id="typography-reset" style="flex: 1; font-size: 0.9em;">Reset</button>
                 <button class="btn primary" id="typography-dyslexia" style="flex: 1; font-size: 0.9em;">Dyslexia Optimised</button>
+            </div>
+
+            <div class="settings-divider"></div>
+            <div class="settings-section-header">Reading Bar</div>
+
+            <div class="settings-item settings-toggle">
+                <div>
+                    <i class="ph ph-ruler"></i>
+                    <span>Reading Bar</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="reading-bar-toggle" onchange="toggleReadingBar()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="reading-bar-controls" id="reading-bar-controls">
+                <div class="settings-item settings-toggle">
+                    <div>
+                        <i class="ph ph-paint-brush"></i>
+                        <span>Style</span>
+                    </div>
+                    <select id="reading-bar-style" onchange="setReadingBarStyle(this.value)">
+                        <option value="highlight">Highlight</option>
+                        <option value="ruler">Ruler</option>
+                        <option value="focus">Focus</option>
+                    </select>
+                </div>
+
+                <div class="settings-item settings-toggle">
+                    <div>
+                        <i class="ph ph-arrows-vertical"></i>
+                        <span>Height</span>
+                    </div>
+                    <select id="reading-bar-lines" onchange="setReadingBarLines(this.value)">
+                        <option value="1">1 line</option>
+                        <option value="3">3 lines</option>
+                        <option value="5">5 lines</option>
+                    </select>
+                </div>
+
+                <div class="settings-item settings-range" id="reading-bar-opacity-row">
+                    <div>
+                        <i class="ph ph-drop"></i>
+                        <span>Opacity</span>
+                        <span class="range-value" id="reading-bar-opacity-value">30%</span>
+                    </div>
+                    <input type="range" id="reading-bar-opacity" min="0.1" max="0.8" value="0.3" step="0.05"
+                        oninput="setReadingBarOpacity(this.value); document.getElementById('reading-bar-opacity-value').textContent = Math.round(this.value * 100) + '%'">
+                </div>
+
+                <div class="settings-item settings-toggle">
+                    <div>
+                        <i class="ph ph-palette"></i>
+                        <span>Colour</span>
+                    </div>
+                    <input type="color" id="reading-bar-colour" value="#C4903A" onchange="setReadingBarColour(this.value)"
+                        style="width: 32px; height: 28px; border: none; padding: 0; cursor: pointer; border-radius: 4px;">
+                </div>
             </div>
 
             <div class="settings-divider"></div>
@@ -525,6 +584,7 @@
     <script src="js/preferences.js?v=1.3.24"></script>
     <script src="js/tag-manager.js?v=1.3.19"></script>
     <script src="js/ui.js?v=1.3.31"></script>
+    <script src="js/reading-bar.js?v=1.0.0"></script>
     <script src="js/sermons.js?v=1.4.5"></script>
     <script src="js/reading-plans.js?v=1.0.1"></script>
     <script src="js/app.js?v=1.3.22"></script>

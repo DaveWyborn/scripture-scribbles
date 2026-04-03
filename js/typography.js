@@ -70,6 +70,11 @@ function applyTypography(settings) {
 
     // Word spacing
     content.style.wordSpacing = settings.wordSpacing > 0 ? `${settings.wordSpacing}em` : 'normal';
+
+    // Recalculate reading bar height if active
+    if (typeof onTypographyChange === 'function') {
+        onTypographyChange();
+    }
 }
 
 /**

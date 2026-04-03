@@ -100,7 +100,13 @@ async function loadUserPreferences() {
                 if (annotationModeSelect) annotationModeSelect.value = prefs.annotationMode;
             }
 
-            console.log('User preferences loaded from cloud');
+            // Reading bar
+            if (prefs.readingBar && typeof readingBarState !== 'undefined') {
+                Object.assign(readingBarState, prefs.readingBar);
+                localStorage.setItem('readingBar', JSON.stringify(readingBarState));
+                if (readingBarState.enabled) showReadingBar();
+                updateReadingBarControls();
+            }
         } else {
             console.log('No saved preferences, using defaults');
         }
@@ -126,6 +132,11 @@ async function saveUserPreferences() {
             verseNumberStyle: verseNumberStyle,
             annotationMode: document.getElementById('annotation-mode')?.value || 'on'
         };
+
+        // Include reading bar state if module loaded
+        if (typeof readingBarState !== 'undefined') {
+            preferences.readingBar = readingBarState;
+        }
 
         // Upsert to Supabase (use user_id for conflict detection, not primary key)
         const { error } = await supabase
