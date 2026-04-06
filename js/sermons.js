@@ -354,7 +354,7 @@ async function createSermon() {
 
     const sermonData = {
         user_id: currentUser.id,
-        title: `Sermon - ${today}`,
+        title: '',
         date: today,
         speaker: '',
         location: '',
