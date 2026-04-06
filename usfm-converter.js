@@ -263,7 +263,7 @@ function parseUSFMFile(filepath) {
     if (headingMatch) {
       pendingHeading = cleanText(headingMatch[1]);
     }
-    const descMatch = preVerseContent.match(/\\d\s+(.+?)(?=\\|$)/s);
+    const descMatch = preVerseContent.match(/\\d\s+(.+)$/m);
     if (descMatch) {
       pendingHeading = cleanText(descMatch[1]);
     }
@@ -301,6 +301,19 @@ function parseUSFMFile(filepath) {
         }
       }
 
+      // Capture \s (section heading) or \d (description) markers that trail
+      // after verse text — these are headings for the NEXT verse.
+      // We extract them before cleaning so they don't get stripped silently.
+      let trailingHeading = null;
+      const trailingSectionMatch = verseText.match(/\\s\d?\s+(.+?)(?=\\|$)/s);
+      if (trailingSectionMatch) {
+        trailingHeading = cleanText(trailingSectionMatch[1]);
+      }
+      const trailingDescMatch = verseText.match(/\\d\s+(.+)$/m);
+      if (trailingDescMatch) {
+        trailingHeading = cleanText(trailingDescMatch[1]);
+      }
+
       // Extract Strong's word data BEFORE cleaning
       const words = extractWords(verseText);
 
@@ -312,7 +325,7 @@ function parseUSFMFile(filepath) {
       verseText = verseText.replace(/\\f\s+\+\s+.*?\\f\*/gs, '');
       verseText = verseText.replace(/\\x\s+\+\s+.*?\\x\*/gs, '');
       verseText = verseText.replace(/\\[qpms]\d?\s*/g, ''); // Remove paragraph/poetry/section markers anywhere
-      verseText = verseText.replace(/\\d\s*/g, ''); // Remove description markers
+      verseText = verseText.replace(/\\d\s+.+/g, ''); // Remove description markers and their content
 
       // Clean the text
       verseText = cleanText(verseText);
@@ -355,6 +368,12 @@ function parseUSFMFile(filepath) {
       }
 
       result.chapters[chapterNum].push(verseObj);
+
+      // If this verse's trailing content had a \d or \s marker,
+      // set it as heading for the next verse
+      if (trailingHeading) {
+        pendingHeading = trailingHeading;
+      }
     }
   }
 
