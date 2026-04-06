@@ -1503,6 +1503,70 @@
     cursor: pointer;
 }
 
+/* Chapter title row with scroll nav */
+.chapter-title-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+}
+
+.scroll-nav-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-m);
+    font-size: 1.1em;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.scroll-nav-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--text-tertiary);
+}
+
+.scroll-nav-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    margin-top: var(--space-xs);
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: var(--space-xs) 0;
+}
+
+.scroll-nav-dropdown.open {
+    display: block;
+}
+
+.scroll-nav-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: var(--space-s) var(--space-m);
+    color: var(--text-primary);
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.scroll-nav-item:hover {
+    background: var(--bg-secondary);
+}
+
 /* Section headings */
 .reading-mode-fluid .section-heading {
     font-size: 18px;

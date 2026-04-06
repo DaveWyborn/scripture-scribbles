@@ -17,6 +17,76 @@ function loadLastPosition() {
 }
 
 /**
+ * Render the chapter title with an optional section outline button
+ */
+function renderChapterTitleWithOutline(bookName, chapterNum, headings, showOutline) {
+    let html = `<div class="chapter-title-row">`;
+    html += `<div class="chapter-title">${bookName} ${chapterNum}</div>`;
+    if (showOutline) {
+        html += `<button class="scroll-nav-btn" onclick="toggleScrollNav()" aria-label="Section outline" title="Jump to section">`;
+        html += `<i class="ph ph-list-bullets"></i>`;
+        html += `</button>`;
+        html += `<div class="scroll-nav-dropdown" id="scroll-nav-dropdown">`;
+        headings.forEach((h, i) => {
+            html += `<button class="scroll-nav-item" onclick="scrollToSection(${i}, ${h.verse})" data-heading-index="${i}" data-verse="${h.verse}">${h.heading}</button>`;
+        });
+        html += `</div>`;
+    }
+    html += `</div>`;
+    return html;
+}
+
+/**
+ * Toggle the scroll navigation dropdown
+ */
+function toggleScrollNav() {
+    const dropdown = document.getElementById('scroll-nav-dropdown');
+    if (!dropdown) return;
+    dropdown.classList.toggle('open');
+
+    // Close on outside click
+    if (dropdown.classList.contains('open')) {
+        setTimeout(() => {
+            const close = (e) => {
+                if (!e.target.closest('.scroll-nav-dropdown') && !e.target.closest('.scroll-nav-btn')) {
+                    dropdown.classList.remove('open');
+                    document.removeEventListener('click', close);
+                }
+            };
+            document.addEventListener('click', close);
+        }, 0);
+    }
+}
+
+/**
+ * Scroll to a section heading or jump to its passage chunk
+ */
+function scrollToSection(headingIndex, verseNum) {
+    const dropdown = document.getElementById('scroll-nav-dropdown');
+    if (dropdown) dropdown.classList.remove('open');
+
+    if (readingMode === 'passage') {
+        // Find the chunk containing this verse
+        for (let i = 0; i < passageChunks.length; i++) {
+            const chunk = passageChunks[i];
+            if (chunk.verses.some(v => v.number === verseNum)) {
+                currentPassageIndex = i;
+                saveLastPosition();
+                displayChapter();
+                window.scrollTo(0, 0);
+                return;
+            }
+        }
+    } else {
+        // Fluid mode: scroll to the section heading element
+        const headings = document.querySelectorAll('.section-heading, .hebrew-heading');
+        if (headings[headingIndex]) {
+            headings[headingIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+}
+
+/**
  * Render a paragraph in fluid reading mode
  */
 function renderParagraph(verses, bookNum, chapterNum) {
@@ -637,6 +707,12 @@ function displayChapter() {
 
     let html;
 
+    // Build section headings list for scroll nav
+    const sectionHeadings = chapter.verses
+        .filter(v => v.heading)
+        .map(v => ({ heading: v.heading, verse: v.number }));
+    const hasOutline = sectionHeadings.length > 0 && readingMode !== 'verse';
+
     if (readingMode === 'passage') {
         if (passageChunks.length === 0) {
             passageChunks = buildPassageChunks(chapter);
@@ -644,11 +720,11 @@ function displayChapter() {
         }
         document.getElementById('chapter-info').textContent =
             `${book.name} ${currentChapter} · ${currentPassageIndex + 1}/${passageChunks.length}`;
-        html = `<div class="chapter-title">${book.name} ${currentChapter}</div>`;
+        html = renderChapterTitleWithOutline(book.name, currentChapter, sectionHeadings, hasOutline);
         html += renderPassageMode(chapter, book);
     } else {
         document.getElementById('chapter-info').textContent = `${book.name} ${currentChapter}`;
-        html = `<div class="chapter-title">${book.name} ${currentChapter}</div>`;
+        html = renderChapterTitleWithOutline(book.name, currentChapter, sectionHeadings, hasOutline);
         if (readingMode === 'fluid') {
             html += renderFluidMode(chapter, book);
         } else {
