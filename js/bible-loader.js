@@ -12,8 +12,9 @@ function fetchWithTimeout(url, timeoutMs = 20000) {
 }
 
 async function loadGzippedBible(version = 'web') {
-    const gzippedUrl = `data/${version}-bible-enhanced.json.gz`;
-    const fallbackUrl = `data/${version}-bible-enhanced.json`;
+    const cacheBust = 'v=1.4.2';
+    const gzippedUrl = `data/${version}-bible-enhanced.json.gz?${cacheBust}`;
+    const fallbackUrl = `data/${version}-bible-enhanced.json?${cacheBust}`;
 
     try {
         console.log(`Loading ${version.toUpperCase()} Bible (gzipped)...`);
