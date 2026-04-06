@@ -261,6 +261,10 @@
                 <i class="ph ph-download"></i>
                 <span>Export Notes</span>
             </div>
+            <div class="settings-item" style="cursor: pointer;" onclick="caches.keys().then(k=>Promise.all(k.map(n=>caches.delete(n)))).finally(()=>location.reload())">
+                <i class="ph ph-arrow-clockwise"></i>
+                <span>Hard Refresh</span>
+            </div>
             <div class="settings-divider"></div>
             <div class="settings-item user-section" id="settings-user-info" style="display: none;">
                 <div class="settings-user-label">Logged in as:</div>
