@@ -1574,17 +1574,21 @@
     color: var(--text-secondary);
     margin: 2em 0 1em 0;
     text-align: center;
+    display: block;
 }
 
 /* Hebrew letter headings (Psalm 119) */
 .reading-mode-fluid .hebrew-heading {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin: 2.5em 0 0.5em 0;
-    text-align: left;
-    font-family: Georgia, serif;
-    letter-spacing: 2px;
+    display: block;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    margin: 2em 0 0.8em 0;
+    padding-top: 1.5em;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
 /* Poetry */
