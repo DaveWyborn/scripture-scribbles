@@ -297,9 +297,37 @@ trix-toolbar .trix-button-group:last-child {
     border-right: none;
 }
 
+trix-toolbar .trix-button-group--block-tools {
+    border-right: none;
+}
+
 /* Hide file tools (attach) — not needed for sermon notes */
 trix-toolbar .trix-button-group--file-tools {
     display: none;
+}
+
+/* Override Trix default dialog styles for dark themes */
+trix-toolbar .trix-dialog {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+trix-toolbar .trix-dialog input {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+trix-toolbar .trix-dialog .trix-button-group {
+    border: none;
+}
+
+trix-toolbar .trix-dialog .trix-button-group .trix-button {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    opacity: 1;
 }
 
 trix-toolbar .trix-button {
@@ -309,16 +337,38 @@ trix-toolbar .trix-button {
     color: var(--text-tertiary);
     padding: 6px 8px;
     cursor: pointer;
-    transition: color 0.15s;
+    transition: opacity 0.15s;
     font-size: 0.85em;
+    opacity: 0.5;
+}
+
+trix-toolbar .trix-button:not(:first-child) {
+    border-left: none;
 }
 
 trix-toolbar .trix-button:hover {
-    color: var(--text-primary);
+    opacity: 0.85;
 }
 
 trix-toolbar .trix-button.trix-active {
-    color: var(--accent-primary);
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Invert Trix SVG icons for dark themes */
+[data-theme="warm-dark"] trix-toolbar .trix-button--icon::before,
+[data-theme="slate"] trix-toolbar .trix-button--icon::before,
+[data-theme="dyslexia-dark"] trix-toolbar .trix-button--icon::before,
+[data-theme="high-contrast-dark"] trix-toolbar .trix-button--icon::before {
+    filter: invert(1);
+}
+
+/* Light themes keep default black icons */
+[data-theme="paper"] trix-toolbar .trix-button--icon::before,
+[data-theme="clean"] trix-toolbar .trix-button--icon::before,
+[data-theme="dyslexia-light"] trix-toolbar .trix-button--icon::before,
+[data-theme="high-contrast-light"] trix-toolbar .trix-button--icon::before {
+    filter: none;
 }
 
 /* Trix editor */
