@@ -114,6 +114,7 @@
 
 .sermon-metadata-header input {
     flex: 1;
+    min-width: 0;
     border: none;
     border-bottom: 1px solid transparent;
     background: transparent;
@@ -357,14 +358,14 @@ trix-toolbar .trix-dialog .trix-button-group .trix-button {
 
 /* Individual toolbar buttons */
 trix-toolbar .trix-button {
-    background: transparent;
-    border: none;
+    background: transparent !important;
+    border: none !important;
     border-radius: var(--radius-s);
     padding: 7px 9px;
     cursor: pointer;
     transition: background 0.15s, opacity 0.15s;
     font-size: 0.85em;
-    opacity: 0.7;
+    opacity: 0.9;
     min-width: 34px;
     min-height: 34px;
     display: flex;
@@ -378,12 +379,12 @@ trix-toolbar .trix-button:not(:first-child) {
 
 trix-toolbar .trix-button:hover {
     opacity: 1;
-    background: var(--bg-primary);
+    background: var(--bg-primary) !important;
 }
 
 trix-toolbar .trix-button.trix-active {
     opacity: 1;
-    background: var(--accent-primary);
+    background: var(--accent-primary) !important;
 }
 
 /* Icon colour for dark themes — invert black SVGs to white */
@@ -391,8 +392,8 @@ trix-toolbar .trix-button.trix-active {
 [data-theme="slate"] trix-toolbar .trix-button--icon::before,
 [data-theme="dyslexia-dark"] trix-toolbar .trix-button--icon::before,
 [data-theme="high-contrast-dark"] trix-toolbar .trix-button--icon::before {
-    filter: invert(1);
-    opacity: 0.9;
+    filter: invert(1) !important;
+    opacity: 1 !important;
 }
 
 /* Active button in dark themes — keep icons visible against accent bg */
@@ -400,7 +401,7 @@ trix-toolbar .trix-button.trix-active {
 [data-theme="slate"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
 [data-theme="dyslexia-dark"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
 [data-theme="high-contrast-dark"] trix-toolbar .trix-button.trix-active.trix-button--icon::before {
-    filter: invert(0);
+    filter: invert(0) !important;
 }
 
 /* Light themes keep default black icons */
@@ -408,7 +409,8 @@ trix-toolbar .trix-button.trix-active {
 [data-theme="clean"] trix-toolbar .trix-button--icon::before,
 [data-theme="dyslexia-light"] trix-toolbar .trix-button--icon::before,
 [data-theme="high-contrast-light"] trix-toolbar .trix-button--icon::before {
-    filter: none;
+    filter: none !important;
+    opacity: 1 !important;
 }
 
 /* Active button in light themes — invert to white against accent bg */
@@ -416,7 +418,7 @@ trix-toolbar .trix-button.trix-active {
 [data-theme="clean"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
 [data-theme="dyslexia-light"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
 [data-theme="high-contrast-light"] trix-toolbar .trix-button.trix-active.trix-button--icon::before {
-    filter: invert(1);
+    filter: invert(1) !important;
 }
 
 /* Trix editor */
