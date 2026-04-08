@@ -1,7 +1,7 @@
 # Project: Scripture Scribbles
 
 **Status:** Active
-**Last updated:** 2026-02-23
+**Last updated:** 2026-04-08
 
 ## Purpose
 
@@ -22,20 +22,19 @@ Dyslexia-friendly Bible reading app with rich annotations, focus tools, and serm
 - v1.1.0: Auth, cloud sync, full WEB Bible (66 books), visual book/chapter navigation, 6-colour highlights + underlines, verse notes + tags, 3 annotation sets, 24 themes, export (Markdown + JSON)
 - v1.2.0: Reading/fluid mode (paragraphs, not verse-by-verse), UI simplification, multiple public domain Bibles (WEB + ASV + KJV), gentle animations
 - v1.3.0: Full dyslexia typography controls (font, size, line/letter/word spacing), colour customisation, dyslexia-optimised themes — shipped Dec 2025
-- v1.4.0 (in progress): Sermon/message notes with Trix rich-text editor, split-view desktop layout, mobile tab switching, verse insertion into notes, collapsible metadata, Supabase persistence
+- v1.4.0 (shipped Apr 2026): Sermon/message notes (Trix rich-text editor, split-view, mobile tabs, verse insertion, Supabase persistence), reading bar (draggable focus aid, 3 styles), scroll navigation, reading history, passage mode with position save/restore, Hebrew heading styling, USFM converter fixes
 
 ## What's Next
 
-- Stabilise v1.4.0 sermon notes (Trix initialisation on mobile is the current blocker)
-- Reading bar (v1.3.0 planned but may have slipped to post-1.4) — the key differentiator: digital ruler for dyslexic readers
-- Multiple Bible version selector (v1.2 work may be partially done)
+- v1.4.1: Continuous scroll navigation (auto-load next chapter), verse formatting style selection
+- v1.5.0: Word-level highlighting with smart merge rules
+- Polish/UX: loading states, empty states, micro-interactions
+- Strategic: reach 1,000 users before building paid features (v1.6.0)
 
 ## Blockers / Open Questions
 
-- Trix editor initialisation is flaky on mobile (multiple recent commits fixing this — not yet resolved cleanly)
-- Reading bar status unclear — roadmap targets v1.3.0 but recent commits are all sermon notes; confirm whether it shipped
-- Docs (PROGRESS.md, roadmap docs) are ~15 months out of date (written Nov 2024); rely on git log + HTML files for actual state
 - 1,000-user threshold not yet reached — paid features (v1.6.0) are gated on this
+- No analytics/tracking to measure user count — need to determine how to measure progress toward 1,000-user goal
 
 ## Key Files
 

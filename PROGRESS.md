@@ -1,10 +1,10 @@
 # Scripture Scribbles - Progress Summary
 
-**Last Updated:** 2026-02-23
+**Last Updated:** 2026-04-08
 
 ---
 
-## Current Status: v1.3.26 LIVE ✅
+## Current Status: v1.4.0 LIVE ✅
 
 **URL:** https://scripturescribbles.co.uk
 **Live file:** `scripture-scribbles-v1.3.html`
@@ -47,22 +47,35 @@
 
 ---
 
-## In Progress: v1.4.0 - Sermon / Message Notes
+### v1.4.0 ✅ — Sermon / Message Notes + Reading Bar + Scroll Nav
 
-**Status:** Active development — core features built, fixing mobile issues
+**Shipped:** April 2026
 
-**Done:**
+**Sermon Notes:**
 - Split-view layout (desktop: Bible left, notes right)
 - Mobile tab switching (Bible ↔ Notes)
-- Trix rich-text editor integration
-- Markdown toolbar (headers, lists, bold, italic)
+- Trix rich-text editor (headers, lists, bold, italic)
 - Collapsible sermon metadata (speaker, date, passage)
 - Quick verse insertion (select verse → insert into notes)
-- Supabase persistence for sermon notes
-- Verse formatting styles
+- Supabase persistence
+- Trix mobile init fix (deferred editor mounting)
+- Trix dark theme fix (inverted SVG icons, stripped borders)
+- CSS load order fix (sermons.css after Trix)
+- Notebook-style redesigned notes UI
 
-**Blocking:**
-- Trix initialisation flaky on mobile — editor fails when host element is hidden on load. Multiple fixes committed (Feb 2026), not fully resolved. Must ensure editor DOM is visible before calling `trix-editor` init, or defer until first tab activation.
+**Reading Bar (killer differentiator):**
+- Draggable focus bar — 3 styles
+- Touch + mouse positioning
+
+**Scroll Navigation:**
+- Section outline for fluid and passage modes
+
+**Other:**
+- Hebrew heading styling (Psalm 119 section dividers)
+- USFM converter fix for mid-verse \d headings
+- Hard refresh button in settings (Safari cache-busting)
+- Passage mode reading position save/restore
+- Reading history (mark sections/chapters as read)
 
 ---
 
@@ -101,9 +114,10 @@ The app was refactored from a monolithic single HTML file into separate JS/CSS m
 
 ## What's Next
 
-1. Fix Trix mobile initialisation (current blocker for shipping v1.4)
-2. Reading bar — the killer differentiator feature (planned v1.3, may have slipped — confirm)
-3. Export sermon notes to Markdown
+1. **v1.4.1** — Continuous scroll navigation, verse formatting style selection
+2. **v1.5.0** — Word-level highlighting (smart merge rules)
+3. Polish/UX: loading states, empty states, micro-interactions
+4. Strategic: reach 1,000 users before building paid features
 
 ---
 

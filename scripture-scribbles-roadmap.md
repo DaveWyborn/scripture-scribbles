@@ -15,7 +15,7 @@
 
 ## Current Status
 
-### v1.3.26 (LIVE) ✅ — Last updated: 2026-02-23
+### v1.4.0 (LIVE) ✅ — Last updated: 2026-04-08
 
 ### v1.1.0 ✅
 - ✅ Supabase authentication
@@ -97,17 +97,17 @@
 - ✅ Dyslexia-optimised themes
 - ✅ Warm backgrounds for reduced visual stress
 
-**Reading Bar (Innovative Focus Aid) — NOT YET SHIPPED:**
-> Planned for v1.3 but deferred. Still to build. This is the killer differentiator.
-- [ ] Adjustable focus bar (mimics physical ruler for dyslexic readers)
-- [ ] Height options: 1/3/5/7 lines, paragraph, custom
-- [ ] Visual styles: Overlay, Underline, Mask, Blur, Fade, Ruler, Reading Guide
-- [ ] Positioning: Fixed top/centre/bottom, follows scroll, follows cursor, user-anchored
-- [ ] Customisation: colour picker, opacity, thickness, blur intensity
-- [ ] Keyboard controls (desktop) + touch controls (mobile)
-- [ ] Easy toggle on/off, save preferences
+**Reading Bar (Innovative Focus Aid) — ✅ SHIPPED (Apr 2026):**
+- ✅ Draggable focus bar (mimics physical ruler for dyslexic readers)
+- ✅ 3 visual styles (overlay, underline, mask)
+- ✅ Touch + mouse drag positioning
+- ✅ Easy toggle on/off
 
-**Timeline:** 2-3 weeks (next available slot after v1.4)
+**Still possible enhancements (not planned):**
+- [ ] Height options: 1/3/5/7 lines, paragraph, custom
+- [ ] Additional styles: Blur, Fade, Ruler, Reading Guide
+- [ ] Keyboard controls (desktop)
+- [ ] Colour picker, opacity, thickness customisation
 
 ---
 
