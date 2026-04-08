@@ -517,6 +517,7 @@ async function toggleNotesView() {
                     <input type="text" id="sermon-title" placeholder="Message title...">
                     <button class="metadata-toggle-btn" onclick="toggleMetadata()" aria-label="Toggle details">
                         <i class="ph ph-caret-down" id="metadata-toggle-icon"></i>
+                        <span class="metadata-toggle-label">Details</span>
                     </button>
                 </div>
                 <div class="sermon-metadata" id="sermon-metadata">
@@ -632,6 +633,7 @@ window.switchMobileView = async function(view) {
                     <input type="text" id="sermon-title" placeholder="Message title...">
                     <button class="metadata-toggle-btn" onclick="toggleMetadata()" aria-label="Toggle details">
                         <i class="ph ph-caret-down" id="metadata-toggle-icon"></i>
+                        <span class="metadata-toggle-label">Details</span>
                     </button>
                 </div>
                 <div class="sermon-metadata" id="sermon-metadata">

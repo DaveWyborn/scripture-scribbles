@@ -109,7 +109,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-s);
-    margin-bottom: var(--space-s);
+    margin-bottom: var(--space-xs);
 }
 
 .sermon-metadata-header input {
@@ -134,25 +134,30 @@
 }
 
 .metadata-toggle-btn {
-    background: none;
-    border: none;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
     cursor: pointer;
-    padding: 4px 8px;
-    border-radius: var(--radius-s);
-    transition: background 0.2s, transform 0.2s;
+    padding: 6px 10px;
+    border-radius: var(--radius-m);
+    transition: background 0.2s, border-color 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-tertiary);
+    gap: 4px;
+    color: var(--text-secondary);
+    font-size: 0.75em;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .metadata-toggle-btn:hover {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    background: var(--border);
+    border-color: var(--text-tertiary);
 }
 
 .metadata-toggle-btn i {
-    font-size: 1.2em;
+    font-size: 1.1em;
     transition: transform 0.3s;
 }
 
@@ -166,7 +171,8 @@
     grid-template-columns: 1fr 1fr;
     gap: var(--space-xs) var(--space-s);
     padding: var(--space-s) 0 var(--space-m);
-    transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+    border-bottom: 1px solid var(--border);
+    transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease, border-color 0.3s ease;
     overflow: hidden;
 }
 
@@ -175,6 +181,7 @@
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     opacity: 0;
+    border-bottom-color: transparent;
 }
 
 /* Verse insertion bar */
@@ -235,46 +242,56 @@
 
 .sermon-metadata input {
     width: 100%;
-    padding: 6px 0;
+    padding: 8px 12px;
     margin: 0;
-    border: none;
-    border-bottom: 1px solid var(--border);
-    border-radius: 0;
-    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-s);
+    background: var(--bg-secondary);
     color: var(--text-primary);
     font-size: 0.85em;
     font-family: var(--font-primary);
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, background 0.2s;
 }
 
 .sermon-metadata input:focus {
     outline: none;
-    border-bottom-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    background: var(--bg-primary);
 }
 
 .sermon-metadata input::placeholder {
     color: var(--text-tertiary);
 }
 
-#sermon-date {
+/* Date input colour scheme matches theme */
+[data-theme="warm-dark"] #sermon-date,
+[data-theme="slate"] #sermon-date,
+[data-theme="dyslexia-dark"] #sermon-date,
+[data-theme="high-contrast-dark"] #sermon-date {
     color-scheme: dark;
+}
+
+[data-theme="paper"] #sermon-date,
+[data-theme="clean"] #sermon-date,
+[data-theme="dyslexia-light"] #sermon-date,
+[data-theme="high-contrast-light"] #sermon-date {
+    color-scheme: light;
 }
 
 /* Trix editor container */
 .sermon-editor-container {
     flex: 1;
-    padding: var(--space-l);
+    padding: var(--space-m) var(--space-l);
     overflow-y: auto;
 }
 
 /* Trix toolbar customizations */
 trix-toolbar {
-    background: transparent;
+    background: var(--bg-secondary);
     border: none;
-    border-bottom: 1px solid var(--border);
-    border-radius: 0;
-    padding: 4px 0;
-    margin-bottom: 0;
+    border-radius: var(--radius-m);
+    padding: 6px;
+    margin: 0 var(--space-l);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -284,13 +301,15 @@ trix-toolbar .trix-button-row {
     display: flex;
     gap: 2px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 trix-toolbar .trix-button-group {
     display: flex;
-    gap: 1px;
-    padding: 0 4px;
-    border-right: 1px solid var(--border);
+    gap: 2px;
+    padding: 0;
+    border: none;
+    margin: 0;
 }
 
 trix-toolbar .trix-button-group:last-child {
@@ -306,17 +325,21 @@ trix-toolbar .trix-button-group--file-tools {
     display: none;
 }
 
-/* Override Trix default dialog styles for dark themes */
+/* Override Trix default dialog styles */
 trix-toolbar .trix-dialog {
     background: var(--bg-secondary);
     border: 1px solid var(--border);
+    border-radius: var(--radius-m);
     color: var(--text-primary);
+    margin-top: 4px;
 }
 
 trix-toolbar .trix-dialog input {
     background: var(--bg-primary);
     border: 1px solid var(--border);
+    border-radius: var(--radius-s);
     color: var(--text-primary);
+    padding: 6px 10px;
 }
 
 trix-toolbar .trix-dialog .trix-button-group {
@@ -324,22 +347,29 @@ trix-toolbar .trix-dialog .trix-button-group {
 }
 
 trix-toolbar .trix-dialog .trix-button-group .trix-button {
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
-    color: var(--text-primary);
+    background: var(--accent-primary);
+    border: none;
+    color: var(--bg-primary);
     opacity: 1;
+    border-radius: var(--radius-s);
+    font-weight: 500;
 }
 
+/* Individual toolbar buttons */
 trix-toolbar .trix-button {
     background: transparent;
     border: none;
     border-radius: var(--radius-s);
-    color: var(--text-tertiary);
-    padding: 6px 8px;
+    padding: 7px 9px;
     cursor: pointer;
-    transition: opacity 0.15s;
+    transition: background 0.15s, opacity 0.15s;
     font-size: 0.85em;
-    opacity: 0.5;
+    opacity: 0.7;
+    min-width: 34px;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 trix-toolbar .trix-button:not(:first-child) {
@@ -347,20 +377,30 @@ trix-toolbar .trix-button:not(:first-child) {
 }
 
 trix-toolbar .trix-button:hover {
-    opacity: 0.85;
+    opacity: 1;
+    background: var(--bg-primary);
 }
 
 trix-toolbar .trix-button.trix-active {
     opacity: 1;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--accent-primary);
 }
 
-/* Invert Trix SVG icons for dark themes */
+/* Icon colour for dark themes — invert black SVGs to white */
 [data-theme="warm-dark"] trix-toolbar .trix-button--icon::before,
 [data-theme="slate"] trix-toolbar .trix-button--icon::before,
 [data-theme="dyslexia-dark"] trix-toolbar .trix-button--icon::before,
 [data-theme="high-contrast-dark"] trix-toolbar .trix-button--icon::before {
     filter: invert(1);
+    opacity: 0.9;
+}
+
+/* Active button in dark themes — keep icons visible against accent bg */
+[data-theme="warm-dark"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
+[data-theme="slate"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
+[data-theme="dyslexia-dark"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
+[data-theme="high-contrast-dark"] trix-toolbar .trix-button.trix-active.trix-button--icon::before {
+    filter: invert(0);
 }
 
 /* Light themes keep default black icons */
@@ -371,10 +411,19 @@ trix-toolbar .trix-button.trix-active {
     filter: none;
 }
 
+/* Active button in light themes — invert to white against accent bg */
+[data-theme="paper"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
+[data-theme="clean"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
+[data-theme="dyslexia-light"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
+[data-theme="high-contrast-light"] trix-toolbar .trix-button.trix-active.trix-button--icon::before {
+    filter: invert(1);
+}
+
 /* Trix editor */
 trix-editor {
     min-height: 300px;
     padding: var(--space-l);
+    padding-top: var(--space-m);
     background: transparent;
     border: none;
     border-radius: 0;
@@ -385,6 +434,11 @@ trix-editor {
 
 trix-editor:focus {
     outline: none;
+}
+
+trix-editor[placeholder]::before {
+    color: var(--text-tertiary);
+    opacity: 0.6;
 }
 
 /* Trix content styling */
@@ -420,32 +474,38 @@ trix-editor a {
 
 /* Sermon actions */
 .sermon-actions {
-    padding: var(--space-s) var(--space-l);
+    padding: var(--space-m) var(--space-l);
     border-top: 1px solid var(--border);
     display: flex;
     gap: var(--space-s);
-    justify-content: flex-end;
+    justify-content: center;
+    background: var(--bg-primary);
 }
 
 .sermon-actions button {
-    padding: 6px 14px;
-    background: transparent;
-    color: var(--text-secondary);
+    padding: 10px 20px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
     border: 1px solid var(--border);
-    border-radius: var(--radius-m);
-    font-weight: 500;
-    font-size: 0.85em;
+    border-radius: var(--radius-l);
+    font-weight: 600;
+    font-size: 0.9em;
     cursor: pointer;
     transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .sermon-actions button:hover {
-    color: var(--text-primary);
-    border-color: var(--text-tertiary);
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-color: var(--accent-primary);
 }
 
 .sermon-actions button:active {
-    opacity: 0.7;
+    opacity: 0.8;
+    transform: scale(0.98);
 }
 
 /* Save indicator */
@@ -685,6 +745,10 @@ trix-editor a {
 
     .sermon-actions {
         padding: var(--space-s) var(--space-m);
+    }
+
+    trix-toolbar {
+        margin: 0 var(--space-m);
     }
 
     trix-editor {
