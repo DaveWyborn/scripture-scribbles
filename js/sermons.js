@@ -14,8 +14,11 @@ async function initSermons() {
         setupSwipeHandlers();
     }
 
-    // Restore metadata collapsed state
-    const metadataCollapsed = localStorage.getItem('metadataCollapsed') === 'true';
+    // Restore metadata collapsed state (default collapsed on mobile)
+    const storedCollapsed = localStorage.getItem('metadataCollapsed');
+    const metadataCollapsed = storedCollapsed !== null
+        ? storedCollapsed === 'true'
+        : window.innerWidth < 768;
     if (metadataCollapsed) {
         const metadata = document.getElementById('sermon-metadata');
         const toggleBtn = document.querySelector('.metadata-toggle-btn');

@@ -738,7 +738,11 @@ trix-editor a {
     }
 
     .sermon-metadata-wrapper {
-        padding: var(--space-m) var(--space-m) 0;
+        padding: var(--space-s) var(--space-m) 0;
+    }
+
+    .sermon-metadata-header input {
+        font-size: 1.2em;
     }
 
     .sermon-editor-container {
@@ -751,6 +755,22 @@ trix-editor a {
 
     trix-toolbar {
         margin: 0 var(--space-m);
+        padding: 4px;
+    }
+
+    /* Hide lesser-used buttons on mobile to keep toolbar to one row */
+    trix-toolbar .trix-button--icon-strike,
+    trix-toolbar .trix-button--icon-code,
+    trix-toolbar .trix-button--icon-decrease-nesting-level,
+    trix-toolbar .trix-button--icon-increase-nesting-level {
+        display: none !important;
+    }
+
+    /* Compact toolbar buttons on mobile */
+    trix-toolbar .trix-button {
+        min-width: 30px;
+        min-height: 30px;
+        padding: 5px 6px;
     }
 
     trix-editor {
