@@ -364,13 +364,23 @@ trix-toolbar .trix-button {
     padding: 7px 9px;
     cursor: pointer;
     transition: background 0.15s, opacity 0.15s;
-    font-size: 0.85em;
     opacity: 0.9;
     min-width: 34px;
     min-height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+}
+
+/* Hide text labels on icon buttons — display:flex broke Trix's default
+   text-indent trick, so labels were leaking through behind the SVG icons. */
+trix-toolbar .trix-button--icon {
+    font-size: 0 !important;
+    text-indent: -9999px;
+    overflow: hidden;
+    position: relative;
+}
+
+trix-toolbar .trix-button--icon::before {
+    font-size: initial;
+    text-indent: 0;
 }
 
 trix-toolbar .trix-button:not(:first-child) {
