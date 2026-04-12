@@ -273,6 +273,183 @@ function _applyMarkButtonState(marker, status, isMarkAll) {
     if (label) label.textContent = isRead ? 'Read' : 'Mark as read';
 }
 
+// ─── Auto-mark as read ──────────────────────────────────────────────────────
+
+let autoMarkEnabled = false;
+let autoMarkObserver = null;
+let sectionEnterTimes = new Map(); // key: 'bookId-chapter-section' → timestamp
+const AUTO_MARK_MIN_SECONDS = 10; // absolute minimum time before auto-marking
+const AUTO_MARK_WPM = 200; // words per minute threshold (conservative for dyslexic readers)
+
+function initAutoMark() {
+    autoMarkEnabled = localStorage.getItem('autoMarkRead') === 'true';
+    const toggle = document.getElementById('auto-mark-toggle');
+    if (toggle) toggle.checked = autoMarkEnabled;
+}
+
+function setAutoMarkRead(enabled) {
+    autoMarkEnabled = enabled;
+    localStorage.setItem('autoMarkRead', enabled ? 'true' : 'false');
+    if (enabled) {
+        setupAutoMarkObserver();
+    } else {
+        teardownAutoMarkObserver();
+    }
+}
+
+function setupAutoMarkObserver() {
+    teardownAutoMarkObserver();
+    if (!autoMarkEnabled) return;
+
+    sectionEnterTimes.clear();
+
+    // Observe reading sections (fluid mode) and read-marker elements
+    autoMarkObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const el = entry.target;
+            const key = sectionKeyFromElement(el);
+            if (!key) return;
+
+            if (entry.isIntersecting) {
+                // Section entered viewport — start timing
+                if (!sectionEnterTimes.has(key)) {
+                    sectionEnterTimes.set(key, Date.now());
+                }
+            } else {
+                // Section left viewport — check if it scrolled UP (was read)
+                if (entry.boundingClientRect.bottom < 0 && sectionEnterTimes.has(key)) {
+                    checkAndAutoMark(el, key);
+                }
+            }
+        });
+    }, { threshold: 0 });
+
+    // Observe all current reading sections
+    observeReadingSections();
+}
+
+function teardownAutoMarkObserver() {
+    if (autoMarkObserver) {
+        autoMarkObserver.disconnect();
+        autoMarkObserver = null;
+    }
+    sectionEnterTimes.clear();
+}
+
+function observeReadingSections() {
+    if (!autoMarkObserver) return;
+
+    // In fluid mode, observe each .reading-section
+    document.querySelectorAll('.reading-section').forEach(el => {
+        autoMarkObserver.observe(el);
+    });
+
+    // In verse mode, observe .read-marker[data-mark-all] (chapter-level)
+    document.querySelectorAll('.read-marker[data-mark-all]').forEach(el => {
+        autoMarkObserver.observe(el);
+    });
+
+    // In passage mode, observe .read-marker (per-chunk)
+    if (readingMode === 'passage') {
+        document.querySelectorAll('.read-marker:not([data-mark-all])').forEach(el => {
+            autoMarkObserver.observe(el);
+        });
+    }
+}
+
+function sectionKeyFromElement(el) {
+    // Reading section (fluid mode): find parent chapter-section for book/chapter
+    if (el.classList.contains('reading-section')) {
+        const chapterSection = el.closest('.chapter-section');
+        const bookId = chapterSection ? chapterSection.dataset.book : currentBook;
+        const chapter = chapterSection ? parseInt(chapterSection.dataset.chapter) : currentChapter;
+        // Get section index from the mark button inside
+        const marker = el.querySelector('.read-marker');
+        const sectionIndex = marker ? parseInt(marker.dataset.section) : 0;
+        return `${bookId}-${chapter}-${sectionIndex}`;
+    }
+
+    // Read marker (verse/passage mode)
+    if (el.classList.contains('read-marker')) {
+        const bookId = el.dataset.book || currentBook;
+        const chapter = parseInt(el.dataset.chapter || currentChapter);
+        if (el.dataset.markAll) {
+            return `${bookId}-${chapter}-all`;
+        }
+        const section = parseInt(el.dataset.section || 0);
+        return `${bookId}-${chapter}-${section}`;
+    }
+
+    return null;
+}
+
+function checkAndAutoMark(el, key) {
+    const enterTime = sectionEnterTimes.get(key);
+    if (!enterTime) return;
+
+    const elapsed = (Date.now() - enterTime) / 1000; // seconds
+
+    // Calculate minimum read time based on word count
+    const wordCount = estimateWordCount(el);
+    const minTime = Math.max(AUTO_MARK_MIN_SECONDS, (wordCount / AUTO_MARK_WPM) * 60);
+
+    if (elapsed < minTime) {
+        // Not enough time — user was skimming/scrolling, don't auto-mark
+        sectionEnterTimes.delete(key);
+        return;
+    }
+
+    sectionEnterTimes.delete(key);
+
+    // Extract book/chapter/section from key and auto-mark
+    if (el.classList.contains('reading-section')) {
+        const marker = el.querySelector('.read-marker');
+        if (marker && !marker.classList.contains('read')) {
+            const bookId = marker.dataset.book;
+            const chapter = parseInt(marker.dataset.chapter);
+            const section = parseInt(marker.dataset.section);
+            const total = parseInt(marker.dataset.total || 1);
+            autoMarkSection(bookId, chapter, section, total);
+        }
+    } else if (el.classList.contains('read-marker')) {
+        if (el.dataset.markAll) {
+            // Verse mode: mark all sections in chapter
+            if (getChapterStatus(el.dataset.book, parseInt(el.dataset.chapter)) !== 'complete') {
+                const bookId = el.dataset.book;
+                const chapter = parseInt(el.dataset.chapter);
+                const total = parseInt(el.dataset.total || 1);
+                markAllSectionsRead(bookId, chapter, total);
+            }
+        } else if (!el.classList.contains('read')) {
+            const bookId = el.dataset.book;
+            const chapter = parseInt(el.dataset.chapter);
+            const section = parseInt(el.dataset.section);
+            const total = parseInt(el.dataset.total || 1);
+            autoMarkSection(bookId, chapter, section, total);
+        }
+    }
+}
+
+function autoMarkSection(bookId, chapter, sectionIndex, totalSections) {
+    if (getSectionStatus(bookId, chapter, sectionIndex) === 'read') return;
+
+    markSectionInMemory(bookId, chapter, sectionIndex, totalSections);
+    updateMarkButtonInDOM(bookId, chapter, sectionIndex);
+    updateChapterStatusInNav(bookId, chapter);
+
+    // Persist
+    if (currentUser && supabase) {
+        saveReadingMarkToSupabase(bookId, chapter, sectionIndex, totalSections);
+    } else {
+        saveReadingHistoryToLocalStorage();
+    }
+}
+
+function estimateWordCount(el) {
+    const text = el.textContent || '';
+    return text.split(/\s+/).filter(w => w.length > 0).length;
+}
+
 // ─── HTML renderers (called from verse-renderer.js) ───────────────────────────
 
 function renderMarkButton(bookId, chapter, sectionIndex, totalSections) {
@@ -281,6 +458,7 @@ function renderMarkButton(bookId, chapter, sectionIndex, totalSections) {
                  data-book="${bookId}"
                  data-chapter="${chapter}"
                  data-section="${sectionIndex}"
+                 data-total="${totalSections}"
                  onclick="toggleSectionRead('${bookId}', ${chapter}, ${sectionIndex}, ${totalSections})">
                 <i class="ph ${isRead ? 'ph-check-circle' : 'ph-circle'}"></i>
                 <span>${isRead ? 'Read' : 'Mark as read'}</span>
@@ -297,6 +475,7 @@ function renderMarkAllButton(bookId, chapter, totalSections) {
                  data-book="${bookId}"
                  data-chapter="${chapter}"
                  data-mark-all="true"
+                 data-total="${totalSections}"
                  onclick="markAllSectionsRead('${bookId}', ${chapter}, ${totalSections})">
                 <i class="ph ${icon}"></i>
                 <span>${isRead ? 'Read' : 'Mark as read'}</span>

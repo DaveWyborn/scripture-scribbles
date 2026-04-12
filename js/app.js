@@ -34,6 +34,11 @@ async function initApp() {
         await initReadingHistory();
     }
 
+    // Load auto-mark preference
+    if (typeof initAutoMark === 'function') {
+        initAutoMark();
+    }
+
     // Check auth status
     const { data: { session } } = await supabase.auth.getSession();
 

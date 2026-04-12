@@ -160,6 +160,11 @@ async function appendNextChapter() {
 
         // Apply auto-contrast to new highlights
         setTimeout(applyAutoContrast, 50);
+
+        // Observe new sections for auto-mark-as-read
+        if (typeof observeReadingSections === 'function' && autoMarkEnabled) {
+            observeReadingSections();
+        }
     } catch (e) {
         console.error('Error appending next chapter:', e);
     } finally {
@@ -1339,6 +1344,11 @@ function displayChapter() {
     // Set up continuous scroll for fluid and verse modes
     if (readingMode !== 'passage') {
         setupContinuousScroll();
+    }
+
+    // Set up auto-mark-as-read observers
+    if (typeof setupAutoMarkObserver === 'function' && autoMarkEnabled) {
+        setupAutoMarkObserver();
     }
 }
 

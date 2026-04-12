@@ -107,6 +107,13 @@ async function loadUserPreferences() {
                 if (readingBarState.enabled) showReadingBar();
                 updateReadingBarControls();
             }
+
+            // Auto-mark as read
+            if (prefs.autoMarkRead != null && typeof setAutoMarkRead === 'function') {
+                setAutoMarkRead(prefs.autoMarkRead);
+                const toggle = document.getElementById('auto-mark-toggle');
+                if (toggle) toggle.checked = prefs.autoMarkRead;
+            }
         } else {
             console.log('No saved preferences, using defaults');
         }
@@ -136,6 +143,11 @@ async function saveUserPreferences() {
         // Include reading bar state if module loaded
         if (typeof readingBarState !== 'undefined') {
             preferences.readingBar = readingBarState;
+        }
+
+        // Include auto-mark preference
+        if (typeof autoMarkEnabled !== 'undefined') {
+            preferences.autoMarkRead = autoMarkEnabled;
         }
 
         // Upsert to Supabase (use user_id for conflict detection, not primary key)

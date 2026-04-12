@@ -144,7 +144,7 @@ function applyReadingBarStyle() {
         readingBarEl.style.borderTop = 'none';
         readingBarEl.style.borderBottom = 'none';
         // Massive outline to dim everything outside the bar
-        readingBarEl.style.outline = '200vh solid rgba(0,0,0,0.5)';
+        readingBarEl.style.outline = `200vh solid rgba(0,0,0,${readingBarState.opacity})`;
         readingBarEl.style.outlineOffset = '0';
         readingBarEl.style.boxShadow = 'none';
     }
@@ -248,10 +248,10 @@ function updateReadingBarControls() {
     const colourPicker = document.getElementById('reading-bar-colour');
     if (colourPicker) colourPicker.value = readingBarState.colour;
 
-    // Show/hide opacity control (only relevant for highlight style)
+    // Show/hide opacity control (relevant for highlight and focus styles)
     const opacityRow = document.getElementById('reading-bar-opacity-row');
     if (opacityRow) {
-        opacityRow.style.display = readingBarState.style === 'highlight' ? '' : 'none';
+        opacityRow.style.display = readingBarState.style === 'ruler' ? 'none' : '';
     }
 }
 
