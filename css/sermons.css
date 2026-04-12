@@ -75,18 +75,27 @@
 /* Bible content wrapper for split view */
 .bible-content-wrapper {
     overflow-y: auto;
+    overflow-x: hidden;
     max-height: calc(100vh - 80px);
     padding-right: var(--space-m);
+    min-width: 0; /* prevent grid blowout from large text */
 }
 
-/* Sermon notes view container */
+/* Sermon notes view container — reset typography so reading font size
+   doesn't blow up the notes UI (reading controls set fontSize on #content) */
 .sermon-notes-view {
     display: none;
     flex-direction: column;
     border-left: 1px solid var(--border);
     background: var(--bg-primary);
     overflow-y: auto;
+    overflow-x: hidden;
     max-height: calc(100vh - 80px);
+    min-width: 0; /* prevent grid blowout */
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+    letter-spacing: normal !important;
+    word-spacing: normal !important;
 }
 
 @media (max-width: 767px) {
