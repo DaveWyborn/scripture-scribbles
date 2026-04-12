@@ -1781,3 +1781,14 @@
 .toggle-switch input:checked + .toggle-slider::before {
     transform: translateX(18px);
 }
+
+/* Continuous Scroll */
+.chapter-section {
+    /* No special styling needed — just a grouping wrapper */
+}
+
+.chapter-divider {
+    border: none;
+    border-top: 1px solid var(--border-color, rgba(128, 128, 128, 0.2));
+    margin: var(--space-xxl, 48px) 0 var(--space-l, 24px);
+}

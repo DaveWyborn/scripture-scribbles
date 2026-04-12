@@ -41,6 +41,14 @@ let knownTags = {}; // { tagName: color } - persisted to localStorage
 let currentTags = []; // Tags being edited in annotation panel
 let selectedTagColor = '#ACE5CB'; // Default tag colour
 
+// Continuous scroll state
+let continuousScrollEnabled = true; // active for fluid + verse modes
+let annotationCache = {}; // keyed by 'bookId-chapter', stores annotation objects
+let loadedChapterSections = []; // [{bookId, chapter}] in display order
+let continuousScrollObserver = null; // IntersectionObserver for auto-loading
+let chapterVisibilityObserver = null; // IntersectionObserver for toolbar updates
+let isAppendingChapter = false; // prevent concurrent appends
+
 // Reading history state (used by reading-plans.js)
 let readingHistory = {};
 

@@ -16,6 +16,362 @@ function loadLastPosition() {
     } catch (e) {}
 }
 
+// ─── Continuous Scroll ──────────────────────────────────────────────────────
+
+/**
+ * Get the next chapter/book after a given position.
+ * Returns {bookId, bookName, chapter, bookObj, chapterObj} or null if at end of Bible.
+ */
+function getNextChapterInfo(bookId, chapterNum) {
+    const book = bibleData.books.find(b => b.id === bookId);
+    if (!book) return null;
+
+    // Next chapter in same book
+    const nextChapter = book.chapters.find(c => c.number === chapterNum + 1);
+    if (nextChapter) {
+        return { bookId, bookName: book.name, chapter: chapterNum + 1, bookObj: book, chapterObj: nextChapter };
+    }
+
+    // First chapter of next book
+    const bookIndex = bibleData.books.indexOf(book);
+    if (bookIndex < bibleData.books.length - 1) {
+        const nextBook = bibleData.books[bookIndex + 1];
+        const firstChapter = nextBook.chapters.find(c => c.number === 1);
+        if (firstChapter) {
+            return { bookId: nextBook.id, bookName: nextBook.name, chapter: 1, bookObj: nextBook, chapterObj: firstChapter };
+        }
+    }
+
+    return null; // End of Bible
+}
+
+/**
+ * Load annotations for a specific book+chapter combo.
+ * Caches results to avoid duplicate fetches.
+ */
+async function loadAnnotationsForChapter(bookId, chapterNum) {
+    const cacheKey = `${bookId}-${chapterNum}`;
+    if (annotationCache[cacheKey] !== undefined) return annotationCache[cacheKey];
+
+    if (!currentUser) {
+        annotationCache[cacheKey] = {};
+        return {};
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from('annotations')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .eq('bible_version', 'WEB')
+            .eq('annotation_set', currentAnnotationSet)
+            .eq('book_id', cacheKey)
+            .maybeSingle();
+
+        if (error) console.warn('Annotation load error:', error.code, error.message);
+        const annotations = data ? data.data : {};
+        annotationCache[cacheKey] = annotations;
+        return annotations;
+    } catch (e) {
+        console.error('Error loading annotations for', cacheKey, e);
+        annotationCache[cacheKey] = {};
+        return {};
+    }
+}
+
+/**
+ * Render a chapter section's HTML for appending (fluid or verse mode).
+ * Temporarily swaps globals so existing render functions work unchanged.
+ */
+function renderChapterSection(bookId, chapterNum, bookObj, chapterObj, annotations) {
+    // Save globals
+    const savedBook = currentBook;
+    const savedChapter = currentChapter;
+    const savedAnnotations = currentAnnotations;
+
+    // Swap to target chapter
+    currentBook = bookId;
+    currentChapter = chapterNum;
+    currentAnnotations = annotations;
+
+    let innerHtml = '';
+
+    // Chapter divider + title
+    innerHtml += `<div class="chapter-divider"></div>`;
+    innerHtml += `<div class="chapter-title">${bookObj.name} ${chapterNum}</div>`;
+
+    if (readingMode === 'fluid') {
+        innerHtml += renderFluidMode(chapterObj, bookObj);
+    } else {
+        innerHtml += renderVerseMode(chapterObj, bookObj);
+        if (typeof renderMarkAllButton === 'function') {
+            const sections = buildReadingSections(chapterObj.verses);
+            innerHtml += renderMarkAllButton(bookId, chapterNum, sections.length);
+        }
+    }
+
+    // Restore globals
+    currentBook = savedBook;
+    currentChapter = savedChapter;
+    currentAnnotations = savedAnnotations;
+
+    return `<div class="chapter-section" data-book="${bookId}" data-chapter="${chapterNum}">${innerHtml}</div>`;
+}
+
+/**
+ * Append the next chapter to the scrollable content area.
+ */
+async function appendNextChapter() {
+    if (isAppendingChapter || readingMode === 'passage') return;
+
+    // Find what comes after the last loaded section
+    const lastSection = loadedChapterSections[loadedChapterSections.length - 1];
+    if (!lastSection) return;
+
+    const next = getNextChapterInfo(lastSection.bookId, lastSection.chapter);
+    if (!next) return; // End of Bible
+
+    isAppendingChapter = true;
+
+    try {
+        const annotations = await loadAnnotationsForChapter(next.bookId, next.chapter);
+        const html = renderChapterSection(next.bookId, next.chapter, next.bookObj, next.chapterObj, annotations);
+
+        // Find the bottom-nav and insert before it
+        const contentEl = document.getElementById('content');
+        const bibleWrapper = document.getElementById('bible-content-wrapper');
+        const target = bibleWrapper || contentEl;
+        const bottomNav = target.querySelector('.bottom-nav');
+
+        if (bottomNav) {
+            bottomNav.insertAdjacentHTML('beforebegin', html);
+        } else {
+            target.insertAdjacentHTML('beforeend', html);
+        }
+
+        loadedChapterSections.push({ bookId: next.bookId, chapter: next.chapter });
+
+        // Attach verse click handlers for the new section
+        const newSection = target.querySelector(`.chapter-section[data-book="${next.bookId}"][data-chapter="${next.chapter}"]`);
+        if (newSection) {
+            attachVerseHandlers(newSection);
+            observeChapterSection(newSection);
+        }
+
+        // Apply auto-contrast to new highlights
+        setTimeout(applyAutoContrast, 50);
+    } catch (e) {
+        console.error('Error appending next chapter:', e);
+    } finally {
+        isAppendingChapter = false;
+    }
+}
+
+/**
+ * Attach click handlers to verses within a chapter section.
+ * Works for both fluid and verse reading modes.
+ */
+function attachVerseHandlers(sectionEl) {
+    const bookId = sectionEl.dataset.book || currentBook;
+    const chapterNum = parseInt(sectionEl.dataset.chapter) || currentChapter;
+
+    if (readingMode === 'verse') {
+        sectionEl.querySelectorAll('.verse').forEach(el => {
+            el.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' ||
+                    e.target.tagName === 'TEXTAREA' || e.target.closest('.inline-menu') ||
+                    e.target.closest('.annotation-panel')) return;
+
+                // Switch context to this chapter
+                switchChapterContext(bookId, chapterNum);
+
+                const verseNum = parseInt(el.dataset.verse);
+                if (e.shiftKey && typeof toggleVerseSelection === 'function') {
+                    e.preventDefault();
+                    toggleVerseSelection(verseNum);
+                    return;
+                }
+
+                document.querySelectorAll('.verse').forEach(v => v.classList.remove('selected'));
+                if (selectedVerse !== verseNum) {
+                    selectedVerse = verseNum;
+                    el.classList.add('selected');
+                } else {
+                    selectedVerse = null;
+                }
+            });
+        });
+    } else {
+        sectionEl.querySelectorAll('.verse-inline-wrapper').forEach(el => {
+            el.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' ||
+                    e.target.tagName === 'TEXTAREA' || e.target.tagName === 'I' ||
+                    e.target.closest('.inline-menu')) return;
+
+                // Switch context to this chapter
+                switchChapterContext(bookId, chapterNum);
+
+                const verseNum = parseInt(el.dataset.verse);
+                if (e.shiftKey && typeof toggleVerseSelection === 'function') {
+                    e.preventDefault();
+                    toggleVerseSelection(verseNum);
+                    return;
+                }
+
+                document.querySelectorAll('.verse-inline-wrapper').forEach(v => v.classList.remove('selected'));
+                if (selectedVerse === verseNum) {
+                    selectedVerse = null;
+                } else {
+                    selectedVerse = verseNum;
+                    el.classList.add('selected');
+                }
+            });
+        });
+
+        sectionEl.querySelectorAll('.indicator-icon-inline').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                switchChapterContext(bookId, chapterNum);
+                const verseNum = parseInt(el.dataset.verse);
+                const wrapper = el.closest('.verse-inline-wrapper');
+                document.querySelectorAll('.verse-inline-wrapper').forEach(v => v.classList.remove('selected'));
+                if (wrapper) {
+                    wrapper.classList.add('selected');
+                    selectedVerse = verseNum;
+                    setTimeout(() => toggleSubmenu(verseNum, 'note'), 50);
+                }
+            });
+        });
+    }
+}
+
+/**
+ * Switch the global annotation context to a specific chapter.
+ * Called when user interacts with a verse in an appended chapter.
+ */
+function switchChapterContext(bookId, chapterNum) {
+    if (currentBook === bookId && currentChapter === chapterNum) return;
+
+    // Cache current annotations before switching
+    const currentKey = `${currentBook}-${currentChapter}`;
+    annotationCache[currentKey] = currentAnnotations;
+
+    // Switch
+    currentBook = bookId;
+    currentChapter = chapterNum;
+    currentAnnotations = annotationCache[`${bookId}-${chapterNum}`] || {};
+
+    saveLastPosition();
+
+    // Update toolbar
+    const book = bibleData.books.find(b => b.id === bookId);
+    if (book) {
+        document.getElementById('chapter-info').textContent = `${book.name} ${chapterNum}`;
+    }
+}
+
+/**
+ * Set up IntersectionObserver on a chapter section for visibility tracking.
+ */
+function observeChapterSection(sectionEl) {
+    if (!chapterVisibilityObserver) return;
+    chapterVisibilityObserver.observe(sectionEl);
+}
+
+/**
+ * Set up the continuous scroll system: bottom sentinel + chapter visibility observer.
+ */
+function setupContinuousScroll() {
+    // Clean up previous observers
+    if (continuousScrollObserver) continuousScrollObserver.disconnect();
+    if (chapterVisibilityObserver) chapterVisibilityObserver.disconnect();
+
+    if (readingMode === 'passage') return;
+
+    // Chapter visibility observer — updates toolbar as user scrolls between chapters
+    chapterVisibilityObserver = new IntersectionObserver((entries) => {
+        // Find the topmost visible chapter section
+        let topVisible = null;
+        let topY = Infinity;
+
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const rect = entry.boundingClientRect;
+                if (rect.top < topY) {
+                    topY = rect.top;
+                    topVisible = entry.target;
+                }
+            }
+        });
+
+        if (topVisible) {
+            const bookId = topVisible.dataset.book;
+            const chapterNum = parseInt(topVisible.dataset.chapter);
+            if (bookId && chapterNum) {
+                // Update toolbar without triggering full context switch
+                const book = bibleData.books.find(b => b.id === bookId);
+                if (book) {
+                    document.getElementById('chapter-info').textContent = `${book.name} ${chapterNum}`;
+                }
+                // Update position for save
+                if (currentBook !== bookId || currentChapter !== chapterNum) {
+                    const currentKey = `${currentBook}-${currentChapter}`;
+                    annotationCache[currentKey] = currentAnnotations;
+                    currentBook = bookId;
+                    currentChapter = chapterNum;
+                    currentAnnotations = annotationCache[`${bookId}-${chapterNum}`] || {};
+                    saveLastPosition();
+                }
+            }
+        }
+    }, { threshold: 0, rootMargin: '-20% 0px -60% 0px' });
+
+    // Bottom sentinel observer — auto-loads next chapter when near bottom
+    continuousScrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                appendNextChapter();
+            }
+        });
+    }, { rootMargin: '0px 0px 600px 0px' }); // trigger 600px before reaching bottom
+
+    // Add sentinel element
+    const contentEl = document.getElementById('content');
+    const bibleWrapper = document.getElementById('bible-content-wrapper');
+    const target = bibleWrapper || contentEl;
+
+    let sentinel = target.querySelector('.scroll-sentinel');
+    if (!sentinel) {
+        sentinel = document.createElement('div');
+        sentinel.className = 'scroll-sentinel';
+        sentinel.style.height = '1px';
+        const bottomNav = target.querySelector('.bottom-nav');
+        if (bottomNav) {
+            bottomNav.insertAdjacentElement('beforebegin', sentinel);
+        } else {
+            target.appendChild(sentinel);
+        }
+    }
+    continuousScrollObserver.observe(sentinel);
+
+    // Observe the initial chapter section
+    const initialSection = target.querySelector('.chapter-section');
+    if (initialSection) {
+        chapterVisibilityObserver.observe(initialSection);
+    }
+}
+
+/**
+ * Reset continuous scroll state (called when navigating manually).
+ */
+function resetContinuousScroll() {
+    if (continuousScrollObserver) continuousScrollObserver.disconnect();
+    if (chapterVisibilityObserver) chapterVisibilityObserver.disconnect();
+    loadedChapterSections = [];
+    annotationCache = {};
+    isAppendingChapter = false;
+}
+
 /**
  * Render the chapter title with an optional section outline button
  */
@@ -713,6 +1069,9 @@ function displayChapter() {
         .map(v => ({ heading: v.heading, verse: v.number }));
     const hasOutline = sectionHeadings.length > 0 && readingMode !== 'verse';
 
+    // Reset continuous scroll state for fresh render
+    resetContinuousScroll();
+
     if (readingMode === 'passage') {
         if (passageChunks.length === 0) {
             passageChunks = buildPassageChunks(chapter);
@@ -725,15 +1084,24 @@ function displayChapter() {
     } else {
         document.getElementById('chapter-info').textContent = `${book.name} ${currentChapter}`;
         html = renderChapterTitleWithOutline(book.name, currentChapter, sectionHeadings, hasOutline);
+
+        let chapterContent = '';
         if (readingMode === 'fluid') {
-            html += renderFluidMode(chapter, book);
+            chapterContent += renderFluidMode(chapter, book);
         } else {
-            html += renderVerseMode(chapter, book);
+            chapterContent += renderVerseMode(chapter, book);
             if (typeof renderMarkAllButton === 'function') {
                 const sections = buildReadingSections(chapter.verses);
-                html += renderMarkAllButton(currentBook, currentChapter, sections.length);
+                chapterContent += renderMarkAllButton(currentBook, currentChapter, sections.length);
             }
         }
+
+        // Wrap in chapter-section for continuous scroll tracking
+        html += `<div class="chapter-section" data-book="${currentBook}" data-chapter="${currentChapter}">${chapterContent}</div>`;
+
+        // Seed continuous scroll state
+        annotationCache[`${currentBook}-${currentChapter}`] = currentAnnotations;
+        loadedChapterSections = [{ bookId: currentBook, chapter: currentChapter }];
     }
 
     // OLD VERSE-BY-VERSE CODE BELOW - NOW HANDLED BY renderVerseMode()
@@ -885,7 +1253,7 @@ function displayChapter() {
             <button class="nav-btn nav-arrow" id="next-chapter-bottom" aria-label="Next chapter" onclick="navigateChapter(1)">→</button>
         </div>
         <div class="footer">
-            <p>Scripture Scribbles v1.1.0 | World English Bible (WEB) | <a href="https://github.com/DaveWyborn/scripture-scribbles" target="_blank">GitHub</a></p>
+            <p>Scripture Scribbles v1.4.1 | World English Bible (WEB) | <a href="https://github.com/DaveWyborn/scripture-scribbles" target="_blank">GitHub</a></p>
             <p>Made with ❤️ for people with dyslexia</p>
         </div>
     `;
@@ -933,96 +1301,15 @@ function displayChapter() {
     contentEl.classList.toggle('reading-mode-fluid', readingMode === 'fluid' || readingMode === 'passage');
     contentEl.classList.toggle('reading-mode-verse', readingMode === 'verse');
 
-    // Add click handlers based on reading mode
-    if (readingMode === 'verse') {
-        // Verse-by-verse mode: click on verse blocks
-        document.querySelectorAll('.verse').forEach(el => {
-        // Single click: select/deselect verse (show/hide inline menu)
-        el.addEventListener('click', (e) => {
-            // Don't handle click if it's on interactive elements
-            if (e.target.tagName === 'BUTTON' ||
-                e.target.tagName === 'INPUT' ||
-                e.target.tagName === 'TEXTAREA' ||
-                e.target.closest('.inline-menu') ||
-                e.target.closest('.annotation-panel')) {
-                return;
-            }
-
-            const verseNum = parseInt(el.dataset.verse);
-
-            // Shift+click: toggle verse selection for insertion into notes
-            if (e.shiftKey && typeof toggleVerseSelection === 'function') {
-                e.preventDefault();
-                toggleVerseSelection(verseNum);
-                return;
-            }
-
-            // Deselect all verses
-            document.querySelectorAll('.verse').forEach(v => v.classList.remove('selected'));
-
-            // Select this verse
-            if (selectedVerse !== verseNum) {
-                selectedVerse = verseNum;
-                el.classList.add('selected');
-            } else {
-                // Clicking same verse again deselects it
-                selectedVerse = null;
-            }
-        });
-        });
+    // Attach verse click handlers
+    if (readingMode === 'passage') {
+        // Passage mode: no chapter-section wrapper, use content element directly
+        const target = bibleWrapper || contentEl;
+        attachVerseHandlers(target);
     } else {
-        // Fluid reading mode: click on verse wrapper to toggle inline menu
-        document.querySelectorAll('.verse-inline-wrapper').forEach(el => {
-            el.addEventListener('click', (e) => {
-                // Don't handle click if it's on interactive elements
-                if (e.target.tagName === 'BUTTON' ||
-                    e.target.tagName === 'INPUT' ||
-                    e.target.tagName === 'TEXTAREA' ||
-                    e.target.tagName === 'I' || // Skip icons
-                    e.target.closest('.inline-menu')) {
-                    return;
-                }
-
-                const verseNum = parseInt(el.dataset.verse);
-
-                // Shift+click: toggle verse selection for insertion into notes
-                if (e.shiftKey && typeof toggleVerseSelection === 'function') {
-                    e.preventDefault();
-                    toggleVerseSelection(verseNum);
-                    return;
-                }
-
-                // Deselect all verse wrappers
-                document.querySelectorAll('.verse-inline-wrapper').forEach(v => v.classList.remove('selected'));
-
-                // Toggle selection
-                if (selectedVerse === verseNum) {
-                    selectedVerse = null;
-                } else {
-                    selectedVerse = verseNum;
-                    el.classList.add('selected');
-                }
-            });
-        });
-
-        // Click note icon to toggle inline menu on that verse
-        document.querySelectorAll('.indicator-icon-inline').forEach(el => {
-            el.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const verseNum = parseInt(el.dataset.verse);
-                const wrapper = el.closest('.verse-inline-wrapper');
-
-                // Deselect all
-                document.querySelectorAll('.verse-inline-wrapper').forEach(v => v.classList.remove('selected'));
-
-                // Select this verse and open note submenu
-                if (wrapper) {
-                    wrapper.classList.add('selected');
-                    selectedVerse = verseNum;
-                    // Auto-open note submenu
-                    setTimeout(() => toggleSubmenu(verseNum, 'note'), 50);
-                }
-            });
+        // Fluid/verse mode: attach per chapter section (supports continuous scroll)
+        document.querySelectorAll('.chapter-section').forEach(section => {
+            attachVerseHandlers(section);
         });
     }
 
@@ -1033,8 +1320,11 @@ function displayChapter() {
         prevDisabled = currentChapter === 1 && currentPassageIndex === 0;
         nextDisabled = currentChapter === book_obj.chapters.length && currentPassageIndex === passageChunks.length - 1;
     } else {
-        prevDisabled = currentChapter === 1;
-        nextDisabled = currentChapter === book_obj.chapters.length;
+        // With continuous scroll, next is never disabled (auto-loads).
+        // Prev disabled only at Genesis 1.
+        const isFirstBook = bibleData.books.indexOf(book_obj) === 0;
+        prevDisabled = isFirstBook && currentChapter === 1;
+        nextDisabled = false;
     }
     document.getElementById('prev-chapter').disabled = prevDisabled;
     document.getElementById('next-chapter').disabled = nextDisabled;
@@ -1045,6 +1335,11 @@ function displayChapter() {
 
     // Apply auto-contrast to highlights and tags
     setTimeout(applyAutoContrast, 50);
+
+    // Set up continuous scroll for fluid and verse modes
+    if (readingMode !== 'passage') {
+        setupContinuousScroll();
+    }
 }
 
 // Navigate to previous/next chapter (or passage in passage mode)
@@ -1087,7 +1382,29 @@ async function navigateChapter(delta) {
 
     isNavigating = true;
     try {
-        currentChapter += delta;
+        const book = bibleData.books.find(b => b.id === currentBook);
+        const bookIndex = bibleData.books.indexOf(book);
+        const newChapter = currentChapter + delta;
+
+        if (newChapter >= 1 && newChapter <= book.chapters.length) {
+            // Same book
+            currentChapter = newChapter;
+        } else if (delta > 0 && bookIndex < bibleData.books.length - 1) {
+            // Next book
+            const nextBook = bibleData.books[bookIndex + 1];
+            currentBook = nextBook.id;
+            currentChapter = 1;
+        } else if (delta < 0 && bookIndex > 0) {
+            // Previous book (go to last chapter)
+            const prevBook = bibleData.books[bookIndex - 1];
+            currentBook = prevBook.id;
+            currentChapter = prevBook.chapters.length;
+        } else {
+            // At boundary of Bible, nothing to do
+            isNavigating = false;
+            return;
+        }
+
         passageChunks = [];
         currentPassageIndex = 0;
         saveLastPosition();

@@ -16,10 +16,9 @@ Vanilla JS, no framework, no build step. Supabase backend.
 See README.md and the roadmap file for full context if needed.
 
 ## Current state
-- v1.3.26 live — typography, dyslexia controls, themes, cloud sync
-- Recent work: design overhaul, passage reading mode, reading history
-- v1.4.0 in progress: sermon/message notes
-- Reading bar: deferred from v1.3, highest priority after v1.4
+- v1.4.0 live — sermon notes, reading bar, passage mode, reading history, scroll nav
+- Next: v1.4.1 — continuous scroll (auto-load next chapter), verse formatting styles
+- Then: v1.5.0 — word-level highlighting with smart merge
 
 ## Strategic goal
 1,000 users before building paid features. No paid tier until validated.
