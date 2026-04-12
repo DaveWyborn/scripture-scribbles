@@ -10,7 +10,7 @@ function loadLastPosition() {
         if (saved) {
             const { book, chapter, passageIndex } = JSON.parse(saved);
             if (book) currentBook = book;
-            if (chapter) currentChapter = chapter;
+            if (chapter != null) currentChapter = chapter;
             if (passageIndex != null) currentPassageIndex = passageIndex;
         }
     } catch (e) {}

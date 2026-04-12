@@ -123,6 +123,11 @@ async function handleAuthSuccess(user) {
     // Load annotations
     await loadAnnotations();
 
+    // Load reading history from cloud (initReadingHistory ran before currentUser was set)
+    if (typeof loadReadingHistoryFromSupabase === 'function') {
+        await loadReadingHistoryFromSupabase();
+    }
+
     // Load user preferences from cloud
     await loadUserPreferences();
 
