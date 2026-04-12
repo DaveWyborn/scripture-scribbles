@@ -1,207 +1,118 @@
-# 📖 Scripture Scribbles
+# Scripture Scribbles
 
-**Your Bible. Your Notes. Your Device.**
+**Your Bible. Your Notes. Beautiful Reading.**
 
-A local-first Bible study tool that keeps everything private and works perfectly with Obsidian markdown files.
+A dyslexia-friendly Bible reading app with rich annotations, focus tools, and sermon notes. Anti-YouVersion -- minimal, beautiful, accessible.
 
-🔗 **Live App:** [scripturescribbles.co.uk](https://scripturescribbles.co.uk)
-
----
-
-## ✨ Features
-
-- 🎨 **Rich Annotations** - 6 highlight colours, detailed notes, verse tags
-- 💾 **Auto-Save** - Everything saves automatically, never lose your work
-- 🔒 **100% Private** - No cloud, no tracking, no accounts - all data stays on your device
-- 📚 **Multiple Sets** - Separate annotations for Study, Church, Home Group, and Personal
-- ⚡ **Lightning Fast** - Works entirely offline, no internet required
-- 🆓 **Forever Free** - Open source, no subscriptions, no hidden costs
+[scripturescribbles.co.uk](https://scripturescribbles.co.uk)
 
 ---
 
-## 🎯 Perfect for Obsidian Users
+## Features
 
-Already using Bible markdown files in Obsidian? Scripture Scribbles works seamlessly:
+### Reading
+- **Fluid reading mode** -- natural paragraphs, not verse-by-verse blocks
+- **Passage mode** -- smart chunking with position save/restore
+- **Reading bar** -- draggable focus aid with 3 styles (ruler, highlight, underline)
+- **Reading history** -- track chapters and sections read
+- **Scroll navigation** -- section outline for quick jumping
 
-- ✅ Use your existing Bible markdown files
-- ✅ Files stay completely untouched
-- ✅ Annotations saved separately in JSON format
-- ✅ Keep using Obsidian for everything else
+### Accessibility
+- **Dyslexia typography** -- OpenDyslexic, Atkinson Hyperlegible, system fonts
+- **Full spacing control** -- font size (up to 42px), line height, letter spacing, word spacing
+- **24 themes** -- light, dark, high contrast, dyslexia-optimised presets
+- **Custom colours** -- background and text colour pickers
+
+### Annotations
+- **6-colour highlighting** with underline option
+- **Verse notes** with range support
+- **Tags** with colour coding
+- **Multiple annotation sets** -- Study, Church, Home Group, Personal
+- **3 display modes** -- full, subtle (greyscale), hidden
+
+### Sermon Notes
+- **Rich text editor** (Trix) with formatting toolbar
+- **Split-view** -- Bible + notes side by side (desktop)
+- **Mobile tabs** -- swipe between Bible and notes
+- **Verse insertion** from current chapter
+- **Cloud sync** via Supabase
+
+### Cloud Sync
+- **Supabase backend** -- email + Google OAuth
+- **Auto-sync** annotations and sermon notes
+- **Works across devices**
+- **Offline-first** -- IndexedDB local storage with cloud backup
+
+### Export
+- **Markdown** -- formatted for Obsidian
+- **JSON** -- full data backup
 
 ---
 
-## 🚀 Getting Started
+## Stack
 
-1. **Open the app** - Visit [scripturescribbles.co.uk](https://scripturescribbles.co.uk)
-2. **Select your Bible folder** - Navigate to your markdown Bible files
-3. **Grant permissions** - Allow browser to access your files
-4. **Start studying** - Highlight, annotate, and tag verses
-
-### Requirements
-
-- Chrome, Edge, or Brave browser (uses File System Access API)
-- Bible files in markdown format (one chapter per file)
-- Read/write permissions to your Bible folder
+- Vanilla JS, no framework, no build step
+- Supabase (auth + cloud sync)
+- GitHub Pages + Cloudflare DNS
+- WEB Bible (public domain, bundled as enhanced JSON)
 
 ---
 
-## 📂 File Structure
+## Bible Versions
 
-Your Bible folder should look like this:
+Bundled (public domain, offline):
+- **WEB** -- World English Bible (default)
+- **ASV** -- American Standard Version
+- **KJV** -- King James Version
+
+---
+
+## Development
+
+```bash
+# Local dev server
+python3 -m http.server 8000
+
+# Convert USFM source to enhanced JSON
+node usfm-converter.js /path/to/usfm output.json
+```
+
+### File Structure
 
 ```
-Scripture/
-└── Your Bible Name/
-    ├── 001 - Genesis/
-    │   ├── Genesis 1.md
-    │   ├── Genesis 2.md
-    │   └── ...
-    ├── 046 - 1 Peter/
-    │   ├── 1 Peter 1.md
-    │   ├── 1 Peter 2.md
-    │   └── ...
-    └── .annotations/          ← Created automatically
-        ├── Study/
-        │   ├── 001-Genesis.json
-        │   └── 046-1-Peter.json
-        ├── Church/
-        ├── HomeGroup/
-        └── Personal/
+scripture-scribbles-v1.3.html   -- main app entry point
+index.html                      -- landing page
+preview.html                    -- redirects to current version
+js/                             -- 15 JS modules
+css/                            -- 4 stylesheets (base, components, themes, sermons)
+data/                           -- bundled Bible JSON (gzipped)
+WEB/                            -- USFM source files
 ```
 
-All your annotations are saved in the `.annotations/` folder, organised by annotation set.
+### Technical References
+- `BIBLE-JSON-FORMAT.md` -- enhanced JSON schema
+- `BIBLE-VERSION-INTEGRATION-GUIDE.md` -- adding new Bible versions
+- `SUPABASE-SETUP-GUIDE.md` -- database and RLS setup
 
 ---
 
-## 🎨 How to Use
+## Roadmap
 
-### Highlighting
+See the [public roadmap](https://scripturescribbles.co.uk/roadmap) for upcoming features and voting.
 
-- **Full verse**: Hover over verse number → click 🎨 → choose colour
-- **Specific text**: Select text → choose colour from floating toolbar
-- **Clear**: Hover over verse number → click 🎨 → click ✕
-
-### Notes
-
-- Hover over verse number → click 📝
-- Enter your note text
-- Optionally specify verse range (e.g., "9-12")
-- Press Cmd/Ctrl+Enter to save
-
-### Tags
-
-- Hover over verse number → click 🏷️
-- Type tags (auto-adds # if needed)
-- Press Tab to add multiple tags
-- Press Cmd/Ctrl+Enter to save
-
-### Annotation Sets
-
-Switch between different annotation contexts using the dropdown:
-- **Study** - Personal Bible study
-- **Church** - Sermon notes
-- **Home Group** - Group study
-- **Personal** - Private devotions
-
-Each set maintains completely separate annotations!
+**Current version:** v1.4.0
 
 ---
 
-## 🛠️ Technology
+## Support
 
-- **100% Client-Side** - Pure HTML/CSS/JavaScript
-- **File System Access API** - Direct access to local files
-- **JSON Storage** - Clean, portable annotation format
-- **Auto-Save** - Debounced saves (500ms delay)
-- **No Build Process** - Single HTML file, maximum portability
+- [Report a bug](https://github.com/DaveWyborn/scripture-scribbles/issues)
+- [Buy us a coffee](https://www.buymeacoffee.com/scripturescribbles)
 
 ---
 
-## 🔐 Privacy & Data
+## Licence
 
-Scripture Scribbles is **privacy-first**:
-
-- ❌ No cloud storage
-- ❌ No user accounts
-- ❌ No tracking or analytics
-- ❌ No data collection
-- ✅ Everything stays on your device
-- ✅ You control your data
-- ✅ Works completely offline
-
----
-
-## 🐛 Bug Reports
-
-Found a bug? Please report it:
-
-1. Click "Report a Bug" in the app footer
-2. Describe the issue and steps to reproduce
-3. Submit (uses Formspree for privacy)
-
-Or open an issue on GitHub.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! This is an open-source project built for the body of Christ.
-
-**Ideas for contributions:**
-- Custom styled modals (replace browser alerts)
-- Cleanup tools (bulk delete annotations)
-- Chapter/book notes support
-- Export/import features
-- Search and filter annotations
-- Mobile app version
-- Bible API integration
-
----
-
-## 📜 License
-
-MIT License - See [LICENSE](LICENSE) file for details.
-
-Free to use and modify. Please credit Scripture Scribbles if you fork or redistribute.
-
----
-
-## 🙏 Credits
-
-Built with ❤️ for the body of Christ.
-
-- **Author:** Dave Wyborn
-- **Website:** [scripturescribbles.co.uk](https://scripturescribbles.co.uk)
-- **Feedback:** hello@scripturescribbles.co.uk
-
----
-
-## 📋 Roadmap
-
-### v1.1.0 (Next)
-- Custom styled modals
-- Cleanup tools
-- Chapter/book notes
-- Better error messages
-
-### v2.0.0 (Future)
-- Cloud sync (optional)
-- Mobile app
-- Bible API integration (NIV, ESV, etc.)
-- Advanced search
-
----
-
-## ⭐ Support
-
-If Scripture Scribbles helps your Bible study:
-
-- ⭐ Star this repo
-- 🐦 Share with your community
-- 🐛 Report bugs
-- 💡 Suggest features
-- 🙏 Pray for the project
-
----
+MIT -- see [LICENSE](LICENSE) for details.
 
 **Made for the glory of God and the edification of His church.**
