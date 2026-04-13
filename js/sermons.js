@@ -577,8 +577,12 @@ async function toggleNotesView() {
             content.insertBefore(bibleWrapper, notesView);
         }
 
-        content.classList.add('split-view');
+        // Show notes with transition: set display first, then add split-view
+        // class on next frame so CSS transition can run
         notesView.style.display = 'flex';
+        requestAnimationFrame(() => {
+            content.classList.add('split-view');
+        });
         sermonViewMode = 'split';
 
         if (toggleBtn) {
@@ -602,9 +606,15 @@ async function toggleNotesView() {
             bibleWrapper.remove();
         }
 
+        // Animate out then hide
         content.classList.remove('split-view');
-        notesView.style.display = 'none';
         sermonViewMode = 'single';
+        // Wait for transition to finish before hiding
+        setTimeout(() => {
+            if (sermonViewMode === 'single') {
+                notesView.style.display = 'none';
+            }
+        }, 400);
 
         if (toggleBtn) {
             toggleBtn.innerHTML = '<i class="ph ph-notebook"></i> Notes';

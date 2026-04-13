@@ -96,6 +96,14 @@
     line-height: 1.6 !important;
     letter-spacing: normal !important;
     word-spacing: normal !important;
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.content.split-view .sermon-notes-view {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 @media (max-width: 767px) {

@@ -18,6 +18,7 @@ body {
     background: var(--bg-primary);
     min-height: 100vh;
     box-shadow: 0 0 40px var(--stroke);
+    transition: max-width 0.4s ease;
 }
 
 /* Expand container when split view (sermon notes) is active */
@@ -542,6 +543,7 @@ body {
     padding-bottom: 0;
     max-width: 720px;
     margin: 0 auto;
+    transition: max-width 0.4s ease;
 }
 
 .content.split-view {
