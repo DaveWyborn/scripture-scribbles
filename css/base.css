@@ -20,6 +20,35 @@ body {
     box-shadow: 0 0 40px var(--stroke);
 }
 
+/* Expand container when split view (sermon notes) is active */
+.container:has(.split-view) {
+    max-width: 1600px;
+}
+
+/* Themed scrollbars */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--text-tertiary, rgba(128, 128, 128, 0.4));
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary, rgba(128, 128, 128, 0.6));
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-tertiary, rgba(128, 128, 128, 0.4)) var(--bg-secondary);
+}
+
 /* Header / Toolbar */
 .toolbar {
     background: var(--bg-primary);
