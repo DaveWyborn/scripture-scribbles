@@ -915,11 +915,14 @@ function renderVerseMode(chapter, book) {
         const hasTags = annotation.tags && annotation.tags.length > 0;
         const hasAnnotations = hasNote || hasTags || annotation.highlight || annotation.underline;
 
+        const verseNumClass = verseNumberStyle === 'hidden' ? 'verse-number hidden' :
+                               verseNumberStyle === 'margin' ? 'verse-number margin' :
+                               'verse-number superscript';
         html += `
             <div class="verse ${highlightClass} ${underlineClass} ${selectedClass} ${hasAnnotations ? 'has-annotations' : ''}" data-verse="${verse.number}">
                 <div class="verse-body">
                     <div class="verse-content">
-                        <span class="verse-number">${verse.number}</span>
+                        <span class="${verseNumClass}">${verse.number}</span>
                         <div class="verse-text-wrapper">
                             <span class="verse-text">${verse.text}</span>
                         </div>
