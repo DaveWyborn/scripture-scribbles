@@ -161,24 +161,24 @@ function handleSignOut() {
     document.getElementById('content').innerHTML = `
         <div class="welcome">
             <h2>Welcome to Scripture Scribbles</h2>
-            <p>Your dyslexia-friendly Bible study companion with rich annotations and sermon notes.</p>
+            <p>A beautiful Bible reader designed around how you read.</p>
 
             <div class="features">
                 <div class="feature">
                     <h3>📖 Instant Access</h3>
-                    <p>World English Bible embedded. No downloads or setup required.</p>
+                    <p>World English Bible built in, with ASV and KJV available. More translations coming soon.</p>
                 </div>
                 <div class="feature">
                     <h3>✨ Beautiful Annotations</h3>
-                    <p>Highlight verses, add notes, and organize your studies.</p>
+                    <p>Highlight verses, add notes, and organise your studies across multiple annotation sets.</p>
                 </div>
                 <div class="feature">
-                    <h3>☁️ Sync Everywhere</h3>
-                    <p>Your notes sync across all your devices automatically.</p>
+                    <h3>🎛 Fully Customisable Reading</h3>
+                    <p>Adjust fonts, sizing, spacing, and colours to suit your reading style. 24 themes to choose from.</p>
                 </div>
                 <div class="feature">
-                    <h3>♿ Accessible</h3>
-                    <p>Designed for people with dyslexia. Clean, customizable, readable.</p>
+                    <h3>📄 Passage Mode</h3>
+                    <p>Put off by long chapters? Passage mode splits the text into smaller, manageable chunks.</p>
                 </div>
             </div>
 
