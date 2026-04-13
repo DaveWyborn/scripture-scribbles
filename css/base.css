@@ -544,6 +544,10 @@ body {
     margin: 0 auto;
 }
 
+.content.split-view {
+    max-width: none;
+}
+
 .chapter-title {
     font-size: 1.9em;
     font-weight: 600;
