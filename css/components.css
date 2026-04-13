@@ -1182,22 +1182,58 @@
 /* Welcome screen for non-authenticated users */
 .welcome {
     text-align: center;
-    padding: 80px 40px;
+    padding: 60px 40px;
 }
 
 .welcome h2 {
     font-size: 2.5em;
     color: var(--text-primary);
-    margin-bottom: var(--space-l);
+    margin-bottom: var(--space-s);
 }
 
-.welcome p {
+.welcome > p {
     font-size: 1.2em;
     color: var(--text-secondary);
-    margin-bottom: var(--space-xxl);
+    margin-bottom: var(--space-l);
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+}
+
+.welcome-actions {
+    display: flex;
+    gap: var(--space-m);
+    justify-content: center;
+    align-items: center;
+    margin-bottom: var(--space-xxl);
+    flex-wrap: wrap;
+}
+
+.welcome-actions .btn.primary {
+    font-size: 1.2em;
+    padding: 15px 40px;
+}
+
+.welcome-support-btn {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 24px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-l);
+    font-weight: 500;
+    font-size: 0.95em;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.welcome-support-btn:hover {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border-color: var(--accent-primary);
 }
 
 .welcome .features {
@@ -1217,6 +1253,19 @@
 .welcome .feature h3 {
     color: var(--accent-primary);
     margin-bottom: var(--space-s);
+}
+
+.welcome-footer {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--border);
+}
+
+.welcome-footer p {
+    color: var(--text-tertiary);
+    font-size: 0.95em;
+    max-width: 500px;
+    margin: 0 auto var(--space-m);
 }
 
 /* Bottom navigation */
