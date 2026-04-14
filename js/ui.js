@@ -60,12 +60,24 @@ function setAnnotationMode(mode) {
 
 // ===== Reading Mode =====
 
+const READING_MODE_DESCRIPTIONS = {
+    verse: "Each verse on its own line with a clear gap between them. Easiest to track line-by-line and good for study.",
+    fluid: "Verses flow together as paragraphs, closer to a printed Bible. Better for continuous, natural reading.",
+    passage: "Breaks chapters into bite-sized passages of roughly 8–10 verses. Less overwhelming and easier to focus one thought at a time."
+};
+
+function updateReadingModeDescription(mode) {
+    const el = document.getElementById('reading-mode-description');
+    if (el) el.textContent = READING_MODE_DESCRIPTIONS[mode] || '';
+}
+
 function loadReadingMode() {
     const savedMode = localStorage.getItem('readingMode') || 'verse';
     readingMode = savedMode;
     const select = document.getElementById('reading-mode');
     if (select) select.value = savedMode;
     updateVerseNumberStyleVisibility();
+    updateReadingModeDescription(savedMode);
 }
 
 function setReadingMode(mode) {
@@ -74,6 +86,7 @@ function setReadingMode(mode) {
     currentPassageIndex = 0;
     localStorage.setItem('readingMode', mode);
     updateVerseNumberStyleVisibility();
+    updateReadingModeDescription(mode);
     displayChapter();
     debounceSavePreferences();
 }
