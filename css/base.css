@@ -220,7 +220,7 @@ body {
     position: fixed;
     top: 0;
     right: 0;
-    width: 300px;
+    width: clamp(420px, 45vw, 520px);
     height: 100vh;
     height: 100dvh;
     background: var(--bg-primary);
@@ -298,7 +298,7 @@ body {
     padding-bottom: var(--space-xl);
 }
 
-@media (max-width: 400px) {
+@media (max-width: 600px) {
     .settings-panel {
         width: 100%;
     }
@@ -340,12 +340,14 @@ body {
 }
 
 .settings-description {
-    padding: 0 var(--space-m) var(--space-s);
-    margin-top: -4px;
-    font-size: 0.8em;
-    line-height: 1.4;
+    padding: 0 var(--space-m) var(--space-m);
+    margin-top: -6px;
+    padding-left: calc(var(--space-m) + 1.2em + var(--space-s));
+    font-size: 0.82em;
+    line-height: 1.5;
     color: var(--text-tertiary, var(--text-secondary));
-    font-style: italic;
+    opacity: 0.85;
+    font-weight: 400;
 }
 
 .annotation-mode-select {
