@@ -253,17 +253,20 @@
 }
 
 /* ── Auto-contrast text on highlights ──────────────────────────────── */
-.verse.highlight-light-text .verse-body,
-.verse.highlight-light-text .verse-text,
-.verse.highlight-light-text .verse-number {
+/* Only apply when annotations are fully on; in subtle/off modes the */
+/* highlight background is removed, so forcing the contrast colour   */
+/* leaves unreadable text (e.g. black text on a dark theme).         */
+.annotation-mode-on .verse.highlight-light-text .verse-body,
+.annotation-mode-on .verse.highlight-light-text .verse-text,
+.annotation-mode-on .verse.highlight-light-text .verse-number {
     color: #FFFFFF !important;
 }
 
-.verse.highlight-dark-text .verse-body,
-.verse.highlight-dark-text .verse-text,
-.verse.highlight-dark-text .verse-number {
+.annotation-mode-on .verse.highlight-dark-text .verse-body,
+.annotation-mode-on .verse.highlight-dark-text .verse-text,
+.annotation-mode-on .verse.highlight-dark-text .verse-number {
     color: #000000 !important;
 }
 
-.highlighted-text.highlight-light-text { color: #FFFFFF !important; }
-.highlighted-text.highlight-dark-text  { color: #000000 !important; }
+.annotation-mode-on .highlighted-text.highlight-light-text { color: #FFFFFF !important; }
+.annotation-mode-on .highlighted-text.highlight-dark-text  { color: #000000 !important; }

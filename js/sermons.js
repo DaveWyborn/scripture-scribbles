@@ -550,7 +550,7 @@ async function toggleNotesView() {
                 <input type="hidden" id="sermon-content">
             </div>
             <div class="sermon-actions">
-                <button onclick="openSermonSelector()">Message Notes</button>
+                <button onclick="openSermonSelector()">Manage Notes</button>
                 <button onclick="exportSermonMarkdown()">Export</button>
             </div>
         `;
@@ -676,7 +676,7 @@ window.switchMobileView = async function(view) {
                 <input type="hidden" id="sermon-content">
             </div>
             <div class="sermon-actions">
-                <button onclick="openSermonSelector()">Message Notes</button>
+                <button onclick="openSermonSelector()">Manage Notes</button>
                 <button onclick="exportSermonMarkdown()">Export</button>
             </div>
         `;

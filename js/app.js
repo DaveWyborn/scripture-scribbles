@@ -291,6 +291,16 @@ function setupEventListeners() {
         toggleNotesBtn.addEventListener('click', toggleNotesView);
     }
 
+    // Notes entry in settings panel
+    const settingsNotesBtn = document.getElementById('settings-notes-btn');
+    if (settingsNotesBtn) {
+        settingsNotesBtn.addEventListener('click', () => {
+            document.getElementById('settings-panel').classList.remove('open');
+            document.getElementById('settings-overlay').classList.remove('open');
+            if (typeof toggleNotesView === 'function') toggleNotesView();
+        });
+    }
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         // Ctrl/Cmd+Shift+N - Toggle notes
