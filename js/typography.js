@@ -1,10 +1,10 @@
 // Typography Controls - Font, size, spacing
 
-// Default values
+// Default values — editorial reading baseline (Literata @ 19/1.7)
 const DEFAULT_TYPOGRAPHY = {
     fontFamily: 'system',
-    fontSize: 16,
-    lineSpacing: 1.5,
+    fontSize: 19,
+    lineSpacing: 1.7,
     letterSpacing: 0,
     wordSpacing: 0
 };
