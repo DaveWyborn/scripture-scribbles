@@ -1,32 +1,32 @@
-/* Scripture Scribbles — Design System */
-/* 8 curated themes. Default: Paper (warm cream, dyslexia-friendly by default). */
+/* Scripture Scribbles — Palette Tokens (v2)
+ *
+ * Nine themes. Each sets the new editorial tokens AND aliases the legacy
+ * tokens that existing base.css / components.css / sermons.css read.
+ *
+ * Editorial tokens:
+ *   --base     main background
+ *   --surface  elevated panels / secondary background
+ *   --text     primary reading colour
+ *   --muted    metadata, marginalia, quiet UI
+ *   --accent   editorial touch — used for ≤5% of the surface
+ *   --rule     hairline dividers
+ *
+ * Legacy aliases (do not remove — 3000+ lines of CSS read these):
+ *   --bg-primary, --bg-secondary, --text-primary/secondary/tertiary,
+ *   --accent-primary/positive/negative/info, --border, --stroke,
+ *   --highlight-* (annotation colours — kept per-theme)
+ *
+ * Default is Paper (matches current production). Deep Ink is the new
+ * editorial dark theme.
+ */
 
 :root {
-    /* Paper — warm cream default */
-    --bg-primary: #F8F4EE;
-    --bg-secondary: #EFE9DF;
-    --text-primary: #2C2820;
-    --text-secondary: #5C5048;
-    --text-tertiary: #9C9088;
-    --accent-primary: #C4903A;
-    --accent-positive: #5A8F6E;
-    --accent-negative: #C44A3A;
-    --accent-info: #5A7A9C;
-    --border: #E4DDD4;
-    --stroke: rgba(44, 40, 32, 0.08);
+    /* Editorial typography + geometry */
+    --font-serif: 'Literata', Georgia, 'Iowan Old Style', serif;
+    --font-sans:  'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-primary: var(--font-sans);
 
-    /* Annotation colours */
-    --highlight-yellow: #F0C040;
-    --highlight-green: #72B882;
-    --highlight-blue: #5A90D4;
-    --highlight-purple: #9B6BDB;
-    --highlight-orange: #E07838;
-    --highlight-pink: #D86088;
-
-    /* Typography */
-    --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-
-    /* Spacing */
+    /* Spacing (kept as-was — widely used) */
     --space-xs: 4px;
     --space-s: 8px;
     --space-m: 16px;
@@ -34,11 +34,14 @@
     --space-xl: 32px;
     --space-xxl: 48px;
 
-    /* Border radius */
+    /* Radius — collapsed toward editorial restraint.
+       Legacy tokens kept so existing CSS still compiles, but all
+       resolve to 4px for the single-token discipline. */
+    --radius: 4px;
     --radius-s: 4px;
-    --radius-m: 8px;
-    --radius-l: 12px;
-    --radius-xl: 16px;
+    --radius-m: 4px;
+    --radius-l: 4px;
+    --radius-xl: 4px;
 
     /* Transitions */
     --transition-fast: 150ms ease-in-out;
@@ -46,92 +49,245 @@
     --transition-slow: 350ms ease-in-out;
 }
 
-/* Clean — white for users who prefer it */
-[data-theme="clean"] {
-    --bg-primary: #FFFFFF;
-    --bg-secondary: #F4F4F8;
-    --text-primary: #1A1A1A;
-    --text-secondary: #4A4A4A;
-    --text-tertiary: #8A8A8A;
-    --accent-primary: #C4903A;
-    --accent-positive: #5A8F6E;
-    --accent-negative: #C44A3A;
-    --accent-info: #5A7A9C;
-    --border: #E8E8EC;
-    --stroke: rgba(0, 0, 0, 0.08);
-
-    --highlight-yellow: #F5D040;
-    --highlight-green: #6BCF7F;
-    --highlight-blue: #5090E0;
-    --highlight-purple: #9B6BDB;
-    --highlight-orange: #E07838;
-    --highlight-pink: #E06090;
-}
-
-/* Paper — explicit selector, same as :root (keeps saved prefs working) */
+/* ── Paper — warm cream, burnt copper (default) ───────────────────── */
+:root,
 [data-theme="paper"] {
-    --bg-primary: #F8F4EE;
-    --bg-secondary: #EFE9DF;
-    --text-primary: #2C2820;
+    --base:    #F8F4EE;
+    --surface: #EFE9DF;
+    --text:    #2C2820;
+    --muted:   #8A7F6E;
+    --accent:  #9C6B2A;
+    --rule:    rgba(44, 40, 32, 0.10);
+    color-scheme: light;
+
+    --bg-primary:     var(--base);
+    --bg-secondary:   var(--surface);
+    --text-primary:   var(--text);
     --text-secondary: #5C5048;
-    --text-tertiary: #9C9088;
-    --accent-primary: #C4903A;
+    --text-tertiary:  var(--muted);
+    --accent-primary: var(--accent);
     --accent-positive: #5A8F6E;
     --accent-negative: #C44A3A;
-    --accent-info: #5A7A9C;
+    --accent-info:     #5A7A9C;
     --border: #E4DDD4;
     --stroke: rgba(44, 40, 32, 0.08);
 
     --highlight-yellow: #F0C040;
-    --highlight-green: #72B882;
-    --highlight-blue: #5A90D4;
+    --highlight-green:  #72B882;
+    --highlight-blue:   #5A90D4;
     --highlight-purple: #9B6BDB;
     --highlight-orange: #E07838;
-    --highlight-pink: #D86088;
+    --highlight-pink:   #D86088;
 }
 
-/* Dyslexia Light — optimised for dyslexia */
-[data-theme="dyslexia-light"] {
-    --bg-primary: #FFF8F0;
-    --bg-secondary: #F5EDE3;
-    --text-primary: #1A1A1A;
-    --text-secondary: #3D3D3D;
-    --text-tertiary: #7A7A7A;
-    --accent-primary: #0077B6;
+/* ── Deep Ink — editorial dark (new) ──────────────────────────────── */
+[data-theme="deep-ink"] {
+    --base:    #14110E;
+    --surface: #1C1814;
+    --text:    #E8E1D2;
+    --muted:   #8F8576;
+    --accent:  #C9A66B;
+    --rule:    rgba(232, 225, 210, 0.08);
+    color-scheme: dark;
+
+    --bg-primary:     var(--base);
+    --bg-secondary:   var(--surface);
+    --text-primary:   var(--text);
+    --text-secondary: #C0B8A8;
+    --text-tertiary:  var(--muted);
+    --accent-primary: var(--accent);
+    --accent-positive: #6A9E78;
+    --accent-negative: #C85848;
+    --accent-info:     #7090B0;
+    --border: #2A241C;
+    --stroke: var(--rule);
+
+    --highlight-yellow: #C4902A;
+    --highlight-green:  #6A9E78;
+    --highlight-blue:   #6080A8;
+    --highlight-purple: #9070C0;
+    --highlight-orange: #C87040;
+    --highlight-pink:   #B85870;
+}
+
+/* ── Clean — crisp white, ink-navy ────────────────────────────────── */
+[data-theme="clean"] {
+    --base:    #FFFFFF;
+    --surface: #F4F4F8;
+    --text:    #141418;
+    --muted:   #6C6C74;
+    --accent:  #1F3A8A;
+    --rule:    rgba(0, 0, 0, 0.08);
+    color-scheme: light;
+
+    --bg-primary:     var(--base);
+    --bg-secondary:   var(--surface);
+    --text-primary:   var(--text);
+    --text-secondary: #4A4A52;
+    --text-tertiary:  var(--muted);
+    --accent-primary: var(--accent);
     --accent-positive: #2D6A4F;
     --accent-negative: #C1121F;
-    --accent-info: #7B2CBF;
-    --border: #E8DFD5;
-    --stroke: rgba(0, 0, 0, 0.1);
+    --accent-info:     #5A7A9C;
+    --border: #E8E8EC;
+    --stroke: var(--rule);
 
-    --highlight-yellow: #0077B6;
-    --highlight-green: #2D6A4F;
-    --highlight-blue: #C1121F;
-    --highlight-purple: #7B2CBF;
-    --highlight-orange: #F77F00;
-    --highlight-pink: #D62828;
+    --highlight-yellow: #F5D040;
+    --highlight-green:  #6BCF7F;
+    --highlight-blue:   #5090E0;
+    --highlight-purple: #9B6BDB;
+    --highlight-orange: #E07838;
+    --highlight-pink:   #E06090;
 }
 
-/* High Contrast Light — WCAG AAA */
+/* ── Slate — neutral dark, cool pewter ────────────────────────────── */
+[data-theme="slate"] {
+    --base:    #1A1A1A;
+    --surface: #252525;
+    --text:    #E8E8E8;
+    --muted:   #8A8A8A;
+    --accent:  #B8B2A4;
+    --rule:    rgba(255, 255, 255, 0.07);
+    color-scheme: dark;
+
+    --bg-primary:     var(--base);
+    --bg-secondary:   var(--surface);
+    --text-primary:   var(--text);
+    --text-secondary: #C8C8C8;
+    --text-tertiary:  var(--muted);
+    --accent-primary: var(--accent);
+    --accent-positive: #5FA67F;
+    --accent-negative: #E06060;
+    --accent-info:     #6090B8;
+    --border: #3C3C3C;
+    --stroke: var(--rule);
+
+    --highlight-yellow: #C4902A;
+    --highlight-green:  #5FA67F;
+    --highlight-blue:   #5B7C99;
+    --highlight-purple: #8B7BA8;
+    --highlight-orange: #C87840;
+    --highlight-pink:   #B86078;
+}
+
+/* ── Warm Dark — cosy brown-ink, warm brass ───────────────────────── */
+[data-theme="warm-dark"] {
+    --base:    #201A14;
+    --surface: #2A221A;
+    --text:    #F0E4CE;
+    --muted:   #A0907C;
+    --accent:  #D4A86A;
+    --rule:    rgba(240, 228, 206, 0.09);
+    color-scheme: dark;
+
+    --bg-primary:     var(--base);
+    --bg-secondary:   var(--surface);
+    --text-primary:   var(--text);
+    --text-secondary: #C8BCA8;
+    --text-tertiary:  var(--muted);
+    --accent-primary: var(--accent);
+    --accent-positive: #6A9E78;
+    --accent-negative: #C85848;
+    --accent-info:     #7090B0;
+    --border: #3C3028;
+    --stroke: var(--rule);
+
+    --highlight-yellow: #C4902A;
+    --highlight-green:  #6A9E78;
+    --highlight-blue:   #6080A8;
+    --highlight-purple: #9070C0;
+    --highlight-orange: #C87040;
+    --highlight-pink:   #B85870;
+}
+
+/* ── Dyslexia Light — soft cream, strong editorial blue ───────────── */
+[data-theme="dyslexia-light"] {
+    --base:    #FFF8F0;
+    --surface: #F5EDE3;
+    --text:    #1A1A1A;
+    --muted:   #6A6A6A;
+    --accent:  #0056A0;
+    --rule:    rgba(0, 0, 0, 0.09);
+    color-scheme: light;
+
+    --bg-primary:     var(--base);
+    --bg-secondary:   var(--surface);
+    --text-primary:   var(--text);
+    --text-secondary: #3D3D3D;
+    --text-tertiary:  var(--muted);
+    --accent-primary: var(--accent);
+    --accent-positive: #2D6A4F;
+    --accent-negative: #C1121F;
+    --accent-info:     #7B2CBF;
+    --border: #E8DFD5;
+    --stroke: var(--rule);
+
+    --highlight-yellow: #0077B6;
+    --highlight-green:  #2D6A4F;
+    --highlight-blue:   #C1121F;
+    --highlight-purple: #7B2CBF;
+    --highlight-orange: #F77F00;
+    --highlight-pink:   #D62828;
+}
+
+/* ── Dyslexia Dark — indigo-black, parchment text, amber ──────────── */
+[data-theme="dyslexia-dark"] {
+    --base:    #1A1A2E;
+    --surface: #222238;
+    --text:    #FFFACD;
+    --muted:   #A89C60;
+    --accent:  #FFB84D;
+    --rule:    rgba(255, 250, 205, 0.09);
+    color-scheme: dark;
+
+    --bg-primary:     var(--base);
+    --bg-secondary:   var(--surface);
+    --text-primary:   var(--text);
+    --text-secondary: #F0E68C;
+    --text-tertiary:  var(--muted);
+    --accent-primary: var(--accent);
+    --accent-positive: #4ADE80;
+    --accent-negative: #FB5A5A;
+    --accent-info:     #38BDF8;
+    --border: #2C3E50;
+    --stroke: var(--rule);
+
+    --highlight-yellow: #FDE047;
+    --highlight-green:  #86EFAC;
+    --highlight-blue:   #60A5FA;
+    --highlight-purple: #C084FC;
+    --highlight-orange: #FDBA74;
+    --highlight-pink:   #F472B6;
+}
+
+/* ── High Contrast Light — WCAG AAA ───────────────────────────────── */
 [data-theme="high-contrast-light"] {
-    --bg-primary: #FFFFFF;
-    --bg-secondary: #F5F5F5;
-    --text-primary: #000000;
+    --base:    #FFFFFF;
+    --surface: #F2F2F2;
+    --text:    #000000;
+    --muted:   #404040;
+    --accent:  #003A8C;
+    --rule:    rgba(0, 0, 0, 0.22);
+    color-scheme: light;
+
+    --bg-primary:     var(--base);
+    --bg-secondary:   var(--surface);
+    --text-primary:   var(--text);
     --text-secondary: #1A1A1A;
-    --text-tertiary: #4A4A4A;
-    --accent-primary: #0052CC;
+    --text-tertiary:  var(--muted);
+    --accent-primary: var(--accent);
     --accent-positive: #006644;
     --accent-negative: #CC0000;
-    --accent-info: #5243AA;
+    --accent-info:     #5243AA;
     --border: #CCCCCC;
     --stroke: rgba(0, 0, 0, 0.15);
 
     --highlight-yellow: #0052CC;
-    --highlight-green: #006644;
-    --highlight-blue: #CC0000;
+    --highlight-green:  #006644;
+    --highlight-blue:   #CC0000;
     --highlight-purple: #5243AA;
     --highlight-orange: #B35900;
-    --highlight-pink: #A3006B;
+    --highlight-pink:   #A3006B;
 }
 
 [data-theme="high-contrast-light"] .btn,
@@ -139,92 +295,34 @@
     color: #FFFFFF;
 }
 
-/* Slate — dark, refined */
-[data-theme="slate"] {
-    --bg-primary: #1E1E1E;
-    --bg-secondary: #2D2D2D;
-    --text-primary: #E8E8E8;
-    --text-secondary: #C8C8C8;
-    --text-tertiary: #787878;
-    --accent-primary: #D4A045;
-    --accent-positive: #5FA67F;
-    --accent-negative: #E06060;
-    --accent-info: #6090B8;
-    --border: #3C3C3C;
-    --stroke: rgba(255, 255, 255, 0.08);
-
-    --highlight-yellow: #C4902A;
-    --highlight-green: #5FA67F;
-    --highlight-blue: #5B7C99;
-    --highlight-purple: #8B7BA8;
-    --highlight-orange: #C87840;
-    --highlight-pink: #B86078;
-}
-
-/* Warm Dark — dark with warm tones */
-[data-theme="warm-dark"] {
-    --bg-primary: #1C1814;
-    --bg-secondary: #26221C;
-    --text-primary: #F0E8D8;
-    --text-secondary: #C8BCA8;
-    --text-tertiary: #8C8070;
-    --accent-primary: #D4A045;
-    --accent-positive: #6A9E78;
-    --accent-negative: #C85848;
-    --accent-info: #7090B0;
-    --border: #3C3028;
-    --stroke: rgba(240, 232, 216, 0.08);
-
-    --highlight-yellow: #C4902A;
-    --highlight-green: #6A9E78;
-    --highlight-blue: #6080A8;
-    --highlight-purple: #9070C0;
-    --highlight-orange: #C87040;
-    --highlight-pink: #B85870;
-}
-
-/* Dyslexia Dark */
-[data-theme="dyslexia-dark"] {
-    --bg-primary: #1A1A2E;
-    --bg-secondary: #16213E;
-    --text-primary: #FFFACD;
-    --text-secondary: #F0E68C;
-    --text-tertiary: #A09060;
-    --accent-primary: #FFB84D;
-    --accent-positive: #4ADE80;
-    --accent-negative: #FB5A5A;
-    --accent-info: #38BDF8;
-    --border: #2C3E50;
-    --stroke: rgba(255, 250, 205, 0.08);
-
-    --highlight-yellow: #FDE047;
-    --highlight-green: #86EFAC;
-    --highlight-blue: #60A5FA;
-    --highlight-purple: #C084FC;
-    --highlight-orange: #FDBA74;
-    --highlight-pink: #F472B6;
-}
-
-/* High Contrast Dark — WCAG AAA */
+/* ── High Contrast Dark — WCAG AAA ────────────────────────────────── */
 [data-theme="high-contrast-dark"] {
-    --bg-primary: #0A0A0A;
-    --bg-secondary: #1A1A1A;
-    --text-primary: #FFFFFF;
+    --base:    #0A0A0A;
+    --surface: #1A1A1A;
+    --text:    #FFFFFF;
+    --muted:   #C0C0C0;
+    --accent:  #6BB6FF;
+    --rule:    rgba(255, 255, 255, 0.22);
+    color-scheme: dark;
+
+    --bg-primary:     var(--base);
+    --bg-secondary:   var(--surface);
+    --text-primary:   var(--text);
     --text-secondary: #E5E5E5;
-    --text-tertiary: #A0A0A0;
-    --accent-primary: #4DA6FF;
+    --text-tertiary:  var(--muted);
+    --accent-primary: var(--accent);
     --accent-positive: #4ADE80;
     --accent-negative: #FF6B6B;
-    --accent-info: #A78BFA;
+    --accent-info:     #A78BFA;
     --border: #3A3A3A;
     --stroke: rgba(255, 255, 255, 0.15);
 
     --highlight-yellow: #4DA6FF;
-    --highlight-green: #4ADE80;
-    --highlight-blue: #FF6B6B;
+    --highlight-green:  #4ADE80;
+    --highlight-blue:   #FF6B6B;
     --highlight-purple: #A78BFA;
     --highlight-orange: #FFB347;
-    --highlight-pink: #FF8FAB;
+    --highlight-pink:   #FF8FAB;
 }
 
 [data-theme="high-contrast-dark"] .btn,
@@ -232,12 +330,11 @@
     color: #000000;
 }
 
-/* ── Logo switching ─────────────────────────────────────────────────── */
-/* Default: show dark logo on light bg */
+/* ── Logo switching ───────────────────────────────────────────────── */
 .logo-light { display: none; }
 .logo-dark  { display: block; }
 
-/* Dark themes: flip */
+[data-theme="deep-ink"] .logo-dark,
 [data-theme="slate"] .logo-dark,
 [data-theme="warm-dark"] .logo-dark,
 [data-theme="dyslexia-dark"] .logo-dark,
@@ -245,6 +342,7 @@
     display: none;
 }
 
+[data-theme="deep-ink"] .logo-light,
 [data-theme="slate"] .logo-light,
 [data-theme="warm-dark"] .logo-light,
 [data-theme="dyslexia-dark"] .logo-light,
@@ -252,10 +350,7 @@
     display: block;
 }
 
-/* ── Auto-contrast text on highlights ──────────────────────────────── */
-/* Only apply when annotations are fully on; in subtle/off modes the */
-/* highlight background is removed, so forcing the contrast colour   */
-/* leaves unreadable text (e.g. black text on a dark theme).         */
+/* ── Auto-contrast text on highlights ─────────────────────────────── */
 .annotation-mode-on .verse.highlight-light-text .verse-body,
 .annotation-mode-on .verse.highlight-light-text .verse-text,
 .annotation-mode-on .verse.highlight-light-text .verse-number {

@@ -1,0 +1,490 @@
+/* Scripture Scribbles — Editorial Overlay for the live app
+ *
+ * Loads LAST in scripture-scribbles-v1.3.html. Wins the cascade against
+ * base.css / components.css without rewriting them.
+ *
+ * Reshapes: body typography, scrollbar, toolbar (editorial chrome),
+ * reading surface (.content / .chapter-title / verses), buttons to
+ * 4px radius. Modals + sermon editor + deep annotation panel polish
+ * deferred to a follow-up session.
+ *
+ * Typefaces: Literata (body) · IBM Plex Sans (chrome / UI)
+ * Reads palette tokens from themes.css (v2).
+ */
+
+/* ── Body + container ─────────────────────────────────────────────── */
+
+html, body {
+    background: var(--base);
+    color: var(--text);
+}
+
+body {
+    font-family: var(--font-serif);
+    font-optical-sizing: auto;
+    font-feature-settings: "liga" 1, "onum" 1;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--accent); color: var(--base); }
+
+.container {
+    background: var(--base);
+    box-shadow: none;
+    max-width: 1100px;
+}
+
+.container:has(.split-view) {
+    max-width: 1600px;
+}
+
+/* ── Subtle scrollbar ─────────────────────────────────────────────── */
+
+html {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--text) 12%, transparent) transparent;
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--text) 10%, transparent);
+    border: 3px solid var(--base);
+    border-radius: 10px;
+    transition: background 250ms ease;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--text) 24%, transparent);
+}
+
+/* ── Editorial chrome (toolbar) ───────────────────────────────────── */
+
+.toolbar {
+    background: var(--base);
+    border-bottom: 1px solid var(--rule);
+    padding: 20px var(--space-xl);
+    font-family: var(--font-sans);
+}
+
+.toolbar-menu-btn {
+    color: var(--muted);
+    font-size: 1.2em;
+    border-radius: 4px;
+}
+.toolbar-menu-btn:hover,
+.toolbar-menu-btn:active {
+    background: transparent;
+    color: var(--text);
+}
+
+.chapter-info {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text);
+    min-width: auto;
+    padding: 4px 8px;
+}
+.chapter-info:hover {
+    color: var(--accent);
+    background: transparent;
+}
+
+.nav-btn.nav-arrow {
+    color: var(--muted);
+    font-size: 1em;
+    min-width: 32px;
+}
+.nav-btn.nav-arrow:hover:not(:disabled) {
+    color: var(--accent);
+    background: transparent;
+}
+
+/* ── Reading content ──────────────────────────────────────────────── */
+
+.content {
+    max-width: 820px;
+    padding: 72px var(--space-xl) 96px;
+    font-family: var(--font-serif);
+    color: var(--text);
+}
+
+.content.split-view {
+    max-width: none;
+}
+
+/* ── Chapter title — masthead treatment ───────────────────────────── */
+
+.chapter-title {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(48px, 7vw, 84px);
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    margin: 0 0 56px;
+    padding-bottom: 32px;
+    border-bottom: 0;
+    position: relative;
+}
+
+.chapter-title::after {
+    content: '';
+    display: block;
+    width: 48px;
+    height: 1px;
+    background: var(--accent);
+    margin-top: 32px;
+}
+
+/* When continuous scroll adds a divider between chapters, keep the
+   downstream chapter titles feeling like openings too. */
+.chapter-divider {
+    border: 0;
+    border-top: 1px solid var(--rule);
+    margin: 96px 0 56px;
+}
+
+/* ── Verses (verse-by-verse mode) ─────────────────────────────────── */
+
+.verse {
+    margin-bottom: 18px;
+}
+
+.verse-body {
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background 200ms ease;
+}
+
+.verse:hover .verse-body {
+    background: color-mix(in oklab, var(--text) 4%, transparent);
+}
+
+.verse.selected .verse-body {
+    background: color-mix(in oklab, var(--accent) 12%, transparent);
+    border: 0;
+    border-left: 2px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+    padding-left: 14px;
+}
+
+.verse.selected-for-insertion .verse-body {
+    background: var(--accent);
+    color: var(--base);
+    border: 0;
+    border-radius: 4px;
+}
+
+.verse-content {
+    align-items: baseline;
+}
+
+.verse-number {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.verse-text {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    line-height: 1.75;
+    letter-spacing: 0.005em;
+    color: var(--text);
+    text-wrap: pretty;
+    hanging-punctuation: first last;
+}
+
+.verse-note {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--muted);
+    background: transparent;
+    border-left: 2px solid var(--accent);
+    padding-left: var(--space-m);
+}
+
+/* ── Fluid / passage mode verse numbers (margin style) ────────────── */
+
+.reading-mode-fluid .verse-text,
+.reading-mode-passage .verse-text,
+.reading-mode-fluid .highlighted-text,
+.reading-mode-passage .highlighted-text {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    line-height: 1.75;
+    letter-spacing: 0.005em;
+}
+
+.reading-mode-fluid .paragraph,
+.reading-mode-passage .paragraph {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    line-height: 1.75;
+    color: var(--text);
+    margin: 0 0 1.35em;
+    text-wrap: pretty;
+    hanging-punctuation: first last;
+}
+
+.reading-mode-fluid .verse-number,
+.reading-mode-passage .verse-number {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    vertical-align: baseline;
+    margin-right: 0.35em;
+}
+
+.reading-mode-fluid .verse-number.superscript,
+.reading-mode-passage .verse-number.superscript {
+    font-size: 10px;
+    vertical-align: 0.4em;
+}
+
+/* Margin mode — editorial left-rail verse number */
+.reading-mode-fluid.verse-style-margin .paragraph,
+.reading-mode-passage.verse-style-margin .paragraph {
+    padding-left: 68px;
+    position: relative;
+}
+
+.reading-mode-fluid .verse-number.margin,
+.reading-mode-passage .verse-number.margin {
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 52px;
+    text-align: right;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+@media (max-width: 720px) {
+    .reading-mode-fluid.verse-style-margin .paragraph,
+    .reading-mode-passage.verse-style-margin .paragraph {
+        padding-left: 36px;
+    }
+    .reading-mode-fluid .verse-number.margin,
+    .reading-mode-passage .verse-number.margin {
+        width: 28px;
+    }
+}
+
+/* Drop cap on the first paragraph of each chapter */
+.chapter-section .paragraph:first-of-type::first-letter,
+.chapter-section > .verse:first-of-type .verse-text::first-letter {
+    font-family: var(--font-serif);
+    float: left;
+    font-size: 4.4em;
+    line-height: 0.84;
+    padding: 0.06em 0.14em 0 0;
+    color: var(--accent);
+    font-weight: 500;
+    font-style: italic;
+}
+
+/* Highlights — keep colour but soften the chip shape */
+.reading-mode-fluid .highlighted-text,
+.reading-mode-passage .highlighted-text {
+    padding: 1px 3px;
+    border-radius: 2px;
+}
+
+/* ── Buttons — 4px radius, editorial type ─────────────────────────── */
+
+.btn,
+.nav-btn {
+    border-radius: 4px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.78em;
+    padding: 10px 16px;
+}
+
+.btn:hover {
+    filter: none;
+    background: var(--text);
+    color: var(--base);
+}
+
+.btn.primary {
+    background: var(--accent);
+    color: var(--base);
+}
+.btn.primary:hover {
+    filter: none;
+    background: var(--text);
+    color: var(--base);
+}
+
+.btn.secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--rule);
+}
+.btn.secondary:hover {
+    background: var(--surface);
+    color: var(--text);
+}
+
+.btn.danger {
+    background: transparent;
+    color: var(--accent-negative, #C44A3A);
+    border: 1px solid color-mix(in oklab, var(--accent-negative, #C44A3A) 40%, transparent);
+}
+.btn.danger:hover {
+    background: var(--accent-negative, #C44A3A);
+    color: var(--base);
+}
+
+.nav-btn:not(.nav-arrow) {
+    background: var(--accent);
+    color: var(--base);
+}
+.nav-btn:not(.nav-arrow):hover:not(:disabled) {
+    filter: none;
+    background: var(--text);
+    color: var(--base);
+}
+
+.set-switcher-btn {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--text);
+}
+.set-switcher-btn:hover {
+    background: var(--surface);
+    border-color: var(--accent);
+}
+
+/* ── Settings panel — lighter touch ───────────────────────────────── */
+
+.settings-panel {
+    background: var(--base);
+    border-left: 1px solid var(--rule);
+    box-shadow: none;
+}
+
+.settings-panel-header {
+    border-bottom: 1px solid var(--rule);
+}
+
+.settings-panel-title,
+.settings-section-header {
+    font-family: var(--font-sans);
+    letter-spacing: 0.14em;
+    color: var(--muted);
+}
+
+.settings-item {
+    font-family: var(--font-sans);
+    font-size: 14px;
+}
+
+.settings-item:hover {
+    background: var(--surface);
+}
+
+.settings-divider {
+    background: var(--rule);
+}
+
+.settings-item i {
+    color: var(--muted);
+}
+
+.settings-description {
+    font-family: var(--font-sans);
+    color: var(--muted);
+}
+
+/* Native selects inside the panel — editorial restraint */
+.settings-panel select,
+.annotation-mode-select,
+.reading-mode-select,
+.verse-number-style-select {
+    font-family: var(--font-sans);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--text);
+}
+
+/* ── Modals — inherit palette, 4px radius ─────────────────────────── */
+
+.modal-content {
+    background: var(--base);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+    font-family: var(--font-sans);
+}
+
+.modal-content h2,
+.modal-header h2 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+/* ── Welcome screen — lightly rebadged ────────────────────────────── */
+
+.welcome h2 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(32px, 4vw, 48px);
+    letter-spacing: -0.02em;
+    color: var(--text);
+}
+
+.welcome p,
+.welcome-footer p {
+    font-family: var(--font-serif);
+    color: var(--muted);
+}
+
+.welcome .feature h3 {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text);
+}
+
+.welcome .feature p {
+    font-family: var(--font-serif);
+    color: var(--muted);
+}
+
+/* ── Range sliders inherit accent ─────────────────────────────────── */
+
+input[type="range"]::-webkit-slider-thumb { background: var(--accent); }
+input[type="range"]::-moz-range-thumb     { background: var(--accent); }
+
+/* ── Reduced motion ───────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
