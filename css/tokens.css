@@ -1,0 +1,122 @@
+/* Scripture Scribbles — Palette Tokens
+ *
+ * Nine themes. Each sets exactly six tokens:
+ *   --base     main background
+ *   --surface  elevated panels / secondary background
+ *   --text     primary reading colour
+ *   --muted    metadata, marginalia, quiet UI
+ *   --accent   editorial touch — used for ≤5% of the surface
+ *   --rule     hairline dividers
+ *
+ * :root defaults to Deep Ink (the dev preview default).
+ * Swap the site-wide default by changing :root to mirror another block.
+ */
+
+:root {
+  /* Deep Ink — warm near-black, burnished brass */
+  --base:    #14110E;
+  --surface: #1C1814;
+  --text:    #E8E1D2;
+  --muted:   #8F8576;
+  --accent:  #C9A66B;
+  --rule:    rgba(232, 225, 210, 0.08);
+  color-scheme: dark;
+}
+
+[data-theme="deep-ink"] {
+  --base:    #14110E;
+  --surface: #1C1814;
+  --text:    #E8E1D2;
+  --muted:   #8F8576;
+  --accent:  #C9A66B;
+  --rule:    rgba(232, 225, 210, 0.08);
+  color-scheme: dark;
+}
+
+/* Paper — warm cream, burnt copper */
+[data-theme="paper"] {
+  --base:    #F8F4EE;
+  --surface: #EFE9DF;
+  --text:    #2C2820;
+  --muted:   #8A7F6E;
+  --accent:  #9C6B2A;
+  --rule:    rgba(44, 40, 32, 0.10);
+  color-scheme: light;
+}
+
+/* Clean — crisp white, ink-navy */
+[data-theme="clean"] {
+  --base:    #FFFFFF;
+  --surface: #F4F4F8;
+  --text:    #141418;
+  --muted:   #6C6C74;
+  --accent:  #1F3A8A;
+  --rule:    rgba(0, 0, 0, 0.08);
+  color-scheme: light;
+}
+
+/* Slate — neutral dark, cool pewter */
+[data-theme="slate"] {
+  --base:    #1A1A1A;
+  --surface: #252525;
+  --text:    #E8E8E8;
+  --muted:   #8A8A8A;
+  --accent:  #B8B2A4;
+  --rule:    rgba(255, 255, 255, 0.07);
+  color-scheme: dark;
+}
+
+/* Warm Dark — cosy brown-ink, warm brass */
+[data-theme="warm-dark"] {
+  --base:    #201A14;
+  --surface: #2A221A;
+  --text:    #F0E4CE;
+  --muted:   #A0907C;
+  --accent:  #D4A86A;
+  --rule:    rgba(240, 228, 206, 0.09);
+  color-scheme: dark;
+}
+
+/* Dyslexia Light — soft cream, strong editorial blue */
+[data-theme="dyslexia-light"] {
+  --base:    #FFF8F0;
+  --surface: #F5EDE3;
+  --text:    #1A1A1A;
+  --muted:   #6A6A6A;
+  --accent:  #0056A0;
+  --rule:    rgba(0, 0, 0, 0.09);
+  color-scheme: light;
+}
+
+/* Dyslexia Dark — indigo-black, parchment text, amber accent */
+[data-theme="dyslexia-dark"] {
+  --base:    #1A1A2E;
+  --surface: #222238;
+  --text:    #FFFACD;
+  --muted:   #A89C60;
+  --accent:  #FFB84D;
+  --rule:    rgba(255, 250, 205, 0.09);
+  color-scheme: dark;
+}
+
+/* High Contrast Light — WCAG AAA */
+[data-theme="high-contrast-light"] {
+  --base:    #FFFFFF;
+  --surface: #F2F2F2;
+  --text:    #000000;
+  --muted:   #404040;
+  --accent:  #003A8C;
+  --rule:    rgba(0, 0, 0, 0.22);
+  color-scheme: light;
+}
+
+/* High Contrast Dark — WCAG AAA */
+[data-theme="high-contrast-dark"] {
+  --base:    #0A0A0A;
+  --surface: #1A1A1A;
+  --text:    #FFFFFF;
+  --muted:   #C0C0C0;
+  --accent:  #6BB6FF;
+  --rule:    rgba(255, 255, 255, 0.22);
+  color-scheme: dark;
+}
