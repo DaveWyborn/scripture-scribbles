@@ -28,6 +28,20 @@
     *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; background: var(--ink); color: var(--text); }
 
+    /* Subtle scrollbar — present but quiet */
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(232, 225, 210, 0.12) transparent;
+    }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(232, 225, 210, 0.10);
+      border: 3px solid var(--ink);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(232, 225, 210, 0.22); }
+
     body {
       font-family: var(--serif);
       font-optical-sizing: auto;
