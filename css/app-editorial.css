@@ -465,6 +465,16 @@ html {
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.welcome .feature h3 i {
+    color: var(--accent);
+    font-size: 1.35em;
+    line-height: 1;
+    flex-shrink: 0;
 }
 
 .welcome .feature p {
@@ -476,6 +486,229 @@ html {
 
 input[type="range"]::-webkit-slider-thumb { background: var(--accent); }
 input[type="range"]::-moz-range-thumb     { background: var(--accent); }
+
+/* ── Sermon editor — editorial overlay ────────────────────────────── */
+
+/* Message title: serif, editorial weight */
+.sermon-metadata-header input {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 1.6em;
+    letter-spacing: -0.01em;
+    color: var(--text);
+}
+
+.metadata-toggle-btn {
+    font-family: var(--font-sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--muted);
+}
+.metadata-toggle-btn:hover {
+    background: transparent;
+    border-color: var(--accent);
+    color: var(--text);
+}
+
+.sermon-metadata input {
+    font-family: var(--font-sans);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--text);
+}
+.sermon-metadata input:focus {
+    background: transparent;
+    border-color: var(--accent);
+}
+
+/* Verse insertion bar: hairline restraint, no accent flood */
+.verse-insertion-bar {
+    background: transparent;
+    border-bottom: 1px solid var(--rule);
+    color: var(--text);
+}
+.verses-selected-label {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+.btn-insert {
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.btn-insert:hover {
+    background: var(--surface);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+.btn-clear-selection {
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--muted);
+}
+.btn-clear-selection:hover {
+    background: var(--surface);
+    color: var(--text);
+}
+
+/* Trix toolbar: quiet surface, restrained active state */
+trix-toolbar {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+}
+trix-toolbar .trix-button {
+    border-radius: 4px;
+}
+trix-toolbar .trix-button:hover {
+    background: var(--base) !important;
+}
+trix-toolbar .trix-button.trix-active {
+    background: color-mix(in oklab, var(--accent) 20%, transparent) !important;
+}
+
+/* Trix editor body: serif reading, editorial weights */
+trix-editor {
+    font-family: var(--font-serif);
+    color: var(--text);
+    line-height: 1.75;
+}
+trix-editor h1 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--text);
+}
+trix-editor blockquote {
+    border-left: 2px solid var(--accent);
+    color: var(--muted);
+    font-family: var(--font-serif);
+}
+trix-editor a {
+    color: var(--accent);
+    border-bottom: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
+}
+
+/* ── Annotation panel — editorial overlay ─────────────────────────── */
+
+.annotation-panel {
+    background: var(--base);
+    border-top: 1px solid var(--rule);
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.28);
+}
+
+@media (min-width: 768px) {
+    .annotation-panel {
+        border: 1px solid var(--rule);
+        border-bottom: 0;
+    }
+}
+
+.annotation-handle {
+    background: var(--rule);
+}
+
+.annotation-header {
+    background: transparent;
+    color: var(--muted);
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+.annotation-header button {
+    color: var(--muted);
+}
+.annotation-header button:hover {
+    color: var(--text);
+}
+
+.form-group label {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.form-group input,
+.form-group textarea {
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--font-serif);
+}
+.form-group input:focus,
+.form-group textarea:focus {
+    border: 1px solid var(--accent);
+}
+
+.color-option {
+    border-radius: 4px;
+}
+.color-option.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--base), 0 0 0 3px var(--accent);
+}
+
+/* ── Modals — editorial header + footer ───────────────────────────── */
+
+.modal-header {
+    border-bottom: 1px solid var(--rule);
+}
+.modal-header h2 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: var(--text);
+}
+.modal-close {
+    color: var(--muted);
+    border-radius: 4px;
+}
+.modal-close:hover {
+    background: var(--surface);
+    color: var(--text);
+}
+.modal-footer {
+    background: transparent;
+    border-top: 1px solid var(--rule);
+}
+
+.set-item {
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    font-family: var(--font-sans);
+}
+.set-item:hover {
+    background: var(--surface);
+    border-color: var(--accent);
+}
+.set-item.active {
+    background: var(--surface);
+    border-color: var(--accent);
+}
 
 /* ── Reduced motion ───────────────────────────────────────────────── */
 
