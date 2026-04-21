@@ -415,6 +415,7 @@ trix-toolbar .trix-button.trix-active {
 }
 
 /* Icon colour for dark themes — invert black SVGs to white */
+[data-theme="deep-ink"] trix-toolbar .trix-button--icon::before,
 [data-theme="warm-dark"] trix-toolbar .trix-button--icon::before,
 [data-theme="slate"] trix-toolbar .trix-button--icon::before,
 [data-theme="dyslexia-dark"] trix-toolbar .trix-button--icon::before,
@@ -424,6 +425,7 @@ trix-toolbar .trix-button.trix-active {
 }
 
 /* Active button in dark themes — keep icons visible against accent bg */
+[data-theme="deep-ink"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
 [data-theme="warm-dark"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
 [data-theme="slate"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
 [data-theme="dyslexia-dark"] trix-toolbar .trix-button.trix-active.trix-button--icon::before,
