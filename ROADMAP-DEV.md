@@ -1,6 +1,6 @@
 # Scripture Scribbles — Internal Dev Roadmap
 
-Last updated: 2026-04-06
+Last updated: 2026-04-28
 
 ## Version history
 
@@ -12,28 +12,21 @@ Last updated: 2026-04-06
 | v1.3.0 | Shipped | Full dyslexia typography controls, colour customisation, 8 curated themes |
 | v1.3.26 | Shipped | Design overhaul (Paper theme, side panel, 720px column), reading bar |
 | v1.4.0 | Shipped | Sermon/message notes (Trix editor), split-view, verse insertion |
-| v1.4.1 | Next | Scroll navigation, polish |
-| v1.5.0 | Planned | Word-level highlighting |
+| v1.4.1 | Shipped | Editorial design system (Deep Ink, Literata + IBM Plex, 9 themes re-paletted), continuous scroll, focus opacity, welcome + sermon redesign |
+| v1.5.0 | Next | Word-level highlighting |
 | v1.6.0 | Gated | Paid tier — licensed Bible translations via API |
 | v2.0.0 | Vision | Charity registration, Wycliffe partnership, audio reader |
 
 ## Outstanding tasks (do before new features)
 
-- [ ] Run `supabase-reading-history.sql` in Supabase SQL editor (cloud sync for reading progress is blocked on this)
+- [ ] Verify whether `supabase-reading-history.sql` is run — reading history is persisting for logged-in users (commit 9f9b67a) so it likely is, but the roadmap still shows it as outstanding
 - [ ] Set up local dev server (currently all changes push live — risky)
 - [ ] Trix mobile init: deferred mounting works but is fragile. Needs a proper lifecycle fix or a lighter editor
-
-## v1.4.1 — Polish and scroll nav
-
-Target: next session
-
-- [ ] Scroll navigation — chapter/section jump menu for long chapters
-- [ ] Bottom nav polish — ensure consistent behaviour across reading modes
-- [ ] Review and fix any remaining passage mode edge cases
+- [ ] Add privacy-respecting analytics so we can measure progress to the 1,000-user gate
 
 ## v1.5.0 — Word-level highlighting
 
-Target: after v1.4.1
+Target: now
 
 - [ ] Select individual words (not just full verses)
 - [ ] 6+ colour palette (reuse existing)

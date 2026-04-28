@@ -1,7 +1,7 @@
 # Project: Scripture Scribbles
 
 **Status:** Active
-**Last updated:** 2026-04-08
+**Last updated:** 2026-04-28
 
 ## Purpose
 
@@ -23,22 +23,23 @@ Dyslexia-friendly Bible reading app with rich annotations, focus tools, and serm
 - v1.2.0: Reading/fluid mode (paragraphs, not verse-by-verse), UI simplification, multiple public domain Bibles (WEB + ASV + KJV), gentle animations
 - v1.3.0: Full dyslexia typography controls (font, size, line/letter/word spacing), colour customisation, dyslexia-optimised themes — shipped Dec 2025
 - v1.4.0 (shipped Apr 2026): Sermon/message notes (Trix rich-text editor, split-view, mobile tabs, verse insertion, Supabase persistence), reading bar (draggable focus aid, 3 styles), scroll navigation, reading history, passage mode with position save/restore, Hebrew heading styling, USFM converter fixes
+- v1.4.1 (shipped Apr 2026): Editorial design system — Deep Ink theme, Literata + IBM Plex, design tokens, 9 themes re-paletted, margin-only verse numbers; continuous scroll (auto-load next chapter); auto-mark-as-read + focus opacity slider; welcome + sermon notes UI redesign; Supabase keepalive fix (workflow + VPS cron backup)
 
 ## What's Next
 
-- v1.4.1: Continuous scroll navigation (auto-load next chapter), verse formatting style selection
 - v1.5.0: Word-level highlighting with smart merge rules
+- Analytics: privacy-respecting counter (Plausible / Cloudflare Web Analytics / Umami) — currently no way to measure progress to the 1,000-user gate
 - Polish/UX: loading states, empty states, micro-interactions
 - Strategic: reach 1,000 users before building paid features (v1.6.0)
 
 ## Blockers / Open Questions
 
 - 1,000-user threshold not yet reached — paid features (v1.6.0) are gated on this
-- No analytics/tracking to measure user count — need to determine how to measure progress toward 1,000-user goal
+- No analytics — flying blind on the 1,000-user goal. Worth a half-day to add a privacy-respecting counter before v1.5.0 so we have a baseline.
 
 ## Key Files
 
-- `scripture-scribbles-v1.3.html` — current live app (v1.3.26), also where v1.4 work lands
+- `scripture-scribbles-v1.3.html` — current live app (filename historic; contents are v1.4.1)
 - `index.html` — landing page
 - `preview.html` — redirects to current live file
 - `js/` — JS modules: app, annotations, auth, bible-loader, navigation, preferences, sermons, state, tag-manager, typography, ui, verse-renderer

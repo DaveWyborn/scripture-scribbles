@@ -100,7 +100,7 @@ WEB/                            -- USFM source files
 
 See the [public roadmap](https://scripturescribbles.co.uk/roadmap) for upcoming features and voting.
 
-**Current version:** v1.4.0
+**Current version:** v1.4.1
 
 ---
 

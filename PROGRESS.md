@@ -1,13 +1,13 @@
 # Scripture Scribbles - Progress Summary
 
-**Last Updated:** 2026-04-08
+**Last Updated:** 2026-04-28
 
 ---
 
-## Current Status: v1.4.0 LIVE ✅
+## Current Status: v1.4.1 LIVE ✅
 
 **URL:** https://scripturescribbles.co.uk
-**Live file:** `scripture-scribbles-v1.3.html`
+**Live file:** `scripture-scribbles-v1.3.html` (filename historic; contents are v1.4.1)
 
 ---
 
@@ -44,6 +44,36 @@
 - "Remember me" auth option
 - Improved mobile experience
 - Codebase refactored into separate JS/CSS modules (see Architecture below)
+
+---
+
+### v1.4.1 ✅ — Editorial design system + continuous scroll
+
+**Shipped:** April 2026
+
+**Editorial design system (unplanned headliner):**
+- Deep Ink theme — Literata + IBM Plex Sans, dark editorial palette
+- Design tokens extracted; 9 themes re-paletted onto the same system
+- Margin-only verse numbers (honours "never inline" rule)
+- Quiet, muted scrollbar that fades into the background
+- Welcome screen redesign, duplicate landing page removed
+- Sermon notes UI redesign — polished toolbar, visible Details button, slim mobile UI
+- Settings panel widened, contextual help text, inline font previews
+- Cross-mode font-size consistency
+
+**Features:**
+- Continuous scroll — auto-loads next chapter as you scroll (fluid + verse modes)
+- Auto-mark-as-read + focus mode opacity slider
+
+**Bug fixes:**
+- Reading history persistence on reload for logged-in users
+- Verse number style not applying in verse-by-verse mode
+- Sermon notes panel inheriting reading typography settings
+- Trix toolbar icons unreadable on dark themes (multiple passes)
+
+**Infra:**
+- Supabase keepalive fixed (`/health` was failing silently — now queries PostgREST + VPS cron backup)
+- Favicon — amber SS monogram
 
 ---
 
@@ -114,10 +144,10 @@ The app was refactored from a monolithic single HTML file into separate JS/CSS m
 
 ## What's Next
 
-1. **v1.4.1** — Continuous scroll navigation, verse formatting style selection
-2. **v1.5.0** — Word-level highlighting (smart merge rules)
+1. **v1.5.0** — Word-level highlighting (smart merge rules)
+2. **Analytics** — privacy-respecting counter so we can measure progress to the 1,000-user gate (currently flying blind)
 3. Polish/UX: loading states, empty states, micro-interactions
-4. Strategic: reach 1,000 users before building paid features
+4. Strategic: reach 1,000 users before building paid features (v1.6.0)
 
 ---
 

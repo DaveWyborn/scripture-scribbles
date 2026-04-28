@@ -15,7 +15,7 @@
 
 ## Current Status
 
-### v1.4.0 (LIVE) ✅ — Last updated: 2026-04-08
+### v1.4.1 (LIVE) ✅ — Last updated: 2026-04-28
 
 ### v1.1.0 ✅
 - ✅ Supabase authentication
@@ -125,9 +125,34 @@
 - ✅ Trix mobile initialisation fix (deferred editor mounting)
 - ✅ Export sermon notes to Markdown
 
-**Deferred to v1.4.1:**
-- [ ] Continuous scroll navigation (auto-load next chapter)
-- [ ] Verse formatting styles (user selectable)
+---
+
+### v1.4.1 - Editorial design system + continuous scroll ✅ COMPLETE (Apr 2026)
+**Goal:** Polish the live experience and ship continuous scroll.
+
+**Editorial design system (unplanned headliner):**
+- ✅ Deep Ink theme — Literata + IBM Plex Sans, dark editorial palette
+- ✅ Design tokens extracted; 9 themes re-paletted onto the same system
+- ✅ Margin-only verse numbers (honours "never inline" rule)
+- ✅ Quiet, muted scrollbar
+- ✅ Welcome screen redesign, duplicate landing page removed
+- ✅ Sermon notes UI redesign (polished toolbar, mobile-slim layout)
+- ✅ Settings panel widened, contextual help, inline font previews
+- ✅ Cross-mode font-size consistency
+
+**Features:**
+- ✅ Continuous scroll — auto-loads next chapter (fluid + verse modes)
+- ✅ Auto-mark-as-read + focus mode opacity slider
+- ✅ Verse number style (superscript / margin / hidden)
+
+**Bug fixes:**
+- ✅ Reading history persistence on reload for logged-in users
+- ✅ Verse number style not applying in verse-by-verse mode
+- ✅ Sermon notes panel inheriting reading typography
+- ✅ Trix toolbar icons readable on dark themes
+
+**Infra:**
+- ✅ Supabase keepalive — workflow rewritten + VPS cron backup
 
 ---
 
