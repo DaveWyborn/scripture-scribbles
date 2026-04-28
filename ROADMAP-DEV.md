@@ -19,10 +19,10 @@ Last updated: 2026-04-28
 
 ## Outstanding tasks (do before new features)
 
-- [ ] Verify whether `supabase-reading-history.sql` is run — reading history is persisting for logged-in users (commit 9f9b67a) so it likely is, but the roadmap still shows it as outstanding
+- [x] `supabase-reading-history.sql` run 2026-04-28 — table now live, related silent-failure bugs in `js/reading-plans.js` fixed (commit 587601f)
+- [x] Cloudflare Web Analytics enabled 2026-04-28 (automatic mode, no code change)
 - [ ] Set up local dev server (currently all changes push live — risky)
 - [ ] Trix mobile init: deferred mounting works but is fragile. Needs a proper lifecycle fix or a lighter editor
-- [ ] Add privacy-respecting analytics so we can measure progress to the 1,000-user gate
 
 ## v1.5.0 — Word-level highlighting
 
