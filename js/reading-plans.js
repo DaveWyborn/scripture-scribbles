@@ -86,7 +86,7 @@ async function loadReadingHistoryFromSupabase() {
 async function saveReadingMarkToSupabase(bookId, chapter, sectionIndex, totalSections) {
     if (!supabase || !currentUser) return;
     try {
-        await supabase.from('reading_history').upsert({
+        const { error } = await supabase.from('reading_history').upsert({
             user_id: currentUser.id,
             book_id: bookId,
             chapter,
@@ -95,6 +95,7 @@ async function saveReadingMarkToSupabase(bookId, chapter, sectionIndex, totalSec
             version: 'web',
             read_at: new Date().toISOString()
         }, { onConflict: 'user_id,book_id,chapter,section_index,version' });
+        if (error) throw error;
     } catch (e) {
         console.error('Failed to save reading mark to Supabase', e);
     }
@@ -103,18 +104,21 @@ async function saveReadingMarkToSupabase(bookId, chapter, sectionIndex, totalSec
 async function deleteReadingMarkFromSupabase(bookId, chapter, sectionIndex) {
     if (!supabase || !currentUser) return;
     try {
-        await supabase.from('reading_history')
+        const { error } = await supabase.from('reading_history')
             .delete()
             .eq('user_id', currentUser.id)
             .eq('book_id', bookId)
             .eq('chapter', chapter)
             .eq('section_index', sectionIndex);
+        if (error) throw error;
     } catch (e) {
         console.error('Failed to delete reading mark from Supabase', e);
     }
 }
 
-// Called on login — silently merges any guest marks into Supabase, then reloads
+// Called on login — silently merges any guest marks into Supabase, then reloads.
+// localStorage is only cleared once the upsert is confirmed; otherwise the guest
+// data stays put so a transient Supabase failure cannot silently delete it.
 async function mergeGuestHistoryToSupabase() {
     if (!currentUser || !supabase) return;
     const raw = localStorage.getItem(READING_HISTORY_KEY);
@@ -138,14 +142,15 @@ async function mergeGuestHistoryToSupabase() {
             });
         });
         if (records.length > 0) {
-            await supabase.from('reading_history').upsert(records, {
+            const { error } = await supabase.from('reading_history').upsert(records, {
                 onConflict: 'user_id,book_id,chapter,section_index,version'
             });
+            if (error) throw error;
         }
         localStorage.removeItem(READING_HISTORY_KEY);
         await loadReadingHistoryFromSupabase();
     } catch (e) {
-        console.error('Failed to merge guest reading history', e);
+        console.error('Failed to merge guest reading history — keeping local copy', e);
     }
 }
 
