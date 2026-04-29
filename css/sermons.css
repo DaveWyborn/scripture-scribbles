@@ -53,6 +53,10 @@
     .sermon-notes-view {
         border-left: none;
         max-height: none;
+        /* Slide-in animation only applies to desktop split-view.
+           On mobile/tablet the panel is a fixed-position overlay — show it. */
+        opacity: 1;
+        transform: none;
     }
 }
 
