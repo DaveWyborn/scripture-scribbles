@@ -92,32 +92,10 @@ async function handleAuthSuccess(user) {
     document.getElementById('settings-guest-buttons').style.display = 'none';
     document.getElementById('navigation').style.display = 'flex';
 
-    // Show sermon notes toggle button (desktop)
-    const desktopToggleWrapper = document.getElementById('desktop-notes-toggle');
-    const toggleNotesBtn = document.getElementById('toggle-notes-btn');
-
-    console.log('🔍 Toggle button debug:', {
-        wrapper: desktopToggleWrapper,
-        button: toggleNotesBtn,
-        windowWidth: window.innerWidth,
-        isDesktop: window.innerWidth >= 768
-    });
-
-    if (desktopToggleWrapper && window.innerWidth >= 768) {
-        desktopToggleWrapper.style.display = 'block';
-        console.log('✅ Desktop: Showing toggle button wrapper');
-    }
-
-    // Show mobile view indicator (mobile)
-    const mobileIndicator = document.getElementById('mobile-view-indicator');
-    console.log('🔍 Mobile indicator debug:', {
-        element: mobileIndicator,
-        isMobile: window.innerWidth < 768
-    });
-
-    if (mobileIndicator && window.innerWidth < 768) {
-        mobileIndicator.style.display = 'flex';
-        console.log('✅ Mobile: Showing view indicator');
+    // Show universal notes toggle in header (works on all viewports)
+    const notesToggleBtn = document.getElementById('notes-toggle-btn');
+    if (notesToggleBtn) {
+        notesToggleBtn.style.display = '';
     }
 
     // Load annotations

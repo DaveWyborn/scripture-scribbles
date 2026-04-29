@@ -21,15 +21,15 @@
 
     <!-- Modular CSS -->
     <link rel="stylesheet" href="css/themes.css?v=2.0.0">
-    <link rel="stylesheet" href="css/base.css?v=1.4.4">
-    <link rel="stylesheet" href="css/components.css?v=1.4.4">
+    <link rel="stylesheet" href="css/base.css?v=1.4.5">
+    <link rel="stylesheet" href="css/components.css?v=1.4.5">
     <!-- Trix Rich Text Editor (load before sermons.css so we can override) -->
     <link rel="stylesheet" href="https://unpkg.com/trix@2.1.15/dist/trix.css">
     <script src="https://unpkg.com/trix@2.1.15/dist/trix.umd.min.js"></script>
 
-    <link rel="stylesheet" href="css/sermons.css?v=1.4.10">
+    <link rel="stylesheet" href="css/sermons.css?v=1.4.11">
     <!-- Editorial overlay — loads last, wins the cascade -->
-    <link rel="stylesheet" href="css/app-editorial.css?v=2.0.1">
+    <link rel="stylesheet" href="css/app-editorial.css?v=2.0.2">
 </head>
 <body>
     <div class="container">
@@ -37,6 +37,9 @@
             <div class="toolbar-top">
                 <button class="toolbar-menu-btn" id="menu-btn" aria-label="Settings menu">
                     <i class="ph ph-list"></i>
+                </button>
+                <button class="toolbar-menu-btn notes-toggle-btn" id="notes-toggle-btn" aria-label="Open sermon notes" style="display: none;">
+                    <i class="ph ph-notebook" id="notes-toggle-icon"></i>
                 </button>
             </div>
             <div class="navigation" id="navigation" style="display: none;">
@@ -273,10 +276,6 @@
 
             <div class="settings-divider"></div>
 
-            <div class="settings-item" id="settings-notes-btn" style="cursor: pointer;">
-                <i class="ph ph-notebook"></i>
-                <span>Notes</span>
-            </div>
             <div class="settings-item" id="manage-tags-btn" style="cursor: pointer;">
                 <i class="ph ph-tag"></i>
                 <span>Manage Tags</span>
@@ -311,19 +310,6 @@
             </div><!-- end settings-panel-body -->
         </div><!-- end settings-panel -->
         <div class="settings-overlay" id="settings-overlay"></div>
-
-        <!-- Desktop toggle button (temporary position for testing) -->
-        <div class="desktop-notes-toggle" id="desktop-notes-toggle" style="display: none; padding: 10px; background: var(--bg-secondary); border-bottom: 1px solid var(--border);">
-            <button id="toggle-notes-btn" aria-label="Toggle sermon notes">
-                <i class="ph ph-notebook"></i> Notes
-            </button>
-        </div>
-
-        <!-- Mobile view indicator (hidden on desktop) -->
-        <div class="mobile-view-indicator" id="mobile-view-indicator" style="display: none;">
-            <span class="view-tab active" data-view="bible" onclick="switchMobileView('bible')">Bible</span>
-            <span class="view-tab" data-view="notes" onclick="switchMobileView('notes')">Notes</span>
-        </div>
 
         <div class="content" id="content">
             <div class="welcome" style="display: none;">
@@ -630,7 +616,7 @@
     <!-- Modular JavaScript (loaded in dependency order) -->
     <script src="js/state.js?v=1.4.2"></script>
     <script src="js/bible-loader.js?v=1.4.2"></script>
-    <script src="js/auth.js?v=1.4.1"></script>
+    <script src="js/auth.js?v=1.4.2"></script>
     <script src="js/annotations.js?v=1.3.13"></script>
     <script src="js/verse-renderer.js?v=1.4.2"></script>
     <script src="js/navigation.js?v=1.3.15"></script>
@@ -639,8 +625,8 @@
     <script src="js/tag-manager.js?v=1.3.19"></script>
     <script src="js/ui.js?v=1.3.31"></script>
     <script src="js/reading-bar.js?v=1.1.0"></script>
-    <script src="js/sermons.js?v=1.4.7"></script>
+    <script src="js/sermons.js?v=1.4.8"></script>
     <script src="js/reading-plans.js?v=1.1.0"></script>
-    <script src="js/app.js?v=1.4.1"></script>
+    <script src="js/app.js?v=1.4.2"></script>
 </body>
 </html>

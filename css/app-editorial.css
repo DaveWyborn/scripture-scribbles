@@ -613,7 +613,7 @@ trix-editor a {
     box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.28);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
     .annotation-panel {
         border: 1px solid var(--rule);
         border-bottom: 0;

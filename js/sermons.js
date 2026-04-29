@@ -9,16 +9,16 @@ async function initSermons() {
     // Setup Trix event listeners
     setupTrixListeners();
 
-    // Setup swipe handlers for mobile
-    if (window.innerWidth < 768) {
+    // Setup swipe handlers for mobile/tablet
+    if (window.innerWidth < 1024) {
         setupSwipeHandlers();
     }
 
-    // Restore metadata collapsed state (default collapsed on mobile)
+    // Restore metadata collapsed state (default collapsed on mobile/tablet)
     const storedCollapsed = localStorage.getItem('metadataCollapsed');
     const metadataCollapsed = storedCollapsed !== null
         ? storedCollapsed === 'true'
-        : window.innerWidth < 768;
+        : window.innerWidth < 1024;
     if (metadataCollapsed) {
         const metadata = document.getElementById('sermon-metadata');
         const toggleBtn = document.querySelector('.metadata-toggle-btn');
@@ -501,12 +501,39 @@ async function deleteSermon(sermonId) {
 }
 
 /**
+ * Universal notes toggle — viewport-aware entry point.
+ * Desktop (≥1024px) → split view. Mobile/tablet (<1024px) → full-screen overlay.
+ */
+window.toggleNotes = async function() {
+    if (window.innerWidth >= 1024) {
+        await toggleNotesView();
+    } else {
+        const next = activeView === 'notes' ? 'bible' : 'notes';
+        await window.switchMobileView(next);
+    }
+};
+
+/**
+ * Update the universal header icon to reflect open/closed state.
+ */
+function setNotesToggleIcon(isOpen) {
+    const btn = document.getElementById('notes-toggle-btn');
+    const icon = document.getElementById('notes-toggle-icon');
+    if (icon) {
+        icon.className = isOpen ? 'ph ph-x' : 'ph ph-notebook';
+    }
+    if (btn) {
+        btn.setAttribute('aria-label', isOpen ? 'Close sermon notes' : 'Open sermon notes');
+        btn.classList.toggle('notes-open', isOpen);
+    }
+}
+
+/**
  * Toggle notes view (desktop split screen)
  */
 async function toggleNotesView() {
     const content = document.getElementById('content');
     const notesView = document.getElementById('sermon-notes-view');
-    const toggleBtn = document.getElementById('toggle-notes-btn');
 
     if (!notesView) {
         console.warn('sermon-notes-view not found, creating fallback');
@@ -585,9 +612,7 @@ async function toggleNotesView() {
         });
         sermonViewMode = 'split';
 
-        if (toggleBtn) {
-            toggleBtn.innerHTML = '<i class="ph ph-x"></i> Close Notes';
-        }
+        setNotesToggleIcon(true);
 
         // Mount and initialise Trix now that notes are visible
         await ensureTrixEditor();
@@ -616,9 +641,7 @@ async function toggleNotesView() {
             }
         }, 400);
 
-        if (toggleBtn) {
-            toggleBtn.innerHTML = '<i class="ph ph-notebook"></i> Notes';
-        }
+        setNotesToggleIcon(false);
     }
 }
 
@@ -628,7 +651,6 @@ async function toggleNotesView() {
  */
 window.switchMobileView = async function(view) {
     activeView = view;
-    const indicator = document.getElementById('mobile-view-indicator');
     let notesView = document.getElementById('sermon-notes-view');
     const welcomeView = document.querySelector('.welcome');
 
@@ -686,13 +708,8 @@ window.switchMobileView = async function(view) {
         setupTrixListeners();
     }
 
-    // Show and update visual indicator (once notes mode is active, keep visible)
-    if (indicator) {
-        indicator.classList.add('active');
-        indicator.querySelectorAll('.view-tab').forEach(tab => {
-            tab.classList.toggle('active', tab.dataset.view === view);
-        });
-    }
+    // Reflect open/closed state on the universal header icon
+    setNotesToggleIcon(view === 'notes');
 
     // Show/hide sermon notes view
     if (view === 'bible') {

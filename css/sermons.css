@@ -1,62 +1,5 @@
 /* Sermon Notes Styles */
 
-/* Mobile view indicator — bottom tab bar, only visible on mobile when notes active */
-.mobile-view-indicator {
-    display: none;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px;
-    padding-bottom: max(10px, env(safe-area-inset-bottom));
-    background: var(--bg-secondary);
-    border-top: 1px solid var(--border);
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 250;
-}
-
-@media (max-width: 767px) {
-    .mobile-view-indicator.active {
-        display: flex;
-    }
-
-    /* Push content up so it's not hidden behind the tab bar */
-    body:has(.mobile-view-indicator.active) #content,
-    body:has(.mobile-view-indicator.active) .sermon-notes-view {
-        padding-bottom: 70px;
-    }
-}
-
-@media (min-width: 768px) {
-    .mobile-view-indicator {
-        display: none !important;
-    }
-}
-
-.view-tab {
-    padding: 8px 20px;
-    border-radius: var(--radius-m);
-    font-size: 0.9em;
-    font-weight: 500;
-    color: var(--text-tertiary);
-    cursor: pointer;
-    transition: all 0.2s;
-    background: transparent;
-    border: 1px solid transparent;
-}
-
-.view-tab.active {
-    background: var(--accent-primary);
-    color: var(--bg-primary);
-    border-color: var(--accent-primary);
-}
-
-.view-tab:hover:not(.active) {
-    background: var(--bg-primary);
-    border-color: var(--border);
-}
-
 /* Split view layout (desktop) */
 .content.split-view {
     display: grid;
@@ -106,7 +49,7 @@
     transform: translateX(0);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
     .sermon-notes-view {
         border-left: none;
         max-height: none;
@@ -716,39 +659,13 @@ trix-editor a {
     border-top: 1px solid var(--border);
 }
 
-/* Desktop toggle button wrapper (temporary position) */
-.desktop-notes-toggle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Toggle notes button */
-#toggle-notes-btn {
-    background: var(--accent-primary);
-    color: var(--bg-primary);
-    border: none;
-    padding: 8px 16px;
-    border-radius: var(--radius-m);
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.95em;
-    transition: opacity 0.2s;
-}
-
-#toggle-notes-btn:hover {
-    opacity: 0.9;
-}
-
-#toggle-notes-btn:active {
-    opacity: 0.7;
+/* Notes toggle — universal header icon (notebook ↔ x state swap) */
+.notes-toggle-btn.notes-open {
+    color: var(--accent-primary);
 }
 
 /* Mobile adjustments */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
     /* On mobile, sermon notes takes full width when shown */
     .sermon-notes-view {
         position: fixed;
@@ -822,7 +739,6 @@ trix-editor a {
 
 /* Prevent double-tap zoom on buttons */
 .sermon-actions button,
-#toggle-notes-btn,
-.view-tab {
+.notes-toggle-btn {
     touch-action: manipulation;
 }

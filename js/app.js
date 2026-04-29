@@ -285,19 +285,11 @@ function setupEventListeners() {
         if (e.target.id === 'tag-manager-modal') closeTagManager();
     });
 
-    // Sermon notes toggle button
-    const toggleNotesBtn = document.getElementById('toggle-notes-btn');
-    if (toggleNotesBtn) {
-        toggleNotesBtn.addEventListener('click', toggleNotesView);
-    }
-
-    // Notes entry in settings panel
-    const settingsNotesBtn = document.getElementById('settings-notes-btn');
-    if (settingsNotesBtn) {
-        settingsNotesBtn.addEventListener('click', () => {
-            document.getElementById('settings-panel').classList.remove('open');
-            document.getElementById('settings-overlay').classList.remove('open');
-            if (typeof toggleNotesView === 'function') toggleNotesView();
+    // Universal notes toggle — single header icon, viewport-aware
+    const notesToggleBtn = document.getElementById('notes-toggle-btn');
+    if (notesToggleBtn) {
+        notesToggleBtn.addEventListener('click', () => {
+            if (typeof window.toggleNotes === 'function') window.toggleNotes();
         });
     }
 
@@ -306,8 +298,8 @@ function setupEventListeners() {
         // Ctrl/Cmd+Shift+N - Toggle notes
         if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'n') {
             e.preventDefault();
-            if (currentUser && typeof toggleNotesView === 'function') {
-                toggleNotesView();
+            if (currentUser && typeof window.toggleNotes === 'function') {
+                window.toggleNotes();
             }
         }
 
