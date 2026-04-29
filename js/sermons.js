@@ -651,6 +651,7 @@ async function toggleNotesView() {
  */
 window.switchMobileView = async function(view) {
     activeView = view;
+    document.body.classList.toggle('mobile-notes-open', view === 'notes');
     let notesView = document.getElementById('sermon-notes-view');
     const welcomeView = document.querySelector('.welcome');
 

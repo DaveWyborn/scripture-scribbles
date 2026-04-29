@@ -682,7 +682,13 @@ trix-editor a {
         z-index: 200;
         border-left: none;
         max-height: 100vh;
-        padding-top: calc(56px + env(safe-area-inset-top, 0px));
+        padding-top: calc(68px + env(safe-area-inset-top, 0px));
+    }
+
+    /* While Notes is open, hide the chapter nav so the toolbar reads as a
+       Notes-mode header (just the menu + close icon). */
+    body.mobile-notes-open .navigation {
+        display: none !important;
     }
 
     .sermon-metadata {
