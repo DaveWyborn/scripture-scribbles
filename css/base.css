@@ -57,7 +57,9 @@ body {
     padding: var(--space-s) var(--space-xl);
     position: sticky;
     top: 0;
-    z-index: 100;
+    /* Above the mobile/tablet sermon notes overlay (z-index 200) so the
+       universal Notes toggle remains tappable while notes are open. */
+    z-index: 250;
     border-bottom: 1px solid var(--border);
     transition: transform 0.3s ease;
 }

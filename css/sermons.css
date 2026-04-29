@@ -670,7 +670,9 @@ trix-editor a {
 
 /* Mobile adjustments */
 @media (max-width: 1023px) {
-    /* On mobile, sermon notes takes full width when shown */
+    /* On mobile/tablet, sermon notes overlays full width.
+       Toolbar (z-index 250) floats above; pad content down so it doesn't
+       render behind the universal Notes toggle. */
     .sermon-notes-view {
         position: fixed;
         top: 0;
@@ -680,7 +682,7 @@ trix-editor a {
         z-index: 200;
         border-left: none;
         max-height: 100vh;
-        padding-top: max(16px, env(safe-area-inset-top));
+        padding-top: calc(56px + env(safe-area-inset-top, 0px));
     }
 
     .sermon-metadata {
