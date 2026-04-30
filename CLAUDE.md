@@ -16,9 +16,11 @@ Vanilla JS, no framework, no build step. Supabase backend.
 See README.md and the roadmap file for full context if needed.
 
 ## Current state
-- v1.4.0 live — sermon notes, reading bar, passage mode, reading history, scroll nav
-- Next: v1.4.1 — continuous scroll (auto-load next chapter), verse formatting styles
-- Then: v1.5.0 — word-level highlighting with smart merge
+- v1.4.1 live — editorial design system, continuous scroll, sermon notes,
+  reading bar, passage mode, reading history
+- Next: v1.5.0 — verse clipping → notes (collect verses across chapters,
+  drop into current sermon note in one tap)
+- Word-level highlighting deferred (design doc kept; re-evaluate post-v1.5.0)
 
 ## Strategic goal
 1,000 users before building paid features. No paid tier until validated.

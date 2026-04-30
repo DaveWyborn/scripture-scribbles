@@ -161,6 +161,9 @@ async function appendNextChapter() {
         // Apply auto-contrast to new highlights
         setTimeout(applyAutoContrast, 50);
 
+        // Re-paint clip pills on the newly-loaded section.
+        if (typeof updateClipUI === 'function') updateClipUI();
+
         // Observe new sections for auto-mark-as-read
         if (typeof observeReadingSections === 'function' && autoMarkEnabled) {
             observeReadingSections();
@@ -193,7 +196,7 @@ function attachVerseHandlers(sectionEl) {
                 const verseNum = parseInt(el.dataset.verse);
                 if (e.shiftKey && typeof toggleVerseSelection === 'function') {
                     e.preventDefault();
-                    toggleVerseSelection(verseNum);
+                    toggleVerseSelection(verseNum, bookId, chapterNum);
                     return;
                 }
 
@@ -219,7 +222,7 @@ function attachVerseHandlers(sectionEl) {
                 const verseNum = parseInt(el.dataset.verse);
                 if (e.shiftKey && typeof toggleVerseSelection === 'function') {
                     e.preventDefault();
-                    toggleVerseSelection(verseNum);
+                    toggleVerseSelection(verseNum, bookId, chapterNum);
                     return;
                 }
 
@@ -517,11 +520,9 @@ function renderParagraph(verses, bookNum, chapterNum) {
                     <button class="menu-btn" onclick="copyVerse(${verse.number})">
                         <i class="ph ph-copy"></i> Copy
                     </button>
-                    ${(typeof sermonViewMode !== 'undefined' && (sermonViewMode === 'split' || activeView === 'notes')) ? `
-                    <button class="menu-btn" onclick="insertVerseReference(${verse.number})" title="Add to sermon notes">
-                        <i class="ph ph-arrow-right"></i> Add to Notes
+                    <button class="menu-btn menu-btn-clip" data-verse="${verse.number}" onclick="toggleClipFromMenu(this, ${verse.number})" title="Clip this verse to add to a note later">
+                        <i class="ph ph-paperclip"></i> Clip
                     </button>
-                    ` : ''}
                 </div>
 
                 <!-- Highlight submenu -->
@@ -964,11 +965,9 @@ function renderVerseMode(chapter, book) {
                     <button class="menu-btn" onclick="copyVerse(${verse.number})">
                         <i class="ph ph-copy"></i> Copy
                     </button>
-                    ${(typeof sermonViewMode !== 'undefined' && (sermonViewMode === 'split' || activeView === 'notes')) ? `
-                    <button class="menu-btn" onclick="insertVerseReference(${verse.number})" title="Add to sermon notes">
-                        <i class="ph ph-arrow-right"></i> Add to Notes
+                    <button class="menu-btn menu-btn-clip" data-verse="${verse.number}" onclick="toggleClipFromMenu(this, ${verse.number})" title="Clip this verse to add to a note later">
+                        <i class="ph ph-paperclip"></i> Clip
                     </button>
-                    ` : ''}
                 </div>
 
                 <!-- Highlight submenu -->
@@ -1170,11 +1169,9 @@ function displayChapter() {
                     <button class="menu-btn" onclick="copyVerse(${verse.number})">
                         <i class="ph ph-copy"></i> Copy
                     </button>
-                    ${(typeof sermonViewMode !== 'undefined' && (sermonViewMode === 'split' || activeView === 'notes')) ? `
-                    <button class="menu-btn" onclick="insertVerseReference(${verse.number})" title="Add to sermon notes">
-                        <i class="ph ph-arrow-right"></i> Add to Notes
+                    <button class="menu-btn menu-btn-clip" data-verse="${verse.number}" onclick="toggleClipFromMenu(this, ${verse.number})" title="Clip this verse to add to a note later">
+                        <i class="ph ph-paperclip"></i> Clip
                     </button>
-                    ` : ''}
                 </div>
 
                 <!-- Highlight submenu -->
@@ -1343,6 +1340,10 @@ function displayChapter() {
 
     // Apply auto-contrast to highlights and tags
     setTimeout(applyAutoContrast, 50);
+
+    // Re-apply clip pills to verses that were previously clipped (clips persist
+    // across prev/next nav and continuous scroll).
+    if (typeof updateClipUI === 'function') updateClipUI();
 
     // Set up continuous scroll for fluid and verse modes
     if (readingMode !== 'passage') {

@@ -2,6 +2,25 @@
 // Handles creating, loading, saving, and managing sermon notes with Trix editor
 
 /**
+ * Persist the clip-format preference. 'full' = ref link + verse text;
+ * 'link' = ref link only.
+ * Note: Must be globally accessible for onchange handlers.
+ */
+window.setClipFormat = function(value) {
+    if (value !== 'full' && value !== 'link') value = 'full';
+    localStorage.setItem('clipFormat', value);
+}
+
+/**
+ * Sync the clip-format <select> with the saved preference on init.
+ */
+function initClipFormatControl() {
+    const select = document.getElementById('clip-format');
+    if (!select) return;
+    select.value = localStorage.getItem('clipFormat') || 'full';
+}
+
+/**
  * Initialize sermon notes module
  */
 async function initSermons() {
@@ -26,6 +45,14 @@ async function initSermons() {
             metadata.classList.add('collapsed');
             toggleBtn.classList.add('collapsed');
         }
+    }
+
+    // Restore clip format preference into settings UI
+    initClipFormatControl();
+
+    // Wire hash-link routing for clip references in notes
+    if (typeof setupClipLinkRouter === 'function') {
+        setupClipLinkRouter();
     }
 
     // Load user's sermons if logged in
@@ -134,125 +161,348 @@ function setupTrixListeners() {
 }
 
 /**
- * Toggle verse selection for insertion into notes
+ * Build the storage key for a clip record.
  */
-function toggleVerseSelection(verseNum) {
-    if (!sermonViewMode || sermonViewMode === 'single') {
-        return; // Only allow selection when notes are open
-    }
-
-    if (selectedVerses.has(verseNum)) {
-        selectedVerses.delete(verseNum);
-    } else {
-        selectedVerses.add(verseNum);
-    }
-
-    updateVerseSelectionUI();
+function clipKey(bookId, chapter, verse) {
+    return `${bookId}:${chapter}:${verse}`;
 }
 
 /**
- * Update UI for selected verses
+ * Build a clip record from current bible state for the given verse number.
+ * Captures book, chapter, version, and verse text at clip-time so output is
+ * accurate even if the user has navigated elsewhere.
  */
-function updateVerseSelectionUI() {
-    // Update visual state of verses
+function buildClipRecord(verseNum, bookId = currentBook, chapter = currentChapter) {
+    if (!bibleData) return null;
+    const book = bibleData.books.find(b => b.id === bookId);
+    if (!book) return null;
+    const ch = book.chapters.find(c => c.number === chapter);
+    if (!ch) return null;
+    const verse = ch.verses.find(v => v.number === verseNum);
+    if (!verse) return null;
+    return {
+        bookId,
+        bookName: book.name,
+        chapter,
+        verse: verseNum,
+        version: (bibleData.version || 'WEB').toUpperCase(),
+        text: verse.text
+    };
+}
+
+/**
+ * Toggle clip state from a menu button — resolves the verse's actual chapter
+ * by walking up to its enclosing .chapter-section, so clipping works correctly
+ * even when continuous scroll has loaded multiple chapters.
+ * Note: Must be globally accessible for onclick handlers.
+ */
+window.toggleClipFromMenu = function(menuBtn, verseNum) {
+    const section = menuBtn.closest('.chapter-section');
+    const bookId = section ? section.dataset.book : currentBook;
+    const chapter = section ? parseInt(section.dataset.chapter) : currentChapter;
+    toggleVerseSelection(verseNum, bookId, chapter);
+}
+
+/**
+ * Toggle clip state for a verse in the current chapter.
+ * Note: Must be globally accessible for onclick handlers.
+ */
+window.toggleVerseSelection = function(verseNum, bookId, chapter) {
+    bookId = bookId || currentBook;
+    chapter = chapter || currentChapter;
+    const key = clipKey(bookId, chapter, verseNum);
+    if (clippedVerses.has(key)) {
+        clippedVerses.delete(key);
+    } else {
+        const record = buildClipRecord(verseNum, bookId, chapter);
+        if (!record) return;
+        clippedVerses.set(key, record);
+    }
+    updateClipUI();
+}
+
+/**
+ * Sync clip visual state, count chip, and bar visibility.
+ * Walks all rendered verses (across continuously-scrolled chapters) and marks
+ * those whose passage key is in clippedVerses.
+ */
+function updateClipUI() {
     document.querySelectorAll('.verse, .verse-inline-wrapper').forEach(el => {
         const verseNum = parseInt(el.dataset.verse);
-        if (selectedVerses.has(verseNum)) {
-            el.classList.add('selected-for-insertion');
-        } else {
-            el.classList.remove('selected-for-insertion');
-        }
+        if (!verseNum) return;
+        // Each chapter section in continuous scroll carries data-book + data-chapter.
+        // Passage mode has no section wrapper; fall back to current state.
+        const section = el.closest('.chapter-section');
+        const bookId = section ? section.dataset.book : currentBook;
+        const chapter = section ? parseInt(section.dataset.chapter) : currentChapter;
+        const key = clipKey(bookId, chapter, verseNum);
+        el.classList.toggle('clipped', clippedVerses.has(key));
+        // Keep legacy class in sync for any leftover styles
+        el.classList.toggle('selected-for-insertion', clippedVerses.has(key));
     });
 
-    // Show/hide insertion bar
-    const insertionBar = document.getElementById('verse-insertion-bar');
-    const label = document.getElementById('verses-selected-label');
-
-    if (selectedVerses.size > 0 && insertionBar) {
-        insertionBar.style.display = 'flex';
-        if (label) {
-            const count = selectedVerses.size;
-            label.textContent = `${count} verse${count > 1 ? 's' : ''} selected`;
+    const bar = document.getElementById('clip-bar');
+    const countEl = document.getElementById('clip-count-label');
+    if (!bar) return;
+    if (clippedVerses.size > 0) {
+        bar.classList.add('visible');
+        if (countEl) {
+            const n = clippedVerses.size;
+            countEl.textContent = `${n} clip${n === 1 ? '' : 's'}`;
         }
-    } else if (insertionBar) {
-        insertionBar.style.display = 'none';
+    } else {
+        bar.classList.remove('visible');
     }
 }
+// Back-compat alias for any callers still using the old name.
+const updateVerseSelectionUI = updateClipUI;
 
 /**
- * Clear all selected verses
- * Note: Must be globally accessible for onclick handlers
+ * Clear all clips. Called on book change / chapter jump / explicit clear.
+ * Note: Must be globally accessible for onclick handlers.
  */
 window.clearVerseSelection = function() {
-    selectedVerses.clear();
-    updateVerseSelectionUI();
+    clippedVerses.clear();
+    updateClipUI();
+}
+window.clearClips = window.clearVerseSelection;
+
+/**
+ * Group clips into ordered passages, collapsing contiguous verse runs.
+ * Returns array of { bookId, bookName, chapter, version, ranges: [{start, end, verses: [{verse, text}]}] }.
+ * Each "range" is a contiguous run of clipped verses within one chapter.
+ */
+function groupClipsByPassage() {
+    // Sort by canonical book order, then chapter, then verse. Book IDs are
+    // generated as `book.name.toLowerCase().replace(/\s+/g, '')` so they match
+    // BIBLE_BOOK_ORDER directly (no hyphens).
+    const records = Array.from(clippedVerses.values()).sort((a, b) => {
+        const ai = BIBLE_BOOK_ORDER.indexOf(a.bookId);
+        const bi = BIBLE_BOOK_ORDER.indexOf(b.bookId);
+        if (ai !== bi) return ai - bi;
+        if (a.chapter !== b.chapter) return a.chapter - b.chapter;
+        return a.verse - b.verse;
+    });
+
+    const groups = [];
+    for (const r of records) {
+        let group = groups[groups.length - 1];
+        if (!group || group.bookId !== r.bookId || group.chapter !== r.chapter) {
+            group = {
+                bookId: r.bookId,
+                bookName: r.bookName,
+                chapter: r.chapter,
+                version: r.version,
+                ranges: []
+            };
+            groups.push(group);
+        }
+        const lastRange = group.ranges[group.ranges.length - 1];
+        if (lastRange && r.verse === lastRange.end + 1) {
+            lastRange.end = r.verse;
+            lastRange.verses.push({ verse: r.verse, text: r.text });
+        } else {
+            group.ranges.push({ start: r.verse, end: r.verse, verses: [{ verse: r.verse, text: r.text }] });
+        }
+    }
+    return groups;
 }
 
 /**
- * Insert selected verses as reference (e.g., "Gen 1:1-3")
- * Note: Must be globally accessible for onclick handlers
+ * Format a single range's reference label, e.g. "John 3:16" or "Genesis 1:1-3".
  */
-window.insertSelectedAsReference = function() {
-    if (selectedVerses.size === 0) return;
+function formatRangeRef(group, range) {
+    const v = range.start === range.end ? `${range.start}` : `${range.start}-${range.end}`;
+    return `${group.bookName} ${group.chapter}:${v} (${group.version})`;
+}
 
-    const book = bibleData.books.find(b => b.id === currentBook);
-    if (!book) return;
+/**
+ * Build a hash link that reopens a passage at the first clipped verse.
+ * Format: #/<version>/<bookId>/<chapter>/<verse>
+ */
+function buildPassageLink(group, range) {
+    return `#/${group.version.toLowerCase()}/${group.bookId}/${group.chapter}/${range.start}`;
+}
 
-    // Sort verse numbers
-    const verses = Array.from(selectedVerses).sort((a, b) => a - b);
+/**
+ * Render clips as HTML for Trix insertion.
+ * Format depends on `clipFormat` localStorage setting:
+ *   'full' (default): reference link followed by verse text on next line
+ *   'link': reference link only
+ */
+function renderClipsHTML() {
+    const format = localStorage.getItem('clipFormat') || 'full';
+    const groups = groupClipsByPassage();
+    if (groups.length === 0) return '';
 
-    // Format reference
-    let reference;
-    if (verses.length === 1) {
-        reference = `${book.name} ${currentChapter}:${verses[0]}`;
-    } else if (verses.length === 2) {
-        reference = `${book.name} ${currentChapter}:${verses[0]}, ${verses[1]}`;
-    } else {
-        // Check for continuous range
-        const isContinuous = verses.every((v, i) => i === 0 || v === verses[i - 1] + 1);
-        if (isContinuous) {
-            reference = `${book.name} ${currentChapter}:${verses[0]}-${verses[verses.length - 1]}`;
+    const blocks = [];
+    for (const group of groups) {
+        for (const range of group.ranges) {
+            const ref = formatRangeRef(group, range);
+            const href = buildPassageLink(group, range);
+            const refLine = `<p><a href="${href}"><strong>${ref}</strong></a></p>`;
+            if (format === 'link') {
+                blocks.push(refLine);
+            } else {
+                const verseLines = range.verses
+                    .map(v => `<p>${v.text}</p>`)
+                    .join('');
+                blocks.push(refLine + verseLines);
+            }
+        }
+    }
+    // Trailing blank paragraph keeps the cursor below the inserted block.
+    return blocks.join('') + '<p><br></p>';
+}
+
+/**
+ * Append clipped verses to the current sermon note. If notes panel is closed,
+ * open it first. If no current sermon, create an untitled one.
+ * Note: Must be globally accessible for onclick handlers.
+ */
+window.addClipsToNote = async function() {
+    if (clippedVerses.size === 0) return;
+
+    // Notes are user-scoped; nudge guests to sign in instead of mounting Trix
+    // into nowhere.
+    if (!currentUser) {
+        if (typeof showErrorIndicator === 'function') {
+            showErrorIndicator('Sign in to save clipped verses to a note');
         } else {
-            reference = `${book.name} ${currentChapter}:${verses.join(', ')}`;
+            alert('Sign in to save clipped verses to a note.');
+        }
+        return;
+    }
+
+    // 1. Make sure the notes panel is visible.
+    if (window.innerWidth >= 1024) {
+        if (sermonViewMode !== 'split' && typeof toggleNotesView === 'function') {
+            await toggleNotesView();
+        }
+    } else {
+        if (activeView !== 'notes' && typeof switchMobileView === 'function') {
+            await switchMobileView('notes');
         }
     }
 
-    // Insert into Trix at cursor
-    const trixEditor = document.querySelector('trix-editor');
-    if (trixEditor && trixEditor.editor) {
-        trixEditor.editor.insertString(reference);
+    // 2. Make sure a sermon exists.
+    if (!currentSermon) {
+        await createSermon();
     }
 
-    clearVerseSelection();
+    // 3. Make sure Trix is mounted.
+    const editor = await ensureTrixEditor();
+    if (!editor) {
+        console.error('Could not mount Trix editor');
+        return;
+    }
+
+    // 4. Insert and clear.
+    const html = renderClipsHTML();
+    if (html) {
+        editor.insertHTML(html);
+        debounceSaveSermon();
+    }
+    clearClips();
+}
+
+// Back-compat aliases for any old onclick="insertSelectedAsReference()" or
+// onclick="insertSelectedAsText()" — both now route to addClipsToNote.
+window.insertSelectedAsReference = window.addClipsToNote;
+window.insertSelectedAsText = window.addClipsToNote;
+
+/**
+ * Parse a clip-style hash (#/<version>/<bookId>/<chapter>/<verse>) into parts.
+ * Returns null if the hash isn't in the expected shape.
+ */
+function parseClipHash(hash) {
+    if (!hash || !hash.startsWith('#/')) return null;
+    const parts = hash.slice(2).split('/');
+    if (parts.length < 3) return null;
+    const [version, bookId, chapterStr, verseStr] = parts;
+    const chapter = parseInt(chapterStr, 10);
+    const verse = verseStr ? parseInt(verseStr, 10) : null;
+    if (!bookId || !chapter || isNaN(chapter)) return null;
+    return { version, bookId, chapter, verse };
 }
 
 /**
- * Insert selected verses as full text
- * Note: Must be globally accessible for onclick handlers
+ * Navigate the reader to the passage encoded in a clip hash. Used both for
+ * direct hash changes and for clicks on `<a href="#/...">` clip references
+ * inside the Trix editor.
  */
-window.insertSelectedAsText = function() {
-    if (selectedVerses.size === 0) return;
+async function openClipTarget(target) {
+    if (!target || !bibleData) return;
 
-    const book = bibleData.books.find(b => b.id === currentBook);
+    const book = bibleData.books.find(b => b.id === target.bookId);
     if (!book) return;
+    const chapterObj = book.chapters.find(c => c.number === target.chapter);
+    if (!chapterObj) return;
 
-    const chapter = book.chapters.find(c => c.number === currentChapter);
-    if (!chapter) return;
+    // Switch reader state.
+    currentBook = target.bookId;
+    currentChapter = target.chapter;
+    passageChunks = [];
+    currentPassageIndex = 0;
 
-    // Sort verse numbers and get text
-    const verses = Array.from(selectedVerses).sort((a, b) => a - b);
-    const verseTexts = verses.map(verseNum => {
-        const verse = chapter.verses.find(v => v.number === verseNum);
-        return verse ? `${verseNum} ${verse.text}` : '';
-    }).filter(t => t).join(' ');
+    if (typeof saveLastPosition === 'function') saveLastPosition();
+    if (typeof loadAnnotations === 'function') await loadAnnotations();
+    if (typeof displayChapter === 'function') displayChapter();
 
-    // Insert into Trix at cursor
-    const trixEditor = document.querySelector('trix-editor');
-    if (trixEditor && trixEditor.editor) {
-        trixEditor.editor.insertHTML(`<blockquote>${verseTexts}<br><em>${book.name} ${currentChapter}:${verses[0]}${verses.length > 1 ? '-' + verses[verses.length - 1] : ''}</em></blockquote>`);
+    // On mobile, switching to bible view so the user can see the passage.
+    if (window.innerWidth < 1024 && activeView !== 'bible' && typeof switchMobileView === 'function') {
+        switchMobileView('bible');
     }
 
-    clearVerseSelection();
+    // After render, scroll the target verse into view.
+    if (target.verse) {
+        setTimeout(() => {
+            const verseEl = document.querySelector(
+                `.chapter-section[data-book="${target.bookId}"][data-chapter="${target.chapter}"] [data-verse="${target.verse}"]`
+            ) || document.querySelector(`[data-verse="${target.verse}"]`);
+            if (verseEl) {
+                verseEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                verseEl.classList.add('clip-link-flash');
+                setTimeout(() => verseEl.classList.remove('clip-link-flash'), 1600);
+            }
+        }, 200);
+    }
+}
+
+/**
+ * Wire up clip-link routing: hashchange events for cold links, and a
+ * delegated click handler so links inside the Trix editor (which lives in a
+ * shadow-free iframe-like contenteditable) work without page reload.
+ */
+function setupClipLinkRouter() {
+    window.addEventListener('hashchange', () => {
+        const target = parseClipHash(location.hash);
+        if (target) openClipTarget(target);
+    });
+
+    // Trix renders its content in a regular contenteditable (no shadow DOM),
+    // so a single delegated click listener catches both editor and rendered
+    // notes-export anchors.
+    document.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href^="#/"]');
+        if (!a) return;
+        const target = parseClipHash(a.getAttribute('href'));
+        if (!target) return;
+        e.preventDefault();
+        openClipTarget(target);
+    });
+
+    // Honour an initial clip hash on first load.
+    const initial = parseClipHash(location.hash);
+    if (initial) {
+        // Defer until the bible has loaded.
+        const wait = setInterval(() => {
+            if (bibleData) {
+                clearInterval(wait);
+                openClipTarget(initial);
+            }
+        }, 100);
+    }
 }
 
 /**
@@ -558,20 +808,7 @@ async function toggleNotesView() {
                     <input type="text" id="sermon-passage" placeholder="Passage...">
                 </div>
             </div>
-            <div class="verse-insertion-bar" id="verse-insertion-bar" style="display: none;">
-                <span class="verses-selected-label" id="verses-selected-label">0 verses selected</span>
-                <div class="insertion-buttons">
-                    <button class="btn-insert" onclick="insertSelectedAsReference()">
-                        <i class="ph ph-link"></i> Add as Reference
-                    </button>
-                    <button class="btn-insert" onclick="insertSelectedAsText()">
-                        <i class="ph ph-quotes"></i> Add Full Text
-                    </button>
-                    <button class="btn-clear-selection" onclick="clearVerseSelection()">
-                        <i class="ph ph-x"></i>
-                    </button>
-                </div>
-            </div>
+<!-- Clip bar lives at container level (see main HTML); not embedded in notes view. -->
             <div class="sermon-editor-container">
                 <div id="trix-mount"></div>
                 <input type="hidden" id="sermon-content">
@@ -680,20 +917,7 @@ window.switchMobileView = async function(view) {
                     <input type="text" id="sermon-passage" placeholder="Passage...">
                 </div>
             </div>
-            <div class="verse-insertion-bar" id="verse-insertion-bar" style="display: none;">
-                <span class="verses-selected-label" id="verses-selected-label">0 verses selected</span>
-                <div class="insertion-buttons">
-                    <button class="btn-insert" onclick="insertSelectedAsReference()">
-                        <i class="ph ph-link"></i> Add as Reference
-                    </button>
-                    <button class="btn-insert" onclick="insertSelectedAsText()">
-                        <i class="ph ph-quotes"></i> Add Full Text
-                    </button>
-                    <button class="btn-clear-selection" onclick="clearVerseSelection()">
-                        <i class="ph ph-x"></i>
-                    </button>
-                </div>
-            </div>
+<!-- Clip bar lives at container level (see main HTML); not embedded in notes view. -->
             <div class="sermon-editor-container">
                 <div id="trix-mount"></div>
                 <input type="hidden" id="sermon-content">

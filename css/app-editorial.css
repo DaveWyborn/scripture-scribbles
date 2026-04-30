@@ -710,6 +710,133 @@ trix-editor a {
     border-color: var(--accent);
 }
 
+/* ── Verse clipping (v1.5.0) ──────────────────────────────────────── */
+
+/* Clipped verse: gentle marker, no flood. The "selected-for-insertion"
+   class continues to apply the same accent styling for back-compat. */
+.verse.clipped .verse-body,
+.verse.clipped .verse-number {
+    color: var(--accent);
+}
+.verse.clipped .verse-number {
+    font-weight: 600;
+}
+.verse-inline-wrapper.clipped {
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border-radius: 3px;
+    padding: 0 2px;
+}
+.verse-inline-wrapper.clipped .verse-number-inline {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* Floating clip bar — fixed bottom-centre, only visible when clips exist. */
+.clip-bar {
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px 10px 18px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    box-shadow: 0 10px 28px -18px rgba(0, 0, 0, 0.55), 0 4px 12px -6px rgba(0, 0, 0, 0.25);
+    z-index: 260;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 220ms ease, opacity 180ms ease;
+    max-width: calc(100vw - 24px);
+}
+.clip-bar.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+.clip-count {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+}
+.clip-bar-actions {
+    display: flex;
+    gap: 6px;
+}
+.clip-bar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.clip-bar-btn:hover {
+    background: var(--base);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+.clip-bar-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--base);
+}
+.clip-bar-btn.primary:hover {
+    background: color-mix(in srgb, var(--accent) 85%, var(--text));
+    color: var(--base);
+}
+.clip-bar-btn.ghost {
+    padding: 8px 10px;
+    color: var(--muted);
+}
+.clip-bar-btn .ph {
+    font-size: 14px;
+}
+
+/* Per-verse menu Clip button — show clipped state via parent verse class. */
+.verse.clipped .menu-btn-clip,
+.verse-inline-wrapper.clipped .menu-btn-clip {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Brief flash when navigating from a clip-link in notes. */
+@keyframes clip-link-flash {
+    0%   { background-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+    100% { background-color: transparent; }
+}
+.clip-link-flash {
+    animation: clip-link-flash 1.5s ease-out;
+}
+
+/* On narrow viewports, give the clip bar room to breathe above the mobile
+   notes tab/swipe area without colliding with the toolbar. */
+@media (max-width: 1023px) {
+    .clip-bar {
+        bottom: 12px;
+        padding: 8px 12px 8px 14px;
+        gap: 10px;
+    }
+    .clip-bar-btn {
+        padding: 7px 12px;
+        font-size: 11px;
+    }
+}
+
 /* ── Reduced motion ───────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {

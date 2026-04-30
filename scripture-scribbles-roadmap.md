@@ -156,22 +156,77 @@
 
 ---
 
-### v1.5.0 - Word-Level Highlighting
-**Goal:** "Flexible word + verse highlighting with smart merging"
+### v1.5.0 - Verse Clipping → Notes
+**Goal:** "Collect verses across chapters and books, drop them into a note in one tap."
 
-**Word-level highlighting:**
-- [ ] Select individual words to highlight
-- [ ] 6+ colours available
-- [ ] Smart merge rules:
-  - [ ] Word highlight + verse highlight (different colours) → both remain
-  - [ ] Word highlight + verse highlight (same colour) → merge into verse
-  - [ ] Clear verse → word highlights remain
-  - [ ] Clear word → adopts verse highlight if exists
-- [ ] Clear behaviour:
-  - [ ] "Clear verse highlight" with only word highlights → clears words
-  - [ ] "Clear verse highlight" with both → clears verse only (click again for words)
+**Why this over word-level highlighting:** Clipping ties directly into the
+existing sermon-notes flow (the v1.4.x headliner). It's the natural action
+during a sermon: hear a reference, jump to it, mark it, keep listening,
+collect a few more, drop them all into the note. Word-level highlighting
+is decorative; clipping is functional. Word highlights deferred to a later
+release (kept as design doc — see scripture-scribbles-word-level-annotations.md).
 
-**Timeline:** 2 weeks
+**Core feature — Clipping:**
+- [ ] Tap a verse → tap "Clip" in the action menu (toggles on/off)
+- [ ] Clips persist across chapter navigation and continuous scroll
+- [ ] Clips clear on book change, jump-to-chapter, jump-to-verse, refresh
+- [ ] Clips are session-only (no Supabase persistence)
+- [ ] Clipped verses get a visual marker (existing `selected-for-insertion` pill)
+- [ ] Floating "X clips" chip appears at bottom of viewport with:
+  - [ ] Count ("3 clips")
+  - [ ] "Add to note" primary button
+  - [ ] Clear (X) button
+- [ ] Cross-book / cross-chapter clipping supported
+
+**"Add to note" flow:**
+- [ ] If notes panel closed, open it
+- [ ] If no sermon currently loaded, create a new untitled one
+- [ ] Append clips to current note (at cursor or end)
+- [ ] Clear clip selection after insertion
+
+**Output format (default — "Verse text + link"):**
+```
+Book Ch:V-V (VERSION)    ← hyperlink back to passage
+Verse text...
+```
+- [ ] Group clips by book + chapter
+- [ ] Collapse contiguous verse runs to ranges (1:1-3)
+- [ ] Non-contiguous verses listed separately (1:1-3 then 1:7)
+- [ ] Reference is a clickable link that re-opens the chapter scrolled to verse
+- [ ] Each group separated by blank line
+
+**Output format ("Link only" setting):**
+```
+Book Ch:V-V (VERSION)    ← link, no verse text below
+```
+
+**Settings:**
+- [ ] New toggle in Settings panel: "Clip format in notes"
+  - [ ] "Verse text + link" (default)
+  - [ ] "Link only"
+- [ ] Persisted to localStorage
+
+**Removed (replaced by clipping):**
+- [ ] Old per-verse "Insert reference" button (single-verse insert)
+- [ ] Dual "Add as Reference" / "Add Full Text" buttons in insertion bar
+- [ ] Shift+click for selection (replaced by tap-then-Clip menu action)
+- [ ] `verseInsertFormat` localStorage key (superseded by `clipFormat`)
+
+**Timeline:** 1-2 weeks
+
+---
+
+### Deferred: Word-Level Highlighting
+**Status:** Design complete, deferred until post-v1.5.0 (re-evaluate after clipping ships)
+
+**Why deferred:** Decorative rather than functional; clipping delivers more
+user value for the sermon-notes flow. Design doc preserved at
+`scripture-scribbles-word-level-annotations.md`.
+
+**Original scope (when revisited):**
+- Select individual words to highlight (6+ colours)
+- Smart merge rules (word + verse same/different colour)
+- Clear behaviour for layered highlights
 
 ---
 

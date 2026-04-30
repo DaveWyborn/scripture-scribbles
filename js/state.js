@@ -28,7 +28,10 @@ let currentSermon = null; // Active sermon object
 let sermonList = []; // All user sermons
 let sermonSaveTimeout = null; // Debounce timer
 let splitRatio = 50; // Percentage for adjustable split
-let selectedVerses = new Set(); // Verses selected for insertion into notes
+// Clipped verses for insertion into notes. Keyed by `${bookId}:${chapter}:${verseNum}`,
+// values are { bookId, bookName, chapter, verse, version, text }. Survives chapter
+// nav and continuous scroll; cleared on book change, jump-to-chapter/verse, refresh.
+let clippedVerses = new Map();
 
 // Annotation state
 let currentAnnotations = {};
