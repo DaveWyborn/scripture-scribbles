@@ -168,8 +168,9 @@ release (kept as design doc — see scripture-scribbles-word-level-annotations.m
 
 **Core feature — Clipping:**
 - [ ] Tap a verse → tap "Clip" in the action menu (toggles on/off)
-- [ ] Clips persist across chapter navigation and continuous scroll
-- [ ] Clips clear on book change, jump-to-chapter, jump-to-verse, refresh
+- [ ] Clips persist across all navigation (prev/next, continuous scroll,
+      chapter-grid jump, book change). Only refresh and the explicit clear
+      button drop them.
 - [ ] Clips are session-only (no Supabase persistence)
 - [ ] Clipped verses get a visual marker (existing `selected-for-insertion` pill)
 - [ ] Floating "X clips" chip appears at bottom of viewport with:

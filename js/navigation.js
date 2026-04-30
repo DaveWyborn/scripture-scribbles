@@ -72,8 +72,6 @@ function selectBook(bookId) {
     currentChapter = 1;
     passageChunks = [];
     currentPassageIndex = 0;
-    // Jumping to a different book breaks the reading flow — drop any clips.
-    if (typeof clearClips === 'function') clearClips();
     updateNavDisplay();
     renderBookGrid();
     showNavTab('chapter');
@@ -101,9 +99,6 @@ function renderChapterGrid() {
             currentChapter = parseInt(btn.dataset.chapter);
             passageChunks = [];
             currentPassageIndex = 0;
-            // Jumping via chapter grid is a search/jump action — clear clips.
-            // Sequential prev/next + continuous scroll preserve them.
-            if (typeof clearClips === 'function') clearClips();
             saveLastPosition();
             await loadAnnotations();
             displayChapter();
