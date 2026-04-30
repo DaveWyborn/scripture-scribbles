@@ -397,9 +397,11 @@ window.addClipsToNote = async function() {
         return;
     }
 
-    // 4. Insert and clear.
+    // 4. Append at end of document, regardless of where the cursor was.
     const html = renderClipsHTML();
     if (html) {
+        const end = editor.getDocument().toString().length;
+        editor.setSelectedRange([end, end]);
         editor.insertHTML(html);
         debounceSaveSermon();
     }
