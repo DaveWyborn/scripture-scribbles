@@ -1640,9 +1640,8 @@
     text-transform: uppercase;
 }
 
-/* Poetry */
+/* Poetry — indent-only, no italic (italic on long passages hurts dyslexic readability) */
 .reading-mode-fluid .poetry {
-    font-style: italic;
     margin: 1.5em 0;
 }
 

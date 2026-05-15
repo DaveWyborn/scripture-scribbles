@@ -97,9 +97,17 @@ function cleanText(text) {
   // Remove +wh markers (Hebrew words in footnotes) but keep text
   text = text.replace(/\\\+wh\s+(.*?)\\\+wh\*/g, '$1');
 
-  // Remove words of Jesus markers
-  text = text.replace(/\\wj\s*/g, '');
+  // Remove words of Jesus markers — close (\wj*) BEFORE open (\wj) so the
+  // open-marker regex doesn't eat \wj from \wj* and leave a stray asterisk.
   text = text.replace(/\\wj\*/g, '');
+  text = text.replace(/\\wj\s*/g, '');
+
+  // Remove keyword markers, keeping the inner text
+  text = text.replace(/\\k\s+(.*?)\\k\*/g, '$1');
+
+  // Strip any other stray markers that snuck through (e.g. \b stanza break,
+  // unhandled paragraph variants). Match optional \d? for levels and \*? for close.
+  text = text.replace(/\\[a-z]+\d?\*?(?=\s|$)/g, '');
 
   // Clean up extra spaces
   text = text.replace(/\s+/g, ' ').trim();
@@ -251,7 +259,16 @@ function parseUSFMFile(filepath) {
 
     result.chapters[chapterNum] = [];
 
-    let currentParagraphType = null;
+    // Track paragraph/poetry state across verses. Each verse is split into
+    // segments at \p / \q\d? marker boundaries — preserving the exact point
+    // where styling changes within a verse (e.g. prose intro to an OT poetry
+    // quote). The state at verse start = the last marker seen in the previous
+    // verse's text (or chapter preamble).
+    // `nextSegmentStarts` tells the renderer that the next text segment
+    // begins a new block (explicit marker fired) vs continues the previous
+    // run of segments.
+    let currentSegmentType = 'paragraph';
+    let nextSegmentStarts = false;
     let pendingHeading = null;
 
     // Split into verse sections
@@ -267,14 +284,14 @@ function parseUSFMFile(filepath) {
     if (descMatch) {
       pendingHeading = cleanText(descMatch[1]);
     }
-    const paraMatch = preVerseContent.match(/\\p\s*$/m);
-    if (paraMatch) {
-      currentParagraphType = 'paragraph';
-    }
-    const poetryMatch = preVerseContent.match(/\\q(\d)?/);
-    if (poetryMatch) {
-      const level = poetryMatch[1] || '1';
-      currentParagraphType = `poetry${level}`;
+    // Initial segment type = last paragraph/poetry marker in preVerseContent
+    const preMarkers = [...preVerseContent.matchAll(/\\(p|m|mi|nb|pi\d?|q\d?|qs)(?=\s|$)/g)];
+    if (preMarkers.length > 0) {
+      const tag = preMarkers[preMarkers.length - 1][1];
+      if (tag === 'qs') currentSegmentType = 'poetry1';
+      else if (tag.startsWith('q')) currentSegmentType = `poetry${tag.slice(1) || '1'}`;
+      else currentSegmentType = 'paragraph';
+      nextSegmentStarts = true;
     }
 
     // Process each verse
@@ -287,19 +304,6 @@ function parseUSFMFile(filepath) {
       // Extract until next major marker (next verse handled by split)
       // Keep collecting until we hit \v, \c, or end
       verseText = verseText.split(/(?=\\v\s+\d+|\\c\s+\d+)/)[0];
-
-      // Check for paragraph/poetry markers within verse
-      const versePara = verseText.match(/^\\p\s*$/m);
-      if (versePara) {
-        currentParagraphType = 'paragraph';
-      }
-      const versePoetry = verseText.match(/^\\q(\d)?/m);
-      if (versePoetry) {
-        const level = versePoetry[1] || '1';
-        if (!currentParagraphType || currentParagraphType.startsWith('poetry')) {
-          currentParagraphType = `poetry${level}`;
-        }
-      }
 
       // Capture \s (section heading) or \d (description) markers that trail
       // after verse text — these are headings for the NEXT verse.
@@ -321,34 +325,70 @@ function parseUSFMFile(filepath) {
       const footnotes = extractFootnotes(verseText);
       const crossRefs = extractCrossRefs(verseText);
 
-      // Remove all USFM markers except text content
-      verseText = verseText.replace(/\\f\s+\+\s+.*?\\f\*/gs, '');
-      verseText = verseText.replace(/\\x\s+\+\s+.*?\\x\*/gs, '');
-      verseText = verseText.replace(/\\[qpms]\d?\s*/g, ''); // Remove paragraph/poetry/section markers anywhere
-      verseText = verseText.replace(/\\d\s+.+/g, ''); // Remove description markers and their content
+      // Build segments by walking \p / \q\d? marker boundaries in order.
+      // Each segment carries its own type so the renderer can apply correct
+      // indent level per line rather than to the whole verse.
+      const segments = [];
+      let segmentSource = verseText
+        .replace(/\\f\s+\+\s+.*?\\f\*/gs, '')      // strip footnotes
+        .replace(/\\x\s+\+\s+.*?\\x\*/gs, '')      // strip cross-refs
+        .replace(/\\s\d?\s+.+?(?=\\|$)/gs, '')     // strip section headings
+        .replace(/\\d\s+.+/g, '');                 // strip description markers
 
-      // Clean the text
-      verseText = cleanText(verseText);
+      // Paragraph markers: \p (regular), \m (continuation), \mi (indented continuation),
+      // \nb (no-break), \pi\d? (indented paragraph). All map to type 'paragraph'.
+      // Poetry markers: \q\d? (level 1-9), \qs (selah, treat as poetry1).
+      const segmentMarkerRegex = /\\(p|m|mi|nb|pi\d?|q\d?|qs)(?=\s|$)/g;
+      let segmentLastIdx = 0;
+      let segmentMatch;
+      while ((segmentMatch = segmentMarkerRegex.exec(segmentSource)) !== null) {
+        const slice = segmentSource.slice(segmentLastIdx, segmentMatch.index);
+        const cleaned = cleanText(slice);
+        if (cleaned) {
+          const seg = { type: currentSegmentType, text: cleaned };
+          if (nextSegmentStarts) seg.start = true;
+          segments.push(seg);
+          nextSegmentStarts = false;
+        }
+        const tag = segmentMatch[1];
+        if (tag === 'qs') {
+          currentSegmentType = 'poetry1';
+        } else if (tag.startsWith('q')) {
+          currentSegmentType = `poetry${tag.slice(1) || '1'}`;
+        } else {
+          currentSegmentType = 'paragraph';
+        }
+        nextSegmentStarts = true;
+        segmentLastIdx = segmentMatch.index + segmentMatch[0].length;
+      }
+      const tailSlice = segmentSource.slice(segmentLastIdx);
+      const tailCleaned = cleanText(tailSlice);
+      if (tailCleaned) {
+        const seg = { type: currentSegmentType, text: tailCleaned };
+        if (nextSegmentStarts) seg.start = true;
+        segments.push(seg);
+        nextSegmentStarts = false;
+      }
 
-      if (!verseText) continue;
+      if (segments.length === 0) continue;
+
+      // Flattened text for backward compat (clipping, search, anything that
+      // just wants the verse as a string)
+      const verseTextFlat = segments.map(s => s.text).join(' ');
 
       const verseObj = {
         number: verseNum,
-        text: verseText
+        text: verseTextFlat,
+        // `type` = first segment's type. Used by passage-chunking which needs
+        // a single per-verse classification; the renderer uses `segments` for
+        // accurate per-line styling.
+        type: segments[0].type,
+        segments
       };
 
       // Add Strong's word data if present
       if (words && words.length > 0) {
         verseObj.words = words;
-      }
-
-      // Add paragraph/poetry info
-      if (currentParagraphType) {
-        verseObj.type = currentParagraphType;
-        // Only first verse in paragraph/poetry section gets the marker
-        if (!currentParagraphType.startsWith('poetry')) {
-          currentParagraphType = null;
-        }
       }
 
       // Add heading if pending
