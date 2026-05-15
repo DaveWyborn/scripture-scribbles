@@ -12,7 +12,7 @@ function fetchWithTimeout(url, timeoutMs = 20000) {
 }
 
 async function loadGzippedBible(version = 'web') {
-    const cacheBust = 'v=1.4.2';
+    const cacheBust = 'v=1.6.0';
     const gzippedUrl = `data/${version}-bible-enhanced.json.gz?${cacheBust}`;
     const fallbackUrl = `data/${version}-bible-enhanced.json?${cacheBust}`;
 

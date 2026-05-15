@@ -9,3 +9,8 @@ Thumbs.db
 
 # Dev
 serve.sh
+
+# Generated Bible data — large uncompressed JSON regenerated from USFM.
+# Ship only the gzipped .gz files (~5MB) which is what the app loads.
+# GitHub Pages chokes on the ~100MB uncompressed files.
+data/*-bible-enhanced.json
