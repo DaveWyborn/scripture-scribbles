@@ -48,7 +48,7 @@ async function loadGzippedBible(version = 'web') {
         return await loadPrivateBible(version);
     }
 
-    const cacheBust = 'v=1.7.0';
+    const cacheBust = 'v=1.8.0';
     const gzippedUrl = `data/${version}-bible-enhanced.json.gz?${cacheBust}`;
     const fallbackUrl = `data/${version}-bible-enhanced.json?${cacheBust}`;
 

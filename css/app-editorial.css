@@ -210,6 +210,13 @@ html {
     hanging-punctuation: first last;
 }
 
+/* Divine name (USFM \nd) — capital initial + small-caps for the rest
+   (e.g. "Lord", "God", "Jehovah") per KJV print convention. */
+.nd {
+    font-variant-caps: small-caps;
+    letter-spacing: 0.04em;
+}
+
 .verse-note {
     font-family: var(--font-serif);
     font-style: italic;
