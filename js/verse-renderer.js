@@ -63,7 +63,7 @@ async function loadAnnotationsForChapter(bookId, chapterNum) {
             .from('annotations')
             .select('*')
             .eq('user_id', currentUser.id)
-            .eq('bible_version', 'WEB')
+            .eq('bible_version', getCurrentVersionTag())
             .eq('annotation_set', currentAnnotationSet)
             .eq('book_id', cacheKey)
             .maybeSingle();

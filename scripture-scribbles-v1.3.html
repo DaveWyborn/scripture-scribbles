@@ -89,6 +89,18 @@
                 </button>
             </div>
             <div class="settings-description">Keep separate sets of notes, highlights and tags — for example, personal study in one set and sermon notes in another.</div>
+            <div class="settings-item settings-toggle">
+                <div>
+                    <i class="ph ph-book-bookmark"></i>
+                    <span>Bible Version</span>
+                </div>
+                <select id="bible-version" class="bible-version-select">
+                    <option value="web">WEB — World English Bible</option>
+                    <option value="asv">ASV — American Standard Version</option>
+                    <option value="kjv">KJV — King James Version</option>
+                </select>
+            </div>
+            <div class="settings-description">Highlights, notes and tags are kept per version, so switching shows only the markings made in that translation.</div>
             <div class="settings-divider"></div>
             <div class="settings-item settings-toggle">
                 <div>
@@ -627,19 +639,19 @@
     <script src="supabase-config.js?v=1.3.27"></script>
 
     <!-- Modular JavaScript (loaded in dependency order) -->
-    <script src="js/state.js?v=1.5.0"></script>
-    <script src="js/bible-loader.js?v=1.6.0"></script>
-    <script src="js/auth.js?v=1.4.2"></script>
-    <script src="js/annotations.js?v=1.3.13"></script>
-    <script src="js/verse-renderer.js?v=1.6.0"></script>
+    <script src="js/state.js?v=1.6.0"></script>
+    <script src="js/bible-loader.js?v=1.8.0"></script>
+    <script src="js/auth.js?v=1.5.0"></script>
+    <script src="js/annotations.js?v=1.4.0"></script>
+    <script src="js/verse-renderer.js?v=1.7.0"></script>
     <script src="js/navigation.js?v=1.5.0"></script>
     <script src="js/typography.js?v=1.3.21"></script>
-    <script src="js/preferences.js?v=1.4.1"></script>
-    <script src="js/tag-manager.js?v=1.3.19"></script>
+    <script src="js/preferences.js?v=1.6.0"></script>
+    <script src="js/tag-manager.js?v=1.4.0"></script>
     <script src="js/ui.js?v=1.3.31"></script>
     <script src="js/reading-bar.js?v=1.1.0"></script>
-    <script src="js/sermons.js?v=1.5.0"></script>
-    <script src="js/reading-plans.js?v=1.1.0"></script>
-    <script src="js/app.js?v=1.4.2"></script>
+    <script src="js/sermons.js?v=1.6.0"></script>
+    <script src="js/reading-plans.js?v=1.2.0"></script>
+    <script src="js/app.js?v=1.5.0"></script>
 </body>
 </html>

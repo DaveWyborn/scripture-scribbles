@@ -9,6 +9,14 @@ let currentUser = null;
 
 // Bible data
 let bibleData = null; // Loaded from JSON
+let currentBibleVersion = 'web'; // lowercase file/code key; uppercase via getCurrentVersionTag()
+
+// Uppercase version tag for DB columns (bible_version='WEB'|'ASV'|'KJV'|'AFV').
+// Sourced from currentBibleVersion (set by loadBibleData) — bibleData.version is
+// unreliable: ASV/KJV JSONs were built with WEB metadata in the header.
+function getCurrentVersionTag() {
+    return (currentBibleVersion || 'web').toUpperCase();
+}
 
 // Navigation state
 let currentBook = 'genesis';

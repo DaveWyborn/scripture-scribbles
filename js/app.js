@@ -139,6 +139,16 @@ function setupEventListeners() {
         });
     }
 
+    // Bible version selector
+    const bibleVersionSelect = document.getElementById('bible-version');
+    if (bibleVersionSelect) {
+        bibleVersionSelect.value = currentBibleVersion;
+        bibleVersionSelect.addEventListener('change', async (e) => {
+            await switchBibleVersion(e.target.value);
+            if (typeof debounceSavePreferences === 'function') debounceSavePreferences();
+        });
+    }
+
     // Reading mode selector
     const readingModeSelect = document.getElementById('reading-mode');
     if (readingModeSelect) {

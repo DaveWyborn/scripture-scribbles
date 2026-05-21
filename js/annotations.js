@@ -16,7 +16,7 @@ async function loadAnnotations() {
             .from('annotations')
             .select('*')
             .eq('user_id', currentUser.id)
-            .eq('bible_version', 'WEB')
+            .eq('bible_version', getCurrentVersionTag())
             .eq('annotation_set', currentAnnotationSet)
             .eq('book_id', bookId)
             .maybeSingle();
@@ -172,7 +172,7 @@ async function saveAnnotation() {
             .from('annotations')
             .select('id')
             .eq('user_id', currentUser.id)
-            .eq('bible_version', 'WEB')
+            .eq('bible_version', getCurrentVersionTag())
             .eq('annotation_set', currentAnnotationSet)
             .eq('book_id', bookId)
             .maybeSingle();
@@ -193,7 +193,7 @@ async function saveAnnotation() {
                 .from('annotations')
                 .insert({
                     user_id: currentUser.id,
-                    bible_version: 'WEB',
+                    bible_version: getCurrentVersionTag(),
                     annotation_set: currentAnnotationSet,
                     book_id: bookId,
                     data: currentAnnotations
@@ -512,7 +512,7 @@ async function saveInlineAnnotation(verseNum) {
             .from('annotations')
             .select('id')
             .eq('user_id', currentUser.id)
-            .eq('bible_version', 'WEB')
+            .eq('bible_version', getCurrentVersionTag())
             .eq('annotation_set', currentAnnotationSet)
             .eq('book_id', bookId)
             .maybeSingle();
@@ -531,7 +531,7 @@ async function saveInlineAnnotation(verseNum) {
                 .from('annotations')
                 .insert({
                     user_id: currentUser.id,
-                    bible_version: 'WEB',
+                    bible_version: getCurrentVersionTag(),
                     annotation_set: currentAnnotationSet,
                     book_id: bookId,
                     data: currentAnnotations

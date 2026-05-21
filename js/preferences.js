@@ -9,7 +9,8 @@ const DEFAULT_PREFERENCES = {
     wordSpacing: 0,
     readingMode: 'verse',
     verseNumberStyle: 'superscript',
-    annotationMode: 'on'
+    annotationMode: 'on',
+    bibleVersion: 'web'
 };
 
 // Load user preferences from Supabase
@@ -100,6 +101,22 @@ async function loadUserPreferences() {
                 if (annotationModeSelect) annotationModeSelect.value = prefs.annotationMode;
             }
 
+            // Bible version — hot-switch if different from current. Fall back to
+            // default if a saved private version is no longer accessible.
+            if (prefs.bibleVersion && prefs.bibleVersion !== currentBibleVersion) {
+                const isPrivate = typeof isPrivateVersion === 'function' && isPrivateVersion(prefs.bibleVersion);
+                const hasAccess = !isPrivate || (typeof userBibleAccess !== 'undefined' && userBibleAccess.has(prefs.bibleVersion));
+                if (hasAccess) {
+                    try {
+                        await switchBibleVersion(prefs.bibleVersion);
+                    } catch (e) {
+                        console.warn(`Could not switch to ${prefs.bibleVersion}; staying on ${currentBibleVersion}:`, e.message);
+                    }
+                }
+            }
+            const bibleVersionSelect = document.getElementById('bible-version');
+            if (bibleVersionSelect) bibleVersionSelect.value = currentBibleVersion;
+
             // Reading bar
             if (prefs.readingBar && typeof readingBarState !== 'undefined') {
                 Object.assign(readingBarState, prefs.readingBar);
@@ -137,7 +154,8 @@ async function saveUserPreferences() {
             wordSpacing: parseFloat(document.getElementById('word-spacing')?.value || 0),
             readingMode: readingMode,
             verseNumberStyle: verseNumberStyle,
-            annotationMode: document.getElementById('annotation-mode')?.value || 'on'
+            annotationMode: document.getElementById('annotation-mode')?.value || 'on',
+            bibleVersion: currentBibleVersion
         };
 
         // Include reading bar state if module loaded

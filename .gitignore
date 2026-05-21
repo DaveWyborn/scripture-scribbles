@@ -14,3 +14,8 @@ serve.sh
 # Ship only the gzipped .gz files (~5MB) which is what the app loads.
 # GitHub Pages chokes on the ~100MB uncompressed files.
 data/*-bible-enhanced.json
+
+# AFV (A Faithful Version) is copyright-restricted — never commit either form.
+# Lives in private Supabase Storage, authenticated fetch only.
+data/afv-bible-enhanced.json
+data/afv-bible-enhanced.json.gz

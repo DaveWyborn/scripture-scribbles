@@ -92,7 +92,7 @@ async function saveReadingMarkToSupabase(bookId, chapter, sectionIndex, totalSec
             chapter,
             section_index: sectionIndex,
             total_sections: totalSections,
-            version: 'web',
+            version: getCurrentVersionTag().toLowerCase(),
             read_at: new Date().toISOString()
         }, { onConflict: 'user_id,book_id,chapter,section_index,version' });
         if (error) throw error;
@@ -135,7 +135,7 @@ async function mergeGuestHistoryToSupabase() {
                         chapter: parseInt(ch),
                         section_index: sectionIndex,
                         total_sections: info.total,
-                        version: 'web',
+                        version: getCurrentVersionTag().toLowerCase(),
                         read_at: new Date().toISOString()
                     });
                 });

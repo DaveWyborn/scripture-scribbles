@@ -40,7 +40,7 @@ async function populateTagManager() {
             .from('annotations')
             .select('data')
             .eq('user_id', currentUser.id)
-            .eq('bible_version', 'WEB')
+            .eq('bible_version', getCurrentVersionTag())
             .eq('annotation_set', currentAnnotationSet);
 
         if (error) throw error;
@@ -123,7 +123,7 @@ async function applyTagColor(oldName, newColor) {
             .from('annotations')
             .select('*')
             .eq('user_id', currentUser.id)
-            .eq('bible_version', 'WEB')
+            .eq('bible_version', getCurrentVersionTag())
             .eq('annotation_set', currentAnnotationSet);
 
         if (error) throw error;
@@ -199,7 +199,7 @@ async function saveTagName(oldName, newName) {
             .from('annotations')
             .select('*')
             .eq('user_id', currentUser.id)
-            .eq('bible_version', 'WEB')
+            .eq('bible_version', getCurrentVersionTag())
             .eq('annotation_set', currentAnnotationSet);
 
         if (error) throw error;
@@ -263,7 +263,7 @@ async function deleteTag(tagName) {
             .from('annotations')
             .select('*')
             .eq('user_id', currentUser.id)
-            .eq('bible_version', 'WEB')
+            .eq('bible_version', getCurrentVersionTag())
             .eq('annotation_set', currentAnnotationSet);
 
         if (error) throw error;

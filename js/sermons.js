@@ -185,7 +185,7 @@ function buildClipRecord(verseNum, bookId = currentBook, chapter = currentChapte
         bookName: book.name,
         chapter,
         verse: verseNum,
-        version: (bibleData.version || 'WEB').toUpperCase(),
+        version: getCurrentVersionTag(),
         text: verse.text
     };
 }

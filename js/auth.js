@@ -106,6 +106,11 @@ async function handleAuthSuccess(user) {
         await loadReadingHistoryFromSupabase();
     }
 
+    // Load private-Bible access grants before preferences (prefs may select a private version)
+    if (typeof loadUserBibleAccess === 'function') {
+        await loadUserBibleAccess();
+    }
+
     // Load user preferences from cloud
     await loadUserPreferences();
 
@@ -131,6 +136,14 @@ async function handleAuthSuccess(user) {
 function handleSignOut() {
     currentUser = null;
     currentAnnotations = {};
+    if (typeof userBibleAccess !== 'undefined') {
+        userBibleAccess = new Set();
+        if (typeof updateBibleVersionPicker === 'function') updateBibleVersionPicker();
+    }
+    // If signed-in user was reading a private version, drop back to default
+    if (typeof isPrivateVersion === 'function' && isPrivateVersion(currentBibleVersion)) {
+        switchBibleVersion('web').catch(e => console.warn('Fallback to WEB failed:', e));
+    }
     document.getElementById('settings-user-info').style.display = 'none';
     document.getElementById('settings-guest-buttons').style.display = 'flex';
     document.getElementById('navigation').style.display = 'none';
