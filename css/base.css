@@ -89,6 +89,7 @@ body {
         flex-shrink: 0;
         display: flex;
         gap: var(--space-xs);
+        order: 2;
     }
 
     .toolbar-logo {

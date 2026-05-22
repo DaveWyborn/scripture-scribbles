@@ -151,21 +151,21 @@ function handleSignOut() {
     // Show welcome screen
     document.getElementById('content').innerHTML = `
         <div class="welcome">
-            <h2>Welcome to Scripture Scribbles</h2>
+            <h2>Welcome to<br>Scripture Scribbles</h2>
             <p>A beautiful Bible reader designed around how you read.</p>
 
             <div class="features">
                 <div class="feature">
                     <h3>📖 Instant Access</h3>
-                    <p>World English Bible built in, with ASV and KJV available. More translations coming soon.</p>
+                    <p>Three translations built in — World English Bible, ASV, and KJV. More on the way.</p>
+                </div>
+                <div class="feature">
+                    <h3>🎛 Reading Your Way</h3>
+                    <p>Tune the font, size, spacing, and colour until the page suits your eyes. 24 themes and accessibility-minded typography mean the words get out of your way.</p>
                 </div>
                 <div class="feature">
                     <h3>✨ Beautiful Annotations</h3>
                     <p>Highlight verses, add notes, and organise your studies across multiple annotation sets.</p>
-                </div>
-                <div class="feature">
-                    <h3>🎛 Fully Customisable Reading</h3>
-                    <p>Adjust fonts, sizing, spacing, and colours to suit your reading style. 24 themes to choose from.</p>
                 </div>
                 <div class="feature">
                     <h3>📄 Passage Mode</h3>
@@ -173,7 +173,7 @@ function handleSignOut() {
                 </div>
             </div>
 
-            <button class="btn primary" id="get-started-btn-2" style="font-size: 1.2em; padding: 15px 40px;">Get Started</button>
+            <button class="btn primary" id="get-started-btn-2" style="font-size: 1.2em; padding: 15px 40px;">Get Started <span class="free-pill">Free</span></button>
         </div>
     `;
     document.getElementById('get-started-btn-2').addEventListener('click', () => showAuthModal(true));
