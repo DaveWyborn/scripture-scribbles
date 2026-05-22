@@ -44,6 +44,8 @@ async function initApp() {
 
     // Start loading Bible in background
     const bibleLoadPromise = loadBibleData();
+    // Expose so the guest-mode entry path (in setupEventListeners) can await it.
+    window.__bibleReady = bibleLoadPromise;
 
     if (session) {
         // Show loading message while Bible loads
@@ -56,17 +58,33 @@ async function initApp() {
         await bibleLoadPromise;
         await handleAuthSuccess(session.user);
     } else {
-        // No user logged in - show welcome screen immediately
-        // Bible loads in background whilst they sign up
+        // No user logged in.
+        // Returning guests (guestMode flag) skip the welcome and land in the
+        // Bible. First-time visitors see the welcome with Sign In / Get
+        // Started / Read-without-an-account options.
         const welcomeEl = document.querySelector('.welcome');
-        if (welcomeEl) {
-            welcomeEl.style.display = 'block';
-        }
+        const landingSignin = document.getElementById('landing-signin-btn');
+        const isReturningGuest = localStorage.getItem('guestMode') === 'true';
 
-        // Continue loading Bible in background
-        bibleLoadPromise.then(() => {
-            console.log('✅ Bible ready for new user');
-        });
+        if (isReturningGuest) {
+            if (welcomeEl) welcomeEl.style.display = 'none';
+            // Show the same Bible-loading hint as the signed-in path
+            if (!bibleData) {
+                const loadingMsg = document.getElementById('bible-loading-message');
+                if (loadingMsg) loadingMsg.style.display = 'block';
+            }
+            bibleLoadPromise.then(() => {
+                const loadingMsg = document.getElementById('bible-loading-message');
+                if (loadingMsg) loadingMsg.style.display = 'none';
+                if (typeof displayChapter === 'function') displayChapter();
+            });
+        } else {
+            if (welcomeEl) welcomeEl.style.display = 'block';
+            if (landingSignin) landingSignin.style.display = '';
+            bibleLoadPromise.then(() => {
+                console.log('✅ Bible ready for new user');
+            });
+        }
     }
 
     // Listen for auth changes
@@ -242,6 +260,56 @@ function setupEventListeners() {
     document.getElementById('auth-cancel').addEventListener('click', hideAuthModal);
     document.getElementById('auth-form').addEventListener('submit', handleAuth);
     document.getElementById('auth-toggle-link').addEventListener('click', toggleAuthMode);
+
+    // Landing-only Sign In button (top-right of toolbar). Dedicated entry
+    // for returning users so they don't have to hit Get Started and toggle.
+    const landingSignin = document.getElementById('landing-signin-btn');
+    if (landingSignin) landingSignin.addEventListener('click', () => showAuthModal(false));
+
+    // Read-without-an-account entry → enter guest mode. Awaits the Bible
+    // (loading in background since page open) before rendering the chapter,
+    // otherwise displayChapter would no-op on missing data.
+    const guestEntry = document.getElementById('guest-entry-link');
+    if (guestEntry) guestEntry.addEventListener('click', async () => {
+        enterGuestMode();
+        if (window.__bibleReady) {
+            await window.__bibleReady;
+        }
+        if (typeof displayChapter === 'function') displayChapter();
+    });
+
+    // Guest splash modal — dismiss / sign-up shortcuts
+    const closeGuestSplash = document.getElementById('close-guest-splash');
+    if (closeGuestSplash) closeGuestSplash.addEventListener('click', dismissGuestSplash);
+    const guestSplashStart = document.getElementById('guest-splash-start');
+    if (guestSplashStart) guestSplashStart.addEventListener('click', dismissGuestSplash);
+    const guestSplashSignup = document.getElementById('guest-splash-signup');
+    if (guestSplashSignup) guestSplashSignup.addEventListener('click', () => {
+        dismissGuestSplash();
+        showAuthModal(true);
+    });
+    const guestSplashModal = document.getElementById('guest-splash-modal');
+    if (guestSplashModal) guestSplashModal.addEventListener('click', (e) => {
+        if (e.target.id === 'guest-splash-modal') dismissGuestSplash();
+    });
+
+    // Guest gate modal — generic "this feature needs an account" prompt
+    const closeGuestGate = document.getElementById('close-guest-gate');
+    if (closeGuestGate) closeGuestGate.addEventListener('click', hideGuestGate);
+    const guestGateSignin = document.getElementById('guest-gate-signin');
+    if (guestGateSignin) guestGateSignin.addEventListener('click', () => {
+        hideGuestGate();
+        showAuthModal(false);
+    });
+    const guestGateSignup = document.getElementById('guest-gate-signup');
+    if (guestGateSignup) guestGateSignup.addEventListener('click', () => {
+        hideGuestGate();
+        showAuthModal(true);
+    });
+    const guestGateModal = document.getElementById('guest-gate-modal');
+    if (guestGateModal) guestGateModal.addEventListener('click', (e) => {
+        if (e.target.id === 'guest-gate-modal') hideGuestGate();
+    });
 
     // Navigation - chapter-info now opens nav modal
     document.getElementById('chapter-info').addEventListener('click', openNavModal);

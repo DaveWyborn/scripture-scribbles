@@ -39,7 +39,11 @@ function openAnnotationPanel(verseNum) {
     console.log('openAnnotationPanel called with verse:', verseNum);
 
     if (!currentUser) {
-        alert('Please sign in to add annotations');
+        if (typeof showGuestGate === 'function') {
+            showGuestGate('Create a free account to save highlights, notes, and tags — and have them sync across all your devices.');
+        } else {
+            alert('Please sign in to add annotations');
+        }
         return;
     }
 
@@ -242,7 +246,11 @@ function toggleSubmenu(verseNum, menuType) {
 // Set highlight color for a verse (inline)
 async function setHighlight(verseNum, color) {
     if (!currentUser) {
-        alert('Please sign in to add annotations');
+        if (typeof showGuestGate === 'function') {
+            showGuestGate('Create a free account to save highlights, notes, and tags — and have them sync across all your devices.');
+        } else {
+            alert('Please sign in to add annotations');
+        }
         return;
     }
 
@@ -271,7 +279,11 @@ async function setHighlight(verseNum, color) {
 // Set underline color for a verse (inline)
 async function setUnderline(verseNum, color) {
     if (!currentUser) {
-        alert('Please sign in to add annotations');
+        if (typeof showGuestGate === 'function') {
+            showGuestGate('Create a free account to save highlights, notes, and tags — and have them sync across all your devices.');
+        } else {
+            alert('Please sign in to add annotations');
+        }
         return;
     }
 
@@ -300,7 +312,11 @@ async function setUnderline(verseNum, color) {
 // Save note for a verse (inline)
 async function saveNote(verseNum) {
     if (!currentUser) {
-        alert('Please sign in to add annotations');
+        if (typeof showGuestGate === 'function') {
+            showGuestGate('Create a free account to save highlights, notes, and tags — and have them sync across all your devices.');
+        } else {
+            alert('Please sign in to add annotations');
+        }
         return;
     }
 
@@ -350,7 +366,11 @@ async function deleteNote(verseNum) {
 // Add existing tag to a verse (inline)
 async function addExistingTag(verseNum, tagName, tagColor) {
     if (!currentUser) {
-        alert('Please sign in to add annotations');
+        if (typeof showGuestGate === 'function') {
+            showGuestGate('Create a free account to save highlights, notes, and tags — and have them sync across all your devices.');
+        } else {
+            alert('Please sign in to add annotations');
+        }
         return;
     }
 
@@ -375,7 +395,11 @@ async function addExistingTag(verseNum, tagName, tagColor) {
 // Add new tag to a verse (inline)
 async function addNewTag(verseNum) {
     if (!currentUser) {
-        alert('Please sign in to add annotations');
+        if (typeof showGuestGate === 'function') {
+            showGuestGate('Create a free account to save highlights, notes, and tags — and have them sync across all your devices.');
+        } else {
+            alert('Please sign in to add annotations');
+        }
         return;
     }
 

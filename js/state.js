@@ -7,6 +7,13 @@ let supabase = null;
 // User authentication
 let currentUser = null;
 
+// Guest mode — user reading without an account. Persisted via localStorage
+// ('guestMode' = 'true'). Reading and customisation work; annotations and
+// sermon notes show a sign-up gate (see showGuestGate in auth.js).
+function isGuest() {
+    return !currentUser && localStorage.getItem('guestMode') === 'true';
+}
+
 // Bible data
 let bibleData = null; // Loaded from JSON
 let currentBibleVersion = 'web'; // lowercase file/code key; uppercase via getCurrentVersionTag()

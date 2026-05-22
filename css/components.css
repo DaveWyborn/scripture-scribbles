@@ -999,8 +999,119 @@
     justify-content: center;
 }
 
-#set-modal.modal.active {
+#set-modal.modal.active,
+#guest-splash-modal.modal.active,
+#guest-gate-modal.modal.active {
     display: flex;
+}
+
+#guest-splash-modal.modal,
+#guest-gate-modal.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.guest-splash-lead {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-l);
+}
+
+.guest-splash-lists {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-l);
+}
+
+@media (min-width: 600px) {
+    .guest-splash-lists {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.guest-splash-col h3 {
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-s);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.guest-splash-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.95em;
+    color: var(--text-primary);
+}
+
+.guest-splash-footer,
+.guest-gate-footer {
+    display: flex;
+    gap: var(--space-s);
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+#guest-splash-modal .modal-content,
+#guest-gate-modal .modal-content {
+    max-width: 520px;
+}
+
+.landing-signin-btn {
+    background: transparent;
+    border: 1px solid var(--border, rgba(0,0,0,0.12));
+    color: var(--text-secondary, var(--text-primary));
+    padding: 6px 14px;
+    font-size: 0.78em;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.landing-signin-btn:hover,
+.landing-signin-btn:focus-visible {
+    background: var(--text-primary, #111);
+    color: var(--bg-primary, #fff);
+    border-color: var(--text-primary, #111);
+}
+
+.guest-entry-link {
+    display: inline-block;
+    margin: 0 auto var(--space-xxl);
+    background: transparent;
+    border: none;
+    padding: 4px 8px;
+    color: var(--text-tertiary, var(--text-secondary));
+    font-size: 0.9em;
+    font-style: italic;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, currentColor 30%, transparent);
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+}
+
+.guest-entry-link:hover,
+.guest-entry-link:focus-visible {
+    color: var(--text-primary);
+    text-decoration-color: currentColor;
 }
 
 .modal-content {

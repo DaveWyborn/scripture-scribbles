@@ -366,7 +366,9 @@ window.addClipsToNote = async function() {
     // Notes are user-scoped; nudge guests to sign in instead of mounting Trix
     // into nowhere.
     if (!currentUser) {
-        if (typeof showErrorIndicator === 'function') {
+        if (typeof showGuestGate === 'function') {
+            showGuestGate('Sermon notes need a free account so they sync across your devices. Your clipped verses will still be here when you sign in.');
+        } else if (typeof showErrorIndicator === 'function') {
             showErrorIndicator('Sign in to save clipped verses to a note');
         } else {
             alert('Sign in to save clipped verses to a note.');

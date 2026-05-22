@@ -22,7 +22,7 @@
     <!-- Modular CSS -->
     <link rel="stylesheet" href="css/themes.css?v=2.0.0">
     <link rel="stylesheet" href="css/base.css?v=1.4.7">
-    <link rel="stylesheet" href="css/components.css?v=1.6.3">
+    <link rel="stylesheet" href="css/components.css?v=1.6.4">
     <!-- Trix Rich Text Editor (load before sermons.css so we can override) -->
     <link rel="stylesheet" href="https://unpkg.com/trix@2.1.15/dist/trix.css">
     <script src="https://unpkg.com/trix@2.1.15/dist/trix.umd.min.js"></script>
@@ -35,6 +35,7 @@
     <div class="container">
         <div class="toolbar" id="toolbar">
             <div class="toolbar-top">
+                <button class="landing-signin-btn" id="landing-signin-btn" style="display: none;">Sign In</button>
                 <button class="toolbar-menu-btn notes-toggle-btn" id="notes-toggle-btn" aria-label="Open sermon notes" style="display: none;">
                     <i class="ph ph-notebook" id="notes-toggle-icon"></i>
                 </button>
@@ -46,6 +47,63 @@
                 <button class="nav-btn nav-arrow" id="prev-chapter" aria-label="Previous chapter">←</button>
                 <button class="chapter-info" id="chapter-info">Genesis 1</button>
                 <button class="nav-btn nav-arrow" id="next-chapter" aria-label="Next chapter">→</button>
+            </div>
+        </div>
+
+        <!-- Guest Splash Modal — shown when user enters guest mode -->
+        <div class="modal" id="guest-splash-modal">
+            <div class="modal-content modal-small">
+                <div class="modal-header">
+                    <h2>Reading as a guest</h2>
+                    <button class="modal-close" id="close-guest-splash">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="guest-splash-lead">No account needed to start reading. Here's what's available:</p>
+                    <div class="guest-splash-lists">
+                        <div class="guest-splash-col">
+                            <h3><i class="ph ph-check-circle" aria-hidden="true"></i> Works as a guest</h3>
+                            <ul>
+                                <li>All three Bibles — WEB, ASV, KJV</li>
+                                <li>Every theme and typography setting</li>
+                                <li>Passage mode &amp; reading bar</li>
+                                <li>Your reading position on this device</li>
+                            </ul>
+                        </div>
+                        <div class="guest-splash-col">
+                            <h3><i class="ph ph-user-circle" aria-hidden="true"></i> Needs a free account</h3>
+                            <ul>
+                                <li>Highlights, notes, and tags</li>
+                                <li>Sermon notes</li>
+                                <li>Sync across your devices</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer guest-splash-footer">
+                    <button class="btn" id="guest-splash-signup">Create free account</button>
+                    <button class="btn primary" id="guest-splash-start">Start Reading</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guest Gate Modal — shown when guest tries a sign-in-only feature -->
+        <div class="modal" id="guest-gate-modal">
+            <div class="modal-content modal-small">
+                <div class="modal-header">
+                    <h2>Create a free account</h2>
+                    <button class="modal-close" id="close-guest-gate">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="guest-gate-message">This feature needs an account so your work syncs across your devices.</p>
+                </div>
+                <div class="modal-footer guest-gate-footer">
+                    <button class="btn" id="guest-gate-signin">Sign In</button>
+                    <button class="btn primary" id="guest-gate-signup">Sign Up Free</button>
+                </div>
             </div>
         </div>
 
@@ -362,6 +420,7 @@
                     <a href="https://www.buymeacoffee.com/scripturescribbles" target="_blank" class="btn welcome-support-btn">Support Us</a>
                 </div>
                 <p class="free-tagline">Core features always free.</p>
+                <button type="button" class="guest-entry-link" id="guest-entry-link">Read without an account →</button>
 
                 <div id="bible-loading-message" style="display: none; background: #fff3cd; border: 2px solid #f39c12; padding: 15px 25px; border-radius: 12px; margin: 20px auto; max-width: 400px; text-align: center; color: #856404;">
                     Loading Bible... this may take a minute
@@ -640,10 +699,10 @@
     <script src="supabase-config.js?v=1.3.27"></script>
 
     <!-- Modular JavaScript (loaded in dependency order) -->
-    <script src="js/state.js?v=1.6.0"></script>
+    <script src="js/state.js?v=1.6.1"></script>
     <script src="js/bible-loader.js?v=1.8.2"></script>
-    <script src="js/auth.js?v=1.5.0"></script>
-    <script src="js/annotations.js?v=1.4.0"></script>
+    <script src="js/auth.js?v=1.5.1"></script>
+    <script src="js/annotations.js?v=1.4.1"></script>
     <script src="js/verse-renderer.js?v=1.7.0"></script>
     <script src="js/navigation.js?v=1.5.0"></script>
     <script src="js/typography.js?v=1.3.21"></script>
@@ -651,8 +710,8 @@
     <script src="js/tag-manager.js?v=1.4.0"></script>
     <script src="js/ui.js?v=1.3.31"></script>
     <script src="js/reading-bar.js?v=1.1.0"></script>
-    <script src="js/sermons.js?v=1.6.0"></script>
+    <script src="js/sermons.js?v=1.6.1"></script>
     <script src="js/reading-plans.js?v=1.2.0"></script>
-    <script src="js/app.js?v=1.5.0"></script>
+    <script src="js/app.js?v=1.5.1"></script>
 </body>
 </html>

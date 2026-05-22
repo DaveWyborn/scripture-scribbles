@@ -87,6 +87,13 @@ async function signOut() {
 // Handle successful authentication
 async function handleAuthSuccess(user) {
     currentUser = user;
+
+    // Sign-in always ends guest mode — clear the flag and hide the landing
+    // Sign In button (it's only relevant pre-auth).
+    localStorage.removeItem('guestMode');
+    const landingSignin = document.getElementById('landing-signin-btn');
+    if (landingSignin) landingSignin.style.display = 'none';
+
     document.getElementById('settings-user-email').textContent = user.email;
     document.getElementById('settings-user-info').style.display = 'flex';
     document.getElementById('settings-guest-buttons').style.display = 'none';
@@ -175,7 +182,57 @@ function handleSignOut() {
 
             <button class="btn primary" id="get-started-btn-2" style="font-size: 1.2em; padding: 15px 40px;">Get Started</button>
             <p class="free-tagline">Core features always free.</p>
+            <button type="button" class="guest-entry-link" id="guest-entry-link-2">Read without an account →</button>
         </div>
     `;
     document.getElementById('get-started-btn-2').addEventListener('click', () => showAuthModal(true));
+    const guestEntry2 = document.getElementById('guest-entry-link-2');
+    if (guestEntry2) guestEntry2.addEventListener('click', async () => {
+        enterGuestMode();
+        if (window.__bibleReady) await window.__bibleReady;
+        if (typeof displayChapter === 'function') displayChapter();
+    });
+
+    // Restore the landing Sign In button — sign-out drops back to the landing
+    const landingSignin = document.getElementById('landing-signin-btn');
+    if (landingSignin) landingSignin.style.display = '';
+}
+
+// ── Guest mode ──────────────────────────────────────────────────────────
+// Lets users read without an account. Reading + customisation work fully;
+// annotations and sermon notes show a sign-up gate.
+
+function enterGuestMode() {
+    localStorage.setItem('guestMode', 'true');
+    // Mark welcome as seen so that if this guest later signs up, the post-auth
+    // flow doesn't pop the welcome at them again.
+    localStorage.setItem('hasSeenWelcome', 'true');
+    const welcomeEl = document.querySelector('.welcome');
+    if (welcomeEl) welcomeEl.style.display = 'none';
+    const landingSignin = document.getElementById('landing-signin-btn');
+    if (landingSignin) landingSignin.style.display = 'none';
+    document.getElementById('guest-splash-modal').classList.add('active');
+}
+
+function dismissGuestSplash() {
+    document.getElementById('guest-splash-modal').classList.remove('active');
+}
+
+// Shared sign-up prompt for features that need an account.
+// `message` is the body text; falls back to a generic copy.
+function showGuestGate(message) {
+    const modal = document.getElementById('guest-gate-modal');
+    if (!modal) {
+        // Fallback if modal isn't in the DOM yet
+        alert(message || 'Create a free account to use this feature.');
+        return;
+    }
+    const msgEl = document.getElementById('guest-gate-message');
+    if (msgEl && message) msgEl.textContent = message;
+    modal.classList.add('active');
+}
+
+function hideGuestGate() {
+    const modal = document.getElementById('guest-gate-modal');
+    if (modal) modal.classList.remove('active');
 }
