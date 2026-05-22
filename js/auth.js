@@ -173,7 +173,8 @@ function handleSignOut() {
                 </div>
             </div>
 
-            <button class="btn primary" id="get-started-btn-2" style="font-size: 1.2em; padding: 15px 40px;">Get Started <span class="free-pill">Free</span></button>
+            <button class="btn primary" id="get-started-btn-2" style="font-size: 1.2em; padding: 15px 40px;">Get Started</button>
+            <p class="free-tagline">Core features always free.</p>
         </div>
     `;
     document.getElementById('get-started-btn-2').addEventListener('click', () => showAuthModal(true));
