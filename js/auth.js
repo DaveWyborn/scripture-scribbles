@@ -149,7 +149,7 @@ function handleSignOut() {
     }
     // If signed-in user was reading a private version, drop back to default
     if (typeof isPrivateVersion === 'function' && isPrivateVersion(currentBibleVersion)) {
-        switchBibleVersion('web').catch(e => console.warn('Fallback to WEB failed:', e));
+        switchBibleVersion('bsb').catch(e => console.warn('Fallback to BSB failed:', e));
     }
     document.getElementById('settings-user-info').style.display = 'none';
     document.getElementById('settings-guest-buttons').style.display = 'flex';
@@ -164,7 +164,7 @@ function handleSignOut() {
             <div class="features">
                 <div class="feature">
                     <h3>📖 Instant Access</h3>
-                    <p>Three translations built in — World English Bible, ASV, and KJV. More on the way.</p>
+                    <p>Four translations built in — Berean Standard Bible, World English Bible, ASV, and KJV. More on the way.</p>
                 </div>
                 <div class="feature">
                     <h3>🎛 Reading Your Way</h3>

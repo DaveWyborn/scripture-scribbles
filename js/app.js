@@ -42,8 +42,8 @@ async function initApp() {
     // Check auth status
     const { data: { session } } = await supabase.auth.getSession();
 
-    // Start loading Bible in background
-    const bibleLoadPromise = loadBibleData();
+    // Start loading Bible in background (BSB is the default modern translation)
+    const bibleLoadPromise = loadBibleData('bsb');
     // Expose so the guest-mode entry path (in setupEventListeners) can await it.
     window.__bibleReady = bibleLoadPromise;
 

@@ -84,6 +84,27 @@ const BOOK_MAP = {
   'REV': { number: 66, name: 'Revelation', testament: 'NT' }
 };
 
+// Paragraph + poetry markers that start a new segment. Specific multi-char
+// variants must precede their prefixes (e.g. \pmo before \p, \mi before \m,
+// \qr before \q) so the alternation matches the longest token first.
+// Paragraph family: p/pmo/pmc/pmr/pm/po/pc/pi#/pr/cls/li#/m/mi/nb
+// Poetry family: q#/qr/qa/qc/qm/qs
+// \qa (acrostic heading, e.g. Psalm 119's ALEPH/BETH) is handled as a heading,
+// not a segment marker — so it is deliberately excluded here.
+const SEGMENT_MARKER_SOURCE = '\\\\(pmo|pmc|pmr|pm|po|pc|pi\\d?|pr|p|mi|m|nb|cls|li\\d?|qr|qc|qm|qs|q\\d?)(?=\\s|$)';
+function segmentMarkerRegexG() { return new RegExp(SEGMENT_MARKER_SOURCE, 'g'); }
+
+// Map a paragraph/poetry marker tag to a segment type. Poetry markers keep
+// their numeric level (q1→poetry1); non-numeric poetry variants (qr/qa/qc/qm/qs)
+// collapse to poetry1. Everything else is a paragraph.
+function classifySegmentType(tag) {
+  if (tag.startsWith('q')) {
+    const lvl = tag.slice(1);
+    return `poetry${/^[1-9]$/.test(lvl) ? lvl : '1'}`;
+  }
+  return 'paragraph';
+}
+
 /**
  * Clean text by removing USFM markers but preserving text
  */
@@ -284,13 +305,16 @@ function parseUSFMFile(filepath) {
     if (descMatch) {
       pendingHeading = cleanText(descMatch[1]);
     }
+    // Acrostic letter only fills in when no editorial \s/\d heading claimed
+    // this verse (e.g. Psalm 119:1 keeps its section title over "ALEPH").
+    const acroMatch = preVerseContent.match(/\\qa\s+(.+?)(?=\\|$)/s);
+    if (acroMatch && !pendingHeading) {
+      pendingHeading = cleanText(acroMatch[1]);
+    }
     // Initial segment type = last paragraph/poetry marker in preVerseContent
-    const preMarkers = [...preVerseContent.matchAll(/\\(p|m|mi|nb|pi\d?|q\d?|qs)(?=\s|$)/g)];
+    const preMarkers = [...preVerseContent.matchAll(segmentMarkerRegexG())];
     if (preMarkers.length > 0) {
-      const tag = preMarkers[preMarkers.length - 1][1];
-      if (tag === 'qs') currentSegmentType = 'poetry1';
-      else if (tag.startsWith('q')) currentSegmentType = `poetry${tag.slice(1) || '1'}`;
-      else currentSegmentType = 'paragraph';
+      currentSegmentType = classifySegmentType(preMarkers[preMarkers.length - 1][1]);
       nextSegmentStarts = true;
     }
 
@@ -317,6 +341,10 @@ function parseUSFMFile(filepath) {
       if (trailingDescMatch) {
         trailingHeading = cleanText(trailingDescMatch[1]);
       }
+      const trailingAcroMatch = verseText.match(/\\qa\s+(.+?)(?=\\|$)/s);
+      if (trailingAcroMatch && !trailingHeading) {
+        trailingHeading = cleanText(trailingAcroMatch[1]);
+      }
 
       // Extract Strong's word data BEFORE cleaning
       const words = extractWords(verseText);
@@ -333,12 +361,16 @@ function parseUSFMFile(filepath) {
         .replace(/\\f\s+\+\s+.*?\\f\*/gs, '')      // strip footnotes
         .replace(/\\x\s+\+\s+.*?\\x\*/gs, '')      // strip cross-refs
         .replace(/\\s\d?\s+.+?(?=\\|$)/gs, '')     // strip section headings
+        .replace(/\\ms\d?\s+.+?(?=\\|$)/gs, '')    // strip major section headings
+        .replace(/\\mr\s+.+?(?=\\|$)/gs, '')       // strip major section ranges
+        .replace(/\\r\s+.+?(?=\\|$)/gs, '')        // strip parallel-passage refs
+        .replace(/\\qa\s+.+?(?=\\|$)/gs, '')       // strip acrostic headings (handled separately)
         .replace(/\\d\s+.+/g, '');                 // strip description markers
 
       // Paragraph markers: \p (regular), \m (continuation), \mi (indented continuation),
       // \nb (no-break), \pi\d? (indented paragraph). All map to type 'paragraph'.
       // Poetry markers: \q\d? (level 1-9), \qs (selah, treat as poetry1).
-      const segmentMarkerRegex = /\\(p|m|mi|nb|pi\d?|q\d?|qs)(?=\s|$)/g;
+      const segmentMarkerRegex = segmentMarkerRegexG();
       let segmentLastIdx = 0;
       let segmentMatch;
       while ((segmentMatch = segmentMarkerRegex.exec(segmentSource)) !== null) {
@@ -350,14 +382,7 @@ function parseUSFMFile(filepath) {
           segments.push(seg);
           nextSegmentStarts = false;
         }
-        const tag = segmentMatch[1];
-        if (tag === 'qs') {
-          currentSegmentType = 'poetry1';
-        } else if (tag.startsWith('q')) {
-          currentSegmentType = `poetry${tag.slice(1) || '1'}`;
-        } else {
-          currentSegmentType = 'paragraph';
-        }
+        currentSegmentType = classifySegmentType(segmentMatch[1]);
         nextSegmentStarts = true;
         segmentLastIdx = segmentMatch.index + segmentMatch[0].length;
       }
@@ -423,7 +448,7 @@ function parseUSFMFile(filepath) {
 /**
  * Main conversion function
  */
-function convertUSFMDirectory(inputDir, outputFile) {
+function convertUSFMDirectory(inputDir, outputFile, meta = {}) {
   const files = fs.readdirSync(inputDir)
     .filter(f => f.endsWith('.usfm'))
     .filter(f => {
@@ -472,9 +497,9 @@ function convertUSFMDirectory(inputDir, outputFile) {
 
   // Write output
   const output = {
-    version: 'WEB',
-    name: 'World English Bible',
-    copyright: 'Public Domain',
+    version: meta.version || 'WEB',
+    name: meta.name || 'World English Bible',
+    copyright: meta.copyright || 'Public Domain',
     books: bible
   };
 
@@ -489,13 +514,14 @@ if (require.main === module) {
   const args = process.argv.slice(2);
 
   if (args.length < 2) {
-    console.log('Usage: node usfm-converter.js <input-dir> <output-file>');
+    console.log('Usage: node usfm-converter.js <input-dir> <output-file> [version] [name] [copyright]');
     console.log('Example: node usfm-converter.js /tmp/web_usfm web-bible-enhanced.json');
+    console.log('Example: node usfm-converter.js usfm-sources/eng-bsb data/bsb-bible-enhanced.json BSB "Berean Standard Bible" "Public Domain"');
     process.exit(1);
   }
 
-  const [inputDir, outputFile] = args;
-  convertUSFMDirectory(inputDir, outputFile);
+  const [inputDir, outputFile, version, name, copyright] = args;
+  convertUSFMDirectory(inputDir, outputFile, { version, name, copyright });
 }
 
 module.exports = { convertUSFMDirectory, parseUSFMFile };

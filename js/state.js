@@ -16,9 +16,9 @@ function isGuest() {
 
 // Bible data
 let bibleData = null; // Loaded from JSON
-let currentBibleVersion = 'web'; // lowercase file/code key; uppercase via getCurrentVersionTag()
+let currentBibleVersion = 'bsb'; // lowercase file/code key; uppercase via getCurrentVersionTag(). BSB = default modern translation for new users.
 
-// Uppercase version tag for DB columns (bible_version='WEB'|'ASV'|'KJV'|'AFV').
+// Uppercase version tag for DB columns (bible_version='BSB'|'WEB'|'ASV'|'KJV'|'AFV').
 // Sourced from currentBibleVersion (set by loadBibleData) — bibleData.version is
 // unreliable: ASV/KJV JSONs were built with WEB metadata in the header.
 function getCurrentVersionTag() {
