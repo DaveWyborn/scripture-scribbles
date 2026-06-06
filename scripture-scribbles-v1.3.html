@@ -22,7 +22,7 @@
     <!-- Modular CSS -->
     <link rel="stylesheet" href="css/themes.css?v=2.0.0">
     <link rel="stylesheet" href="css/base.css?v=1.4.7">
-    <link rel="stylesheet" href="css/components.css?v=1.6.4">
+    <link rel="stylesheet" href="css/components.css?v=1.6.5">
     <!-- Trix Rich Text Editor (load before sermons.css so we can override) -->
     <link rel="stylesheet" href="https://unpkg.com/trix@2.1.15/dist/trix.css">
     <script src="https://unpkg.com/trix@2.1.15/dist/trix.umd.min.js"></script>
@@ -488,6 +488,9 @@
 
                 <!-- Actions -->
                 <div class="sermon-actions">
+                    <button onclick="openVersePicker()">
+                        <i class="ph ph-book-bookmark"></i> Insert verse
+                    </button>
                     <button onclick="openSermonSelector()">
                         <i class="ph ph-stack"></i> Manage Notes
                     </button>
@@ -576,6 +579,46 @@
                     <h3 id="selected-book-name" style="margin-bottom: var(--space-l);"></h3>
                     <div class="chapter-grid" id="chapter-grid"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verse Picker Modal — pick book/chapter/verse(s) by number, insert
+         a reference link into the current note at the cursor. -->
+    <div class="nav-modal" id="verse-picker-modal">
+        <div class="nav-modal-content">
+            <div class="nav-modal-header">
+                <h3>Insert verse reference</h3>
+                <button class="btn" id="close-verse-picker">×</button>
+            </div>
+            <div class="nav-modal-body">
+                <div class="nav-tabs">
+                    <button class="nav-tab active" id="vp-tab-book">Book</button>
+                    <button class="nav-tab" id="vp-tab-chapter">Chapter</button>
+                    <button class="nav-tab" id="vp-tab-verse">Verse</button>
+                </div>
+
+                <!-- Book Selection -->
+                <div class="testament-section active" id="vp-book-view">
+                    <div id="vp-ot-books"></div>
+                    <div id="vp-nt-books"></div>
+                </div>
+
+                <!-- Chapter Selection -->
+                <div class="testament-section" id="vp-chapter-view">
+                    <h3 id="vp-selected-book-name" style="margin-bottom: var(--space-l);"></h3>
+                    <div class="chapter-grid" id="vp-chapter-grid"></div>
+                </div>
+
+                <!-- Verse Selection (multi-select) -->
+                <div class="testament-section" id="vp-verse-view">
+                    <h3 id="vp-selected-chapter-name" style="margin-bottom: var(--space-l);"></h3>
+                    <div class="verse-pick-grid" id="vp-verse-grid"></div>
+                </div>
+            </div>
+            <div class="vp-footer">
+                <span class="vp-summary" id="vp-summary">Select one or more verses…</span>
+                <button class="btn primary" id="vp-insert-btn" disabled>Insert</button>
             </div>
         </div>
     </div>
@@ -706,12 +749,13 @@
     <script src="js/annotations.js?v=1.4.1"></script>
     <script src="js/verse-renderer.js?v=1.7.0"></script>
     <script src="js/navigation.js?v=1.5.0"></script>
+    <script src="js/verse-picker.js?v=1.0.1"></script>
     <script src="js/typography.js?v=1.3.21"></script>
     <script src="js/preferences.js?v=1.6.0"></script>
     <script src="js/tag-manager.js?v=1.4.0"></script>
     <script src="js/ui.js?v=1.3.31"></script>
     <script src="js/reading-bar.js?v=1.1.0"></script>
-    <script src="js/sermons.js?v=1.6.1"></script>
+    <script src="js/sermons.js?v=1.6.2"></script>
     <script src="js/reading-plans.js?v=1.2.0"></script>
     <script src="js/app.js?v=1.5.1"></script>
 </body>

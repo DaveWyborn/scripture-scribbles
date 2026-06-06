@@ -272,11 +272,13 @@ window.clearClips = window.clearVerseSelection;
  * Returns array of { bookId, bookName, chapter, version, ranges: [{start, end, verses: [{verse, text}]}] }.
  * Each "range" is a contiguous run of clipped verses within one chapter.
  */
-function groupClipsByPassage() {
+function groupClipsByPassage(sourceRecords) {
     // Sort by canonical book order, then chapter, then verse. Book IDs are
     // generated as `book.name.toLowerCase().replace(/\s+/g, '')` so they match
     // BIBLE_BOOK_ORDER directly (no hyphens).
-    const records = Array.from(clippedVerses.values()).sort((a, b) => {
+    // Defaults to the live clip set; callers (e.g. the verse picker) may pass
+    // their own records to format an ad-hoc selection.
+    const records = (sourceRecords || Array.from(clippedVerses.values())).slice().sort((a, b) => {
         const ai = BIBLE_BOOK_ORDER.indexOf(a.bookId);
         const bi = BIBLE_BOOK_ORDER.indexOf(b.bookId);
         if (ai !== bi) return ai - bi;
@@ -330,9 +332,9 @@ function buildPassageLink(group, range) {
  *   'full' (default): reference link followed by verse text on next line
  *   'link': reference link only
  */
-function renderClipsHTML() {
+function renderClipsHTML(sourceRecords) {
     const format = localStorage.getItem('clipFormat') || 'full';
-    const groups = groupClipsByPassage();
+    const groups = groupClipsByPassage(sourceRecords);
     if (groups.length === 0) return '';
 
     const blocks = [];
