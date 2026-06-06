@@ -1216,6 +1216,7 @@ function trixToMarkdown(html) {
     // Headings
     md = md.replace(/<h1>(.*?)<\/h1>/g, '# $1\n\n');
     md = md.replace(/<h2>(.*?)<\/h2>/g, '## $1\n\n');
+    md = md.replace(/<h3>(.*?)<\/h3>/g, '### $1\n\n');
 
     // Bold and italic
     md = md.replace(/<strong>(.*?)<\/strong>/g, '**$1**');

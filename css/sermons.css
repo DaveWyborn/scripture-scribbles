@@ -351,6 +351,19 @@ trix-toolbar .trix-button:not(:first-child) {
     border-left: none;
 }
 
+/* Text heading buttons (H1/H2/H3) — replace Trix's single icon heading button */
+trix-toolbar .trix-button--heading {
+    font-family: var(--sans, 'IBM Plex Sans', sans-serif);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+}
+
+trix-toolbar .trix-button--heading.trix-active {
+    color: var(--bg-primary);
+}
+
 trix-toolbar .trix-button:hover {
     opacity: 1;
     background: var(--bg-primary) !important;
@@ -426,6 +439,22 @@ trix-editor h1 {
     margin-top: 1em;
     margin-bottom: 0.5em;
     color: var(--text-primary);
+}
+
+trix-editor h2 {
+    font-size: 1.4em;
+    font-weight: 700;
+    margin-top: 0.9em;
+    margin-bottom: 0.4em;
+    color: var(--text-primary);
+}
+
+trix-editor h3 {
+    font-size: 1.15em;
+    font-weight: 600;
+    margin-top: 0.8em;
+    margin-bottom: 0.3em;
+    color: var(--text-secondary);
 }
 
 trix-editor blockquote {
