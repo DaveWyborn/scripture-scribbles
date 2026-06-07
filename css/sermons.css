@@ -49,7 +49,7 @@
     transform: translateX(0);
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1024px), (pointer: coarse) {
     .sermon-notes-view {
         border-left: none;
         max-height: none;
@@ -251,10 +251,10 @@
 }
 
 /* Trix toolbar customizations.
-   The toolbar is relocated by JS to be the last flex child of
-   .sermon-notes-view (see finalizeTrixLayout). Mobile-first: it sits at the
-   panel bottom, pinned just above the soft keyboard. Desktop restores a
-   sticky toolbar at the top of the notes column (see media query below). */
+   finalizeTrixLayout() relocates the auto-created toolbar to be the LAST child
+   of .sermon-notes-view, so it sits at the panel's bottom edge by DOM order
+   alone — no flex `order` (that proved fragile). On mobile the panel is sized
+   to the area above the keyboard, so "panel bottom" = just above the keys. */
 trix-toolbar,
 #sermon-trix-toolbar {
     background: var(--bg-secondary);
@@ -262,20 +262,11 @@ trix-toolbar,
     border-top: 1px solid var(--border);
     border-radius: 0;
     padding: 6px var(--space-m);
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
     margin: 0;
     flex-shrink: 0;
     z-index: 10;
 }
-
-/* Desktop default: toolbar sits at the top of the notes column, sticky as the
-   panel scrolls. Flex order places it between the metadata and the editor. */
-.sermon-notes-view > .sermon-metadata-wrapper { order: 0; }
-.sermon-notes-view > #sermon-trix-toolbar {
-    order: 1;
-    position: sticky;
-    top: 0;
-}
-.sermon-notes-view > .sermon-editor-container { order: 2; }
 
 trix-toolbar .trix-button-row {
     display: flex;
@@ -764,10 +755,10 @@ body.kb-open .notes-side-toggle {
     transform: translateY(-50%) translateX(100%);
 }
 
-/* Desktop has the split view + header icon; no edge tab needed.
-   1025px+ so a 1024px iPad (12.9" portrait) keeps the mobile single-column
-   experience — must stay in lockstep with notesIsMobile() in sermons.js. */
-@media (min-width: 1025px) {
+/* Hide the edge tab only on a true desktop — wide AND non-touch. A touch
+   device (any iPad, any width) keeps the single-column overlay + edge tab.
+   Must stay in lockstep with notesIsMobile() in sermons.js. */
+@media (min-width: 1025px) and (pointer: fine) {
     .notes-side-toggle {
         display: none !important;
     }
@@ -854,7 +845,7 @@ body.kb-open .notes-side-toggle {
 }
 
 /* Mobile adjustments */
-@media (max-width: 1024px) {
+@media (max-width: 1024px), (pointer: coarse) {
     /* On mobile/tablet, sermon notes overlays full width.
        Toolbar (z-index 250) floats above; pad content down so it doesn't
        render behind the universal Notes toggle. */
@@ -896,18 +887,12 @@ body.kb-open .notes-side-toggle {
         padding: var(--space-s) var(--space-m);
     }
 
-    /* Pin the toolbar to the bottom of the keyboard-tracked panel, just above
-       the soft keyboard. order:99 drops it below the editor; static position
-       (not sticky) keeps it riding the panel's flex bottom edge. */
+    /* Slimmer toolbar padding on mobile (it's the last child → panel bottom,
+       riding just above the soft keyboard via the keyboard-tracked panel). */
     .sermon-notes-view > #sermon-trix-toolbar {
-        order: 99;
-        position: static;
-        top: auto;
         padding: 5px var(--space-m);
         padding-bottom: calc(5px + env(safe-area-inset-bottom, 0px));
     }
-
-    .sermon-notes-view > .sermon-editor-container { order: 2; }
 
     /* Hide lesser-used buttons on mobile to keep toolbar to one row */
     trix-toolbar .trix-button--icon-strike,

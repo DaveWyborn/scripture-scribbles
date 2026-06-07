@@ -50,12 +50,13 @@ function detachKeyboardViewportTracking() {
 }
 
 // Single source of truth for the notes mobile/desktop split. Uses matchMedia so
-// it ALWAYS agrees with the CSS breakpoint — window.innerWidth is unreliable on
-// iPadOS (it can read narrower than the layout viewport, desyncing JS from CSS,
-// which produced a single-column overlay rendered with desktop CSS). A 1024px
-// iPad (12.9" portrait) counts as mobile: single-column overlay, not split.
+// it ALWAYS agrees with the CSS breakpoint (window.innerWidth is unreliable on
+// iPadOS — it can read narrower than the layout viewport, desyncing JS from CSS).
+// A touch device (pointer: coarse) always counts as mobile regardless of width,
+// so every iPad — portrait or landscape — gets the single-column overlay with
+// the keyboard-pinned toolbar, not the split view.
 function notesIsMobile() {
-    return window.matchMedia('(max-width: 1024px)').matches;
+    return window.matchMedia('(max-width: 1024px), (pointer: coarse)').matches;
 }
 
 /**
@@ -200,15 +201,22 @@ async function ensureTrixEditor() {
  * getDefaultHTML override still bakes in H1/H2/H3) and only move the element
  * afterwards. Moving the node keeps Trix's listeners and active-state wiring.
  */
-function finalizeTrixLayout() {
+function finalizeTrixLayout(attempt = 0) {
     const panel = document.getElementById('sermon-notes-view');
     if (!panel) return;
-    const toolbar = panel.querySelector('trix-toolbar');
-    if (!toolbar) return;
+    // Trix builds the toolbar during editor init; it may not exist on the first
+    // call. Retry briefly rather than silently leaving it in the wrong place.
+    const toolbar = panel.querySelector('trix-toolbar') || document.querySelector('trix-toolbar');
+    if (!toolbar) {
+        if (attempt < 10) setTimeout(() => finalizeTrixLayout(attempt + 1), 100);
+        return;
+    }
 
     if (!toolbar.id) toolbar.id = 'sermon-trix-toolbar';
-    // Make it the last flex child so it rides the panel's bottom edge.
-    if (panel.lastElementChild !== toolbar) {
+    // Make it the LAST child of the panel so it rides the bottom edge purely by
+    // DOM order (no flex `order` — that proved fragile: a single missed selector
+    // dropped the toolbar mid-panel under the header).
+    if (toolbar.parentElement !== panel || panel.lastElementChild !== toolbar) {
         panel.appendChild(toolbar);
     }
 
