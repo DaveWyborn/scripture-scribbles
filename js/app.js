@@ -371,6 +371,14 @@ function setupEventListeners() {
         });
     }
 
+    // Side toggle — persistent right-edge tab to flip Bible ↔ Notes (mobile)
+    const notesSideToggle = document.getElementById('notes-side-toggle');
+    if (notesSideToggle) {
+        notesSideToggle.addEventListener('click', () => {
+            if (typeof window.toggleNotes === 'function') window.toggleNotes();
+        });
+    }
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         // Ctrl/Cmd+Shift+N - Toggle notes

@@ -250,17 +250,32 @@
     overflow-y: auto;
 }
 
-/* Trix toolbar customizations */
-trix-toolbar {
+/* Trix toolbar customizations.
+   The toolbar is relocated by JS to be the last flex child of
+   .sermon-notes-view (see finalizeTrixLayout). Mobile-first: it sits at the
+   panel bottom, pinned just above the soft keyboard. Desktop restores a
+   sticky toolbar at the top of the notes column (see media query below). */
+trix-toolbar,
+#sermon-trix-toolbar {
     background: var(--bg-secondary);
     border: none;
-    border-radius: var(--radius-m);
-    padding: 6px;
-    margin: 0 var(--space-l);
-    position: sticky;
-    top: 0;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    padding: 6px var(--space-m);
+    margin: 0;
+    flex-shrink: 0;
     z-index: 10;
 }
+
+/* Desktop default: toolbar sits at the top of the notes column, sticky as the
+   panel scrolls. Flex order places it between the metadata and the editor. */
+.sermon-notes-view > .sermon-metadata-wrapper { order: 0; }
+.sermon-notes-view > #sermon-trix-toolbar {
+    order: 1;
+    position: sticky;
+    top: 0;
+}
+.sermon-notes-view > .sermon-editor-container { order: 2; }
 
 trix-toolbar .trix-button-row {
     display: flex;
@@ -697,6 +712,145 @@ trix-editor a {
     color: var(--accent-primary);
 }
 
+/* ── Side toggle — persistent right-edge Bible ↔ Notes tab ──────────────────
+   Thumb-reachable switch. Label shows the destination ("Notes" while reading,
+   "Bible" while in notes). Mobile/tablet only; desktop uses split view. */
+.notes-side-toggle {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 255;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: var(--radius-m) 0 0 var(--radius-m);
+    padding: 16px 7px;
+    cursor: pointer;
+    box-shadow: -3px 0 10px rgba(0, 0, 0, 0.14);
+    touch-action: manipulation;
+    transition: background 0.15s ease, transform 0.22s ease, opacity 0.22s ease;
+}
+
+.notes-side-toggle-label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-family: var(--sans, 'IBM Plex Sans', sans-serif);
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+}
+
+.notes-side-toggle:active {
+    transform: translateY(-50%) scale(0.96);
+}
+
+/* When notes are open the tab points back to the Bible — give it a subtle
+   accented edge so the mode reads at a glance (restrained, not a full fill). */
+.notes-side-toggle.notes-open {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+/* Hide the tab while the soft keyboard is up: it would otherwise collide with
+   the bottom-pinned editor toolbar. Slides out; returns when keyboard closes. */
+body.kb-open .notes-side-toggle {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-50%) translateX(100%);
+}
+
+/* Desktop has the split view + header icon; no edge tab needed. */
+@media (min-width: 1024px) {
+    .notes-side-toggle {
+        display: none !important;
+    }
+}
+
+/* ── Notes overflow menu (⋯) — Manage notes / Export ───────────────────────*/
+.notes-overflow {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+}
+
+.notes-overflow-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    padding: 6px 10px;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 1.1em;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    touch-action: manipulation;
+}
+
+.notes-overflow-btn:hover {
+    background: var(--bg-primary);
+}
+
+.notes-overflow-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+    display: none;
+    flex-direction: column;
+    min-width: 175px;
+    overflow: hidden;
+    z-index: 300;
+}
+
+.notes-overflow-menu.open {
+    display: flex;
+}
+
+.notes-overflow-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 0.92em;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+}
+
+.notes-overflow-menu button:hover {
+    background: var(--bg-secondary);
+}
+
+/* Insert-verse button injected into the Trix toolbar */
+.trix-button-group--verse-tools {
+    border-left: 1px solid var(--border);
+    margin-left: 4px;
+    padding-left: 6px;
+}
+
+.trix-verse-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.trix-verse-btn i {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
 /* Mobile adjustments */
 @media (max-width: 1023px) {
     /* On mobile/tablet, sermon notes overlays full width.
@@ -740,10 +894,18 @@ trix-editor a {
         padding: var(--space-s) var(--space-m);
     }
 
-    trix-toolbar {
-        margin: 0 var(--space-m);
-        padding: 4px;
+    /* Pin the toolbar to the bottom of the keyboard-tracked panel, just above
+       the soft keyboard. order:99 drops it below the editor; static position
+       (not sticky) keeps it riding the panel's flex bottom edge. */
+    .sermon-notes-view > #sermon-trix-toolbar {
+        order: 99;
+        position: static;
+        top: auto;
+        padding: 5px var(--space-m);
+        padding-bottom: calc(5px + env(safe-area-inset-bottom, 0px));
     }
+
+    .sermon-notes-view > .sermon-editor-container { order: 2; }
 
     /* Hide lesser-used buttons on mobile to keep toolbar to one row */
     trix-toolbar .trix-button--icon-strike,

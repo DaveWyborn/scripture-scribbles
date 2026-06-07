@@ -18,6 +18,11 @@ function _syncNotesToVisualViewport() {
     // Match the overlay to the visible area above the keyboard.
     _vvNotesEl.style.height = vv.height + 'px';
     _vvNotesEl.style.top = vv.offsetTop + 'px';
+    // Keyboard heuristic: a markedly shorter visible area means the soft
+    // keyboard is up. Flag it so the side toggle hides (it would otherwise
+    // collide with the bottom-pinned editor toolbar).
+    const kbOpen = (window.innerHeight - vv.height) > 120;
+    document.body.classList.toggle('kb-open', kbOpen);
 }
 
 function attachKeyboardViewportTracking(notesEl) {
@@ -41,6 +46,7 @@ function detachKeyboardViewportTracking() {
         _vvNotesEl.style.top = '';
         _vvNotesEl = null;
     }
+    document.body.classList.remove('kb-open');
 }
 
 /**
@@ -175,6 +181,72 @@ async function ensureTrixEditor() {
         }
     });
 }
+
+/**
+ * After Trix mounts, relocate its auto-created toolbar to the bottom of the
+ * notes panel (pinned above the keyboard on mobile) and inject the
+ * Insert-verse button. Idempotent — safe to call on every notes open.
+ *
+ * Note: we let Trix create the toolbar itself (so note-headings.js's
+ * getDefaultHTML override still bakes in H1/H2/H3) and only move the element
+ * afterwards. Moving the node keeps Trix's listeners and active-state wiring.
+ */
+function finalizeTrixLayout() {
+    const panel = document.getElementById('sermon-notes-view');
+    if (!panel) return;
+    const toolbar = panel.querySelector('trix-toolbar');
+    if (!toolbar) return;
+
+    if (!toolbar.id) toolbar.id = 'sermon-trix-toolbar';
+    // Make it the last flex child so it rides the panel's bottom edge.
+    if (panel.lastElementChild !== toolbar) {
+        panel.appendChild(toolbar);
+    }
+
+    // Inject the Insert-verse button into the toolbar's button row (once).
+    const row = toolbar.querySelector('.trix-button-row');
+    if (row && !row.querySelector('.trix-verse-btn')) {
+        const group = document.createElement('span');
+        group.className = 'trix-button-group trix-button-group--verse-tools';
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'trix-button trix-verse-btn';
+        btn.setAttribute('aria-label', 'Insert verse');
+        btn.setAttribute('tabindex', '-1');
+        btn.innerHTML = '<i class="ph ph-book-bookmark"></i>';
+        btn.addEventListener('click', () => {
+            if (typeof window.openVersePicker === 'function') window.openVersePicker();
+        });
+        group.appendChild(btn);
+        row.appendChild(group);
+    }
+}
+
+/**
+ * Toggle the notes overflow (⋯) menu — Manage notes / Export.
+ * Global for the inline onclick handler in the metadata header.
+ */
+window.toggleNotesMenu = function(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('notes-overflow-menu');
+    if (!menu) return;
+    const willOpen = !menu.classList.contains('open');
+    menu.classList.toggle('open', willOpen);
+    if (willOpen) {
+        const onDoc = (ev) => {
+            if (!ev.target.closest('.notes-overflow')) {
+                menu.classList.remove('open');
+                document.removeEventListener('click', onDoc);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', onDoc), 0);
+    }
+};
+
+window.closeNotesMenu = function() {
+    const menu = document.getElementById('notes-overflow-menu');
+    if (menu) menu.classList.remove('open');
+};
 
 /**
  * Setup Trix editor event listeners
@@ -823,6 +895,16 @@ function setNotesToggleIcon(isOpen) {
         btn.setAttribute('aria-label', isOpen ? 'Close sermon notes' : 'Open sermon notes');
         btn.classList.toggle('notes-open', isOpen);
     }
+
+    // Side toggle — label shows the destination ("Notes" while reading,
+    // "Bible" while in notes).
+    const sideBtn = document.getElementById('notes-side-toggle');
+    const sideLabel = document.getElementById('notes-side-toggle-label');
+    if (sideLabel) sideLabel.textContent = isOpen ? 'Bible' : 'Notes';
+    if (sideBtn) {
+        sideBtn.setAttribute('aria-label', isOpen ? 'Back to Bible' : 'Open sermon notes');
+        sideBtn.classList.toggle('notes-open', isOpen);
+    }
 }
 
 /**
@@ -900,6 +982,7 @@ async function toggleNotesView() {
 
         // Mount and initialise Trix now that notes are visible
         await ensureTrixEditor();
+        finalizeTrixLayout();
 
         if (!currentSermon) {
             await createSermon();
@@ -1003,6 +1086,7 @@ window.switchMobileView = async function(view) {
 
             // Mount and initialise Trix now that notes are visible
             await ensureTrixEditor();
+            finalizeTrixLayout();
 
             if (!currentSermon) {
                 await createSermon();

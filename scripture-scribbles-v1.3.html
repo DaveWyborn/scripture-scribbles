@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="https://unpkg.com/trix@2.1.15/dist/trix.css">
     <script src="https://unpkg.com/trix@2.1.15/dist/trix.umd.min.js"></script>
 
-    <link rel="stylesheet" href="css/sermons.css?v=1.4.15">
+    <link rel="stylesheet" href="css/sermons.css?v=1.5.0">
     <!-- Editorial overlay — loads last, wins the cascade -->
     <link rel="stylesheet" href="css/app-editorial.css?v=2.2.0">
 </head>
@@ -49,6 +49,12 @@
                 <button class="nav-btn nav-arrow" id="next-chapter" aria-label="Next chapter">→</button>
             </div>
         </div>
+
+        <!-- Side toggle — persistent right-edge tab to flip Bible ↔ Notes
+             (thumb-reachable; mobile/tablet only). Label = destination. -->
+        <button class="notes-side-toggle" id="notes-side-toggle" aria-label="Open sermon notes" style="display: none;">
+            <span class="notes-side-toggle-label" id="notes-side-toggle-label">Notes</span>
+        </button>
 
         <!-- Guest Splash Modal — shown when user enters guest mode -->
         <div class="modal" id="guest-splash-modal">
@@ -470,6 +476,15 @@
                             <i class="ph ph-caret-down" id="metadata-toggle-icon"></i>
                             <span class="metadata-toggle-label">Details</span>
                         </button>
+                        <div class="notes-overflow">
+                            <button class="notes-overflow-btn" onclick="toggleNotesMenu(event)" aria-label="More actions" aria-haspopup="true">
+                                <i class="ph ph-dots-three-vertical"></i>
+                            </button>
+                            <div class="notes-overflow-menu" id="notes-overflow-menu">
+                                <button onclick="closeNotesMenu(); openSermonSelector()"><i class="ph ph-stack"></i> Manage notes</button>
+                                <button onclick="closeNotesMenu(); exportSermonMarkdown()"><i class="ph ph-download-simple"></i> Export</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="sermon-metadata" id="sermon-metadata">
                         <input type="date" id="sermon-date">
@@ -480,23 +495,12 @@
                     </div>
                 </div>
 
-                <!-- Trix editor (mounted dynamically when notes become visible) -->
+                <!-- Trix editor (mounted dynamically when notes become visible).
+                     The toolbar is auto-created by Trix, then relocated to the
+                     panel bottom (pinned above the keyboard) — see finalizeTrixLayout(). -->
                 <div class="sermon-editor-container">
                     <div id="trix-mount"></div>
                     <input type="hidden" id="sermon-content">
-                </div>
-
-                <!-- Actions -->
-                <div class="sermon-actions">
-                    <button onclick="openVersePicker()">
-                        <i class="ph ph-book-bookmark"></i> Insert verse
-                    </button>
-                    <button onclick="openSermonSelector()">
-                        <i class="ph ph-stack"></i> Manage Notes
-                    </button>
-                    <button onclick="exportSermonMarkdown()">
-                        <i class="ph ph-download-simple"></i> Export
-                    </button>
                 </div>
             </div>
         </div>
@@ -745,7 +749,7 @@
     <!-- Modular JavaScript (loaded in dependency order) -->
     <script src="js/state.js?v=1.6.1"></script>
     <script src="js/bible-loader.js?v=1.8.2"></script>
-    <script src="js/auth.js?v=1.5.1"></script>
+    <script src="js/auth.js?v=1.5.2"></script>
     <script src="js/annotations.js?v=1.4.1"></script>
     <script src="js/verse-renderer.js?v=1.7.0"></script>
     <script src="js/navigation.js?v=1.5.0"></script>
@@ -756,8 +760,8 @@
     <script src="js/ui.js?v=1.3.31"></script>
     <script src="js/reading-bar.js?v=1.1.0"></script>
     <script src="js/note-headings.js?v=1.0.0"></script>
-    <script src="js/sermons.js?v=1.6.3"></script>
+    <script src="js/sermons.js?v=1.7.0"></script>
     <script src="js/reading-plans.js?v=1.2.0"></script>
-    <script src="js/app.js?v=1.5.1"></script>
+    <script src="js/app.js?v=1.5.2"></script>
 </body>
 </html>

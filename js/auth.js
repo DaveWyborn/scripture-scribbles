@@ -104,6 +104,11 @@ async function handleAuthSuccess(user) {
     if (notesToggleBtn) {
         notesToggleBtn.style.display = '';
     }
+    // Show the side toggle (CSS hides it on desktop)
+    const notesSideToggle = document.getElementById('notes-side-toggle');
+    if (notesSideToggle) {
+        notesSideToggle.style.display = '';
+    }
 
     // Load annotations
     await loadAnnotations();
@@ -162,6 +167,10 @@ function handleSignOut() {
     document.getElementById('settings-user-info').style.display = 'none';
     document.getElementById('settings-guest-buttons').style.display = 'flex';
     document.getElementById('navigation').style.display = 'none';
+
+    // Hide the side toggle when signed out (notes are unavailable)
+    const notesSideToggleOut = document.getElementById('notes-side-toggle');
+    if (notesSideToggleOut) notesSideToggleOut.style.display = 'none';
 
     // Show welcome screen
     document.getElementById('content').innerHTML = `
