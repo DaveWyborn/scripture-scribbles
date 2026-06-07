@@ -49,6 +49,15 @@ function detachKeyboardViewportTracking() {
     document.body.classList.remove('kb-open');
 }
 
+// Single source of truth for the notes mobile/desktop split. Uses matchMedia so
+// it ALWAYS agrees with the CSS breakpoint — window.innerWidth is unreliable on
+// iPadOS (it can read narrower than the layout viewport, desyncing JS from CSS,
+// which produced a single-column overlay rendered with desktop CSS). A 1024px
+// iPad (12.9" portrait) counts as mobile: single-column overlay, not split.
+function notesIsMobile() {
+    return window.matchMedia('(max-width: 1024px)').matches;
+}
+
 /**
  * Persist the clip-format preference. 'full' = ref link + verse text;
  * 'link' = ref link only.
@@ -77,7 +86,7 @@ async function initSermons() {
     setupTrixListeners();
 
     // Setup swipe handlers for mobile/tablet
-    if (window.innerWidth < 1024) {
+    if (notesIsMobile()) {
         setupSwipeHandlers();
     }
 
@@ -85,7 +94,7 @@ async function initSermons() {
     const storedCollapsed = localStorage.getItem('metadataCollapsed');
     const metadataCollapsed = storedCollapsed !== null
         ? storedCollapsed === 'true'
-        : window.innerWidth < 1024;
+        : notesIsMobile();
     if (metadataCollapsed) {
         const metadata = document.getElementById('sermon-metadata');
         const toggleBtn = document.querySelector('.metadata-toggle-btn');
@@ -492,7 +501,7 @@ window.addClipsToNote = async function() {
     }
 
     // 1. Make sure the notes panel is visible.
-    if (window.innerWidth >= 1024) {
+    if (!notesIsMobile()) {
         if (sermonViewMode !== 'split' && typeof toggleNotesView === 'function') {
             await toggleNotesView();
         }
@@ -569,7 +578,7 @@ async function openClipTarget(target) {
     if (typeof displayChapter === 'function') displayChapter();
 
     // On mobile, switching to bible view so the user can see the passage.
-    if (window.innerWidth < 1024 && activeView !== 'bible' && typeof switchMobileView === 'function') {
+    if (notesIsMobile() && activeView !== 'bible' && typeof switchMobileView === 'function') {
         switchMobileView('bible');
     }
 
@@ -871,10 +880,11 @@ async function deleteSermon(sermonId) {
 
 /**
  * Universal notes toggle — viewport-aware entry point.
- * Desktop (≥1024px) → split view. Mobile/tablet (<1024px) → full-screen overlay.
+ * Desktop (≥1025px) → split view. Mobile/tablet (≤1024px) → full-screen overlay.
+ * Uses notesIsMobile() (matchMedia) so the JS branch always matches the CSS.
  */
 window.toggleNotes = async function() {
-    if (window.innerWidth >= 1024) {
+    if (!notesIsMobile()) {
         await toggleNotesView();
     } else {
         const next = activeView === 'notes' ? 'bible' : 'notes';

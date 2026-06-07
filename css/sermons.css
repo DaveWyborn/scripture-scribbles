@@ -49,7 +49,7 @@
     transform: translateX(0);
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
     .sermon-notes-view {
         border-left: none;
         max-height: none;
@@ -764,8 +764,10 @@ body.kb-open .notes-side-toggle {
     transform: translateY(-50%) translateX(100%);
 }
 
-/* Desktop has the split view + header icon; no edge tab needed. */
-@media (min-width: 1024px) {
+/* Desktop has the split view + header icon; no edge tab needed.
+   1025px+ so a 1024px iPad (12.9" portrait) keeps the mobile single-column
+   experience — must stay in lockstep with notesIsMobile() in sermons.js. */
+@media (min-width: 1025px) {
     .notes-side-toggle {
         display: none !important;
     }
@@ -852,7 +854,7 @@ body.kb-open .notes-side-toggle {
 }
 
 /* Mobile adjustments */
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
     /* On mobile/tablet, sermon notes overlays full width.
        Toolbar (z-index 250) floats above; pad content down so it doesn't
        render behind the universal Notes toggle. */
