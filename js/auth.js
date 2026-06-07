@@ -108,6 +108,14 @@ async function handleAuthSuccess(user) {
     // Load annotations
     await loadAnnotations();
 
+    // Load user's sermon notes. Must run here (not only in initSermons) so a
+    // late sign-in — fresh browser, no restored session — also loads the list.
+    // Without this, currentSermon stays null and opening notes spawns a new
+    // "Genesis 1" sermon on every open.
+    if (typeof loadSermonList === 'function') {
+        await loadSermonList();
+    }
+
     // Load reading history from cloud (initReadingHistory ran before currentUser was set)
     if (typeof loadReadingHistoryFromSupabase === 'function') {
         await loadReadingHistoryFromSupabase();

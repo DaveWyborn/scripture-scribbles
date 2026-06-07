@@ -55,10 +55,9 @@ async function initSermons() {
         setupClipLinkRouter();
     }
 
-    // Load user's sermons if logged in
-    if (currentUser) {
-        await loadSermonList();
-    }
+    // Sermon-list loading now lives in handleAuthSuccess() so it runs on every
+    // sign-in path (restored session AND late password sign-in), not just when
+    // a user is already authenticated at init time.
 }
 
 /**
