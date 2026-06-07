@@ -1,6 +1,48 @@
 // Sermon Notes Module
 // Handles creating, loading, saving, and managing sermon notes with Trix editor
 
+// ── iOS keyboard viewport tracking ───────────────────────────────────────
+// On iOS Safari (iPad portrait, phones) the soft keyboard does NOT shrink the
+// layout viewport, so a `position:fixed; height:100vh` overlay stays full-height
+// behind the keyboard and Safari scrolls the whole panel up to reveal the
+// caret — dragging the toolbar + title off the top of the screen.
+//
+// Fix: while the notes overlay is open, pin it to window.visualViewport (the
+// real visible region above the keyboard). The panel shrinks to that area, so
+// Safari has nothing to scroll away and the sticky toolbar stays put.
+let _vvNotesEl = null;
+
+function _syncNotesToVisualViewport() {
+    const vv = window.visualViewport;
+    if (!vv || !_vvNotesEl) return;
+    // Match the overlay to the visible area above the keyboard.
+    _vvNotesEl.style.height = vv.height + 'px';
+    _vvNotesEl.style.top = vv.offsetTop + 'px';
+}
+
+function attachKeyboardViewportTracking(notesEl) {
+    const vv = window.visualViewport;
+    if (!vv || !notesEl) return;          // unsupported browser → leave CSS as-is
+    _vvNotesEl = notesEl;
+    vv.addEventListener('resize', _syncNotesToVisualViewport);
+    vv.addEventListener('scroll', _syncNotesToVisualViewport);
+    _syncNotesToVisualViewport();
+}
+
+function detachKeyboardViewportTracking() {
+    const vv = window.visualViewport;
+    if (vv) {
+        vv.removeEventListener('resize', _syncNotesToVisualViewport);
+        vv.removeEventListener('scroll', _syncNotesToVisualViewport);
+    }
+    if (_vvNotesEl) {
+        // Restore CSS-driven full-height sizing.
+        _vvNotesEl.style.height = '';
+        _vvNotesEl.style.top = '';
+        _vvNotesEl = null;
+    }
+}
+
 /**
  * Persist the clip-format preference. 'full' = ref link + verse text;
  * 'link' = ref link only.
@@ -946,12 +988,18 @@ window.switchMobileView = async function(view) {
         if (notesView) {
             notesView.style.display = 'none';
         }
+        // Stop tracking the keyboard viewport once notes are closed.
+        detachKeyboardViewportTracking();
     } else {
         if (welcomeView) {
             welcomeView.style.display = 'none';
         }
         if (notesView) {
             notesView.style.display = 'flex';
+
+            // Pin the overlay to the visible viewport so the iOS keyboard can't
+            // push the toolbar/title off the top of the screen.
+            attachKeyboardViewportTracking(notesView);
 
             // Mount and initialise Trix now that notes are visible
             await ensureTrixEditor();
