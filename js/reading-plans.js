@@ -344,16 +344,11 @@ function teardownAutoMarkObserver() {
 function observeReadingSections() {
     if (!autoMarkObserver) return;
 
-    // In fluid mode, observe each .reading-section
-    document.querySelectorAll('.reading-section').forEach(el => {
-        autoMarkObserver.observe(el);
-    });
-
-    // In verse mode, observe .read-marker[data-mark-all] (chapter-level)
+    // Both fluid and verse mode now mark at chapter level via the mark-all
+    // button, so auto-mark observes that single marker per chapter.
     document.querySelectorAll('.read-marker[data-mark-all]').forEach(el => {
         autoMarkObserver.observe(el);
     });
-
 }
 
 function sectionKeyFromElement(el) {

@@ -673,13 +673,15 @@ function renderFluidModeContent(verses, bookName, chapterNum) {
 
 /**
  * Render chapter in fluid reading mode.
- * Splits into heading-delimited sections, each with a mark-as-read button.
+ * Splits into heading-delimited sections for display; a single chapter-level
+ * "Mark as read" button at the end (matching verse mode). Heading-dense versions
+ * like BSB would otherwise show a button after every few verses.
  */
 function renderFluidMode(chapter, book) {
     const sections = buildReadingSections(chapter.verses);
     let html = '';
 
-    sections.forEach((section, sectionIndex) => {
+    sections.forEach((section) => {
         html += `<div class="reading-section">`;
 
         if (section.heading) {
@@ -691,12 +693,13 @@ function renderFluidMode(chapter, book) {
         const verses = section.verses.map((v, i) => i === 0 ? Object.assign({}, v, { heading: undefined }) : v);
         html += renderFluidModeContent(verses, book.name, chapter.number);
 
-        if (typeof renderMarkButton === 'function') {
-            html += renderMarkButton(currentBook, chapter.number, sectionIndex, sections.length);
-        }
-
         html += '</div>';
     });
+
+    // One mark-as-read button for the whole chapter (marks all sections).
+    if (typeof renderMarkAllButton === 'function') {
+        html += renderMarkAllButton(currentBook, chapter.number, sections.length);
+    }
 
     return html;
 }
