@@ -13,11 +13,16 @@
  * version's own source structure. WEB is the reference, so it is never borrowed.
  */
 const NORMALISE_PARAGRAPHS = {
-    web: false, // reference — keep its own (good) structure
-    bsb: true,  // breaks on nearly every verse → too granular
-    asv: true,  // one break per chapter → giant block
-    kjv: true,  // one break per chapter → giant block
-    afv: true,  // synthetic break on every verse → individual verses
+    web: false,   // reference — keep its own (good) structure
+    webbe: false, // WEB British edition — same good structure as WEB
+    bsb: true,    // breaks on nearly every verse → too granular
+    asv: true,    // one break per chapter → giant block
+    kjv: true,    // one break per chapter → giant block
+    afv: true,    // synthetic break on every verse → individual verses
+    bbe: true,    // sparse breaks (~3/chapter)
+    lsv: true,    // one break per chapter → giant block
+    ylt: true,    // one break per chapter → giant block
+    darby: true,  // sparse breaks (~3/chapter)
 };
 
 let paragraphMap = null;        // { reference, books: { [bookName]: { [chapter]: [verseNums] } } }

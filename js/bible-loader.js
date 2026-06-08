@@ -133,6 +133,11 @@ async function loadBibleData(version = 'web') {
             book.id = book.name.toLowerCase().replace(/\s+/g, '');
         });
 
+        // Surface the version's copyright/attribution (required for licensed
+        // versions like LSV — CC BY-SA; harmless for public-domain ones).
+        const copyrightEl = document.getElementById('version-copyright');
+        if (copyrightEl) copyrightEl.textContent = bibleData.copyright || '';
+
         // Hide loading message if showing
         const loadingMsg = document.getElementById('bible-loading-message');
         if (loadingMsg) {

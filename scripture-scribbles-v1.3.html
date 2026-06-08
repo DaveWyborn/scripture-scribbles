@@ -71,7 +71,7 @@
                         <div class="guest-splash-col">
                             <h3><i class="ph ph-check-circle" aria-hidden="true"></i> Works as a guest</h3>
                             <ul>
-                                <li>All three Bibles — WEB, ASV, KJV</li>
+                                <li>Nine Bibles — BBE, WEB, KJV &amp; more</li>
                                 <li>Every theme and typography setting</li>
                                 <li>Fluid reading &amp; reading bar</li>
                                 <li>Your reading position on this device</li>
@@ -161,11 +161,17 @@
                 <select id="bible-version" class="bible-version-select">
                     <option value="bsb">BSB — Berean Standard Bible</option>
                     <option value="web">WEB — World English Bible</option>
+                    <option value="webbe">WEBBE — World English Bible (British)</option>
+                    <option value="bbe">BBE — Bible in Basic English</option>
+                    <option value="lsv">LSV — Literal Standard Version</option>
                     <option value="asv">ASV — American Standard Version</option>
                     <option value="kjv">KJV — King James Version</option>
+                    <option value="ylt">YLT — Young's Literal Translation</option>
+                    <option value="darby">DARBY — Darby Translation</option>
                 </select>
             </div>
             <div class="settings-description">Highlights, notes and tags are kept per version, so switching shows only the markings made in that translation.</div>
+            <div class="settings-description" id="version-copyright"></div>
             <div class="settings-divider"></div>
             <div class="settings-item settings-toggle">
                 <div>
@@ -743,8 +749,8 @@
 
     <!-- Modular JavaScript (loaded in dependency order) -->
     <script src="js/state.js?v=1.6.2"></script>
-    <script src="js/bible-loader.js?v=1.8.3"></script>
-    <script src="js/paragraph-map.js?v=1.0.0"></script>
+    <script src="js/bible-loader.js?v=1.8.4"></script>
+    <script src="js/paragraph-map.js?v=1.0.1"></script>
     <script src="js/auth.js?v=1.5.3"></script>
     <script src="js/annotations.js?v=1.4.1"></script>
     <script src="js/verse-renderer.js?v=1.7.1"></script>
