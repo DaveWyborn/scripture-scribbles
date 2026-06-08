@@ -354,12 +354,6 @@ function observeReadingSections() {
         autoMarkObserver.observe(el);
     });
 
-    // In passage mode, observe .read-marker (per-chunk)
-    if (readingMode === 'passage') {
-        document.querySelectorAll('.read-marker:not([data-mark-all])').forEach(el => {
-            autoMarkObserver.observe(el);
-        });
-    }
 }
 
 function sectionKeyFromElement(el) {
@@ -374,7 +368,7 @@ function sectionKeyFromElement(el) {
         return `${bookId}-${chapter}-${sectionIndex}`;
     }
 
-    // Read marker (verse/passage mode)
+    // Read marker (verse mode)
     if (el.classList.contains('read-marker')) {
         const bookId = el.dataset.book || currentBook;
         const chapter = parseInt(el.dataset.chapter || currentChapter);

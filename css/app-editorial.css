@@ -105,7 +105,7 @@ html {
 /* ── Reading content ──────────────────────────────────────────────── */
 
 /* Scripture baseline: one source of truth for size, family, line-height.
-   All verse text — verse mode (.verse-text), fluid/passage mode
+   All verse text — verse mode (.verse-text), fluid mode
    (.paragraph descendants, .highlighted-text, .verse-text-inline) —
    inherits from here so modes stay consistent.
    typography.js applies user preferences as inline style, which wins. */
@@ -226,7 +226,7 @@ html {
     padding-left: var(--space-m);
 }
 
-/* ── Fluid / passage mode ─────────────────────────────────────────── */
+/* ── Fluid mode ───────────────────────────────────────────────────── */
 
 /* Font-size and family inherit from .content. Only layout/rhythm here. */
 .reading-mode-fluid .paragraph {
@@ -299,8 +299,7 @@ html {
 }
 
 /* Highlights — keep colour but soften the chip shape */
-.reading-mode-fluid .highlighted-text,
-.reading-mode-passage .highlighted-text {
+.reading-mode-fluid .highlighted-text {
     padding: 1px 3px;
     border-radius: 2px;
 }

@@ -121,8 +121,12 @@ function updateBibleVersionPicker() {
 
 async function loadBibleData(version = 'web') {
     try {
+        // Paragraph map (small) loads in parallel with the bible; awaited below
+        // so the first render can normalise paragraphing for flagged versions.
+        const mapPromise = typeof loadParagraphMap === 'function' ? loadParagraphMap() : null;
         bibleData = await loadGzippedBible(version);
         currentBibleVersion = version.toLowerCase();
+        if (mapPromise) await mapPromise;
 
         // Add ID fields to books (enhanced JSON uses name only)
         bibleData.books.forEach(book => {

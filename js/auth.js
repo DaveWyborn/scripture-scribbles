@@ -191,10 +191,6 @@ function handleSignOut() {
                     <h3>✨ Beautiful Annotations</h3>
                     <p>Highlight verses, add notes, and organise your studies across multiple annotation sets.</p>
                 </div>
-                <div class="feature">
-                    <h3>📄 Passage Mode</h3>
-                    <p>Put off by long chapters? Passage mode splits the text into smaller, manageable chunks.</p>
-                </div>
             </div>
 
             <button class="btn primary" id="get-started-btn-2" style="font-size: 1.2em; padding: 15px 40px;">Get Started</button>

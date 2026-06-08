@@ -52,6 +52,10 @@ def clean_verse_text(raw: str, footnote_refs_seen: list) -> str:
         footnote_refs_seen.append(int(m.group(1)))
     text = FOOTNOTE_REF.sub("", raw)
     text = ITALICS.sub(r"<em>\1</em>", text)
+    # Drop empty parens "()" — the source AFV markdown has ~59 of these where a
+    # Greek/Hebrew transliteration note was stripped upstream, leaving the
+    # brackets behind (e.g. John 14:17). Nothing to render, so remove them.
+    text = re.sub(r"\s*\(\s*\)", "", text)
     # Collapse repeated whitespace (the stripped footnote refs leave gaps)
     text = re.sub(r"\s+", " ", text).strip()
     # Strip leading/trailing whitespace around punctuation introduced by strip

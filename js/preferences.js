@@ -82,9 +82,9 @@ async function loadUserPreferences() {
 
             // Reading mode
             if (prefs.readingMode) {
-                setReadingMode(prefs.readingMode);
+                setReadingMode(prefs.readingMode); // coerces removed 'passage' → 'fluid'
                 const readingModeSelect = document.getElementById('reading-mode');
-                if (readingModeSelect) readingModeSelect.value = prefs.readingMode;
+                if (readingModeSelect) readingModeSelect.value = readingMode;
             }
 
             // Verse number style

@@ -747,13 +747,10 @@ trix-editor a {
     color: var(--accent-primary);
 }
 
-/* Hide the tab while the soft keyboard is up: it would otherwise collide with
-   the bottom-pinned editor toolbar. Slides out; returns when keyboard closes. */
-body.kb-open .notes-side-toggle {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-50%) translateX(100%);
-}
+/* Keep the edge tab visible while the soft keyboard is up — users switch
+   Notes/Bible mid-edit and hiding it forced an extra keyboard dismissal. It
+   sits mid-right (top:50%); the editor toolbar is bottom-pinned, so they don't
+   collide in practice. */
 
 /* Hide the edge tab only on a true desktop — wide AND non-touch. A touch
    device (any iPad, any width) keeps the single-column overlay + edge tab.

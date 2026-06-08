@@ -70,8 +70,6 @@ function renderBookGrid() {
 function selectBook(bookId) {
     currentBook = bookId;
     currentChapter = 1;
-    passageChunks = [];
-    currentPassageIndex = 0;
     updateNavDisplay();
     renderBookGrid();
     showNavTab('chapter');
@@ -97,8 +95,6 @@ function renderChapterGrid() {
     document.querySelectorAll('.chapter-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
             currentChapter = parseInt(btn.dataset.chapter);
-            passageChunks = [];
-            currentPassageIndex = 0;
             saveLastPosition();
             await loadAnnotations();
             displayChapter();

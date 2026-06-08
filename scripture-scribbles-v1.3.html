@@ -27,9 +27,9 @@
     <link rel="stylesheet" href="https://unpkg.com/trix@2.1.15/dist/trix.css">
     <script src="https://unpkg.com/trix@2.1.15/dist/trix.umd.min.js"></script>
 
-    <link rel="stylesheet" href="css/sermons.css?v=1.5.2">
+    <link rel="stylesheet" href="css/sermons.css?v=1.5.3">
     <!-- Editorial overlay — loads last, wins the cascade -->
-    <link rel="stylesheet" href="css/app-editorial.css?v=2.2.0">
+    <link rel="stylesheet" href="css/app-editorial.css?v=2.2.1">
 </head>
 <body>
     <div class="container">
@@ -73,7 +73,7 @@
                             <ul>
                                 <li>All three Bibles — WEB, ASV, KJV</li>
                                 <li>Every theme and typography setting</li>
-                                <li>Passage mode &amp; reading bar</li>
+                                <li>Fluid reading &amp; reading bar</li>
                                 <li>Your reading position on this device</li>
                             </ul>
                         </div>
@@ -204,7 +204,6 @@
                 <select id="reading-mode" class="reading-mode-select">
                     <option value="verse">Verse-by-Verse</option>
                     <option value="fluid">Fluid Reading</option>
-                    <option value="passage">Passage</option>
                 </select>
             </div>
             <div class="settings-description" id="reading-mode-description"></div>
@@ -445,10 +444,6 @@
                     <div class="feature">
                         <h3><i class="ph ph-highlighter" aria-hidden="true"></i> Beautiful Annotations</h3>
                         <p>Highlight verses, add notes, and organise your studies across multiple annotation sets.</p>
-                    </div>
-                    <div class="feature">
-                        <h3><i class="ph ph-rows" aria-hidden="true"></i> Passage Mode</h3>
-                        <p>Put off by long chapters? Passage mode splits the text into smaller, manageable chunks.</p>
                     </div>
                     <div class="feature">
                         <h3><i class="ph ph-cloud-arrow-up" aria-hidden="true"></i> Sync Everywhere</h3>
@@ -747,21 +742,22 @@
     <script src="supabase-config.js?v=1.3.27"></script>
 
     <!-- Modular JavaScript (loaded in dependency order) -->
-    <script src="js/state.js?v=1.6.1"></script>
-    <script src="js/bible-loader.js?v=1.8.2"></script>
-    <script src="js/auth.js?v=1.5.2"></script>
+    <script src="js/state.js?v=1.6.2"></script>
+    <script src="js/bible-loader.js?v=1.8.3"></script>
+    <script src="js/paragraph-map.js?v=1.0.0"></script>
+    <script src="js/auth.js?v=1.5.3"></script>
     <script src="js/annotations.js?v=1.4.1"></script>
-    <script src="js/verse-renderer.js?v=1.7.0"></script>
-    <script src="js/navigation.js?v=1.5.0"></script>
+    <script src="js/verse-renderer.js?v=1.7.1"></script>
+    <script src="js/navigation.js?v=1.5.1"></script>
     <script src="js/verse-picker.js?v=1.0.1"></script>
     <script src="js/typography.js?v=1.3.21"></script>
-    <script src="js/preferences.js?v=1.6.0"></script>
+    <script src="js/preferences.js?v=1.6.1"></script>
     <script src="js/tag-manager.js?v=1.4.0"></script>
-    <script src="js/ui.js?v=1.3.31"></script>
+    <script src="js/ui.js?v=1.3.32"></script>
     <script src="js/reading-bar.js?v=1.1.0"></script>
     <script src="js/note-headings.js?v=1.0.0"></script>
-    <script src="js/sermons.js?v=1.7.2"></script>
-    <script src="js/reading-plans.js?v=1.2.0"></script>
+    <script src="js/sermons.js?v=1.7.3"></script>
+    <script src="js/reading-plans.js?v=1.2.1"></script>
     <script src="js/app.js?v=1.5.2"></script>
 </body>
 </html>

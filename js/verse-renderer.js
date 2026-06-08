@@ -1,17 +1,16 @@
 // Verse renderer module - Supports both verse-by-verse and fluid reading modes
 
 function saveLastPosition() {
-    localStorage.setItem('lastPosition', JSON.stringify({ book: currentBook, chapter: currentChapter, passageIndex: currentPassageIndex }));
+    localStorage.setItem('lastPosition', JSON.stringify({ book: currentBook, chapter: currentChapter }));
 }
 
 function loadLastPosition() {
     try {
         const saved = localStorage.getItem('lastPosition');
         if (saved) {
-            const { book, chapter, passageIndex } = JSON.parse(saved);
+            const { book, chapter } = JSON.parse(saved);
             if (book) currentBook = book;
             if (chapter != null) currentChapter = chapter;
-            if (passageIndex != null) currentPassageIndex = passageIndex;
         }
     } catch (e) {}
 }
@@ -122,7 +121,7 @@ function renderChapterSection(bookId, chapterNum, bookObj, chapterObj, annotatio
  * Append the next chapter to the scrollable content area.
  */
 async function appendNextChapter() {
-    if (isAppendingChapter || readingMode === 'passage') return;
+    if (isAppendingChapter) return;
 
     // Find what comes after the last loaded section
     const lastSection = loadedChapterSections[loadedChapterSections.length - 1];
@@ -294,8 +293,6 @@ function setupContinuousScroll() {
     if (continuousScrollObserver) continuousScrollObserver.disconnect();
     if (chapterVisibilityObserver) chapterVisibilityObserver.disconnect();
 
-    if (readingMode === 'passage') return;
-
     // Chapter visibility observer — updates toolbar as user scrolls between chapters
     chapterVisibilityObserver = new IntersectionObserver((entries) => {
         // Find the topmost visible chapter section
@@ -423,25 +420,13 @@ function toggleScrollNav() {
 }
 
 /**
- * Scroll to a section heading or jump to its passage chunk
+ * Scroll to a section heading
  */
 function scrollToSection(headingIndex, verseNum) {
     const dropdown = document.getElementById('scroll-nav-dropdown');
     if (dropdown) dropdown.classList.remove('open');
 
-    if (readingMode === 'passage') {
-        // Find the chunk containing this verse
-        for (let i = 0; i < passageChunks.length; i++) {
-            const chunk = passageChunks[i];
-            if (chunk.verses.some(v => v.number === verseNum)) {
-                currentPassageIndex = i;
-                saveLastPosition();
-                displayChapter();
-                window.scrollTo(0, 0);
-                return;
-            }
-        }
-    } else {
+    {
         // Fluid mode: scroll to the section heading element
         const headings = document.querySelectorAll('.section-heading, .hebrew-heading');
         if (headings[headingIndex]) {
@@ -600,129 +585,6 @@ function renderSegmentLine(seg, verse, isFirstSegment, extraClasses) {
 }
 
 /**
- * Build natural paragraph chunks from chapter verses using USFM boundary markers
- */
-function buildNaturalChunks(verses) {
-    const chunks = [];
-    let currentVerses = [];
-    let pendingHeading = null;
-    let currentIsPoetry = false;
-
-    verses.forEach(verse => {
-        const isPoetry = verse.type && verse.type.startsWith('poetry');
-        const startsNewSentence = verse.text &&
-            verse.text[0] === verse.text[0].toUpperCase() &&
-            verse.text[0] !== verse.text[0].toLowerCase();
-
-        if (verse.heading) {
-            if (currentVerses.length > 0) {
-                chunks.push({ verses: currentVerses, heading: pendingHeading });
-                currentVerses = [];
-                currentIsPoetry = false;
-            }
-            pendingHeading = verse.heading;
-        }
-
-        if (currentVerses.length > 0 && isPoetry !== currentIsPoetry) {
-            chunks.push({ verses: currentVerses, heading: pendingHeading });
-            currentVerses = [];
-            pendingHeading = null;
-        }
-
-        if (!isPoetry && verse.type === 'paragraph' && currentVerses.length > 0 && startsNewSentence) {
-            chunks.push({ verses: currentVerses, heading: pendingHeading });
-            currentVerses = [];
-            pendingHeading = null;
-        }
-
-        currentVerses.push(verse);
-        currentIsPoetry = isPoetry;
-    });
-
-    if (currentVerses.length > 0) {
-        chunks.push({ verses: currentVerses, heading: pendingHeading });
-    }
-
-    return chunks;
-}
-
-/**
- * Build passage chunks for a chapter.
- * Rules (in order):
- *   1. Merge small non-heading chunks backward into previous (min = 3)
- *   2. Merge first chunk forward if below min (can't go backward)
- *   3. Split chunks above maxSize (10) at paragraph boundaries, targeting ~targetSize (5)
- *   4. Orphan rule: last chunk below min → halve or absorb
- */
-function buildPassageChunks(chapter, targetSize = 5, minSize = 3, maxSize = 10) {
-    const natural = buildNaturalChunks(chapter.verses);
-
-    // Pass 1: Merge small non-heading chunks backward
-    const merged = [];
-    for (const chunk of natural) {
-        if (chunk.verses.length < minSize && !chunk.heading && merged.length > 0) {
-            merged[merged.length - 1].verses.push(...chunk.verses);
-        } else {
-            merged.push({ verses: [...chunk.verses], heading: chunk.heading });
-        }
-    }
-
-    // Pass 2: Merge first chunk forward if below min
-    if (merged.length >= 2 && merged[0].verses.length < minSize) {
-        merged[1].verses = [...merged[0].verses, ...merged[1].verses];
-        if (!merged[1].heading) merged[1].heading = merged[0].heading;
-        merged.shift();
-    }
-
-    // Pass 3: Split chunks above maxSize at paragraph boundaries
-    const split = [];
-    for (const chunk of merged) {
-        if (chunk.verses.length <= maxSize) {
-            split.push(chunk);
-            continue;
-        }
-        let remaining = chunk.verses;
-        let isFirst = true;
-        while (remaining.length > maxSize) {
-            // Scan for a paragraph boundary between minSize and maxSize, prefer near targetSize
-            let splitAt = Math.min(targetSize, remaining.length - minSize);
-            for (let i = minSize; i <= Math.min(maxSize - 1, remaining.length - minSize); i++) {
-                const v = remaining[i];
-                const text = v.text || '';
-                const startsNew = text && text[0] === text[0].toUpperCase() && text[0] !== text[0].toLowerCase();
-                if (v.type === 'paragraph' && startsNew) {
-                    splitAt = i;
-                    if (i >= targetSize) break;
-                }
-            }
-            split.push({ verses: remaining.slice(0, splitAt), heading: isFirst ? chunk.heading : null });
-            remaining = remaining.slice(splitAt);
-            isFirst = false;
-        }
-        split.push({ verses: remaining, heading: isFirst ? chunk.heading : null });
-    }
-
-    // Pass 4: Orphan rule — last chunk below min → halve or absorb
-    if (split.length >= 2) {
-        const last = split[split.length - 1];
-        const prev = split[split.length - 2];
-        if (last.verses.length < minSize) {
-            const all = [...prev.verses, ...last.verses];
-            const half = Math.ceil(all.length / 2);
-            if (half >= minSize && (all.length - half) >= minSize) {
-                split[split.length - 2] = { verses: all.slice(0, half), heading: prev.heading };
-                split[split.length - 1] = { verses: all.slice(half), heading: null };
-            } else {
-                prev.verses.push(...last.verses);
-                split.pop();
-            }
-        }
-    }
-
-    return split;
-}
-
-/**
  * Split verses into heading-delimited sections for read tracking.
  * Each new heading starts a new section. Chapters with no headings = one section.
  */
@@ -744,17 +606,28 @@ function buildReadingSections(verses) {
 
 /**
  * Render verse content (paragraphs + poetry) without section headings or mark buttons.
- * Called by renderFluidMode (per section) and renderPassageMode.
+ * Called by renderFluidMode (per section).
  *
  * Operates on segments (not whole verses): each verse exposes a `segments[]`
  * array with per-line type, so a verse that mixes prose intro + poetic OT
  * quote renders each portion at its correct indent level. A segment's
  * `start: true` flag indicates an explicit \p / \q marker began that segment
  * — used to open a new <p> block within a run of paragraph segments.
+ *
+ * When the current version is flagged for paragraph normalisation
+ * (see paragraph-map.js), we ignore its own segments and overlay the reference
+ * version's break-points instead: each verse becomes a single paragraph segment
+ * that starts a new <p> only at a borrowed break-point.
  */
-function renderFluidModeContent(verses, bookNum, chapterNum) {
+function renderFluidModeContent(verses, bookName, chapterNum) {
     let html = '';
     let openBlock = null; // 'paragraph' | 'poetry' | null
+
+    const normalise = typeof shouldNormaliseParagraphs === 'function'
+        && shouldNormaliseParagraphs(currentBibleVersion);
+    const borrowedStarts = normalise
+        ? getBorrowedParagraphStarts(bookName, chapterNum)
+        : null;
 
     const closeBlock = () => {
         if (openBlock === 'paragraph') html += '</p>';
@@ -763,7 +636,13 @@ function renderFluidModeContent(verses, bookNum, chapterNum) {
     };
 
     verses.forEach(verse => {
-        const segs = verse.segments || [{ type: verse.type || 'paragraph', text: verse.text }];
+        // Normalise PROSE paragraphing only. Poetry keeps its own structure
+        // (q1/q2 indents are faithful to the source — never flatten them).
+        const versePoetry = (verse.type && verse.type.startsWith('poetry'))
+            || (verse.segments && verse.segments.some(s => s.type && s.type.startsWith('poetry')));
+        const segs = (normalise && !versePoetry)
+            ? [{ type: 'paragraph', text: verse.text, start: borrowedStarts.has(verse.number) }]
+            : (verse.segments || [{ type: verse.type || 'paragraph', text: verse.text }]);
         segs.forEach((seg, idx) => {
             const isFirstSegment = idx === 0;
             const isPoetry = seg.type && seg.type.startsWith('poetry');
@@ -793,33 +672,6 @@ function renderFluidModeContent(verses, bookNum, chapterNum) {
 }
 
 /**
- * Render the current passage chunk in passage mode
- */
-function renderPassageMode(chapter, book) {
-    if (passageChunks.length === 0) {
-        passageChunks = buildPassageChunks(chapter);
-        currentPassageIndex = Math.max(0, Math.min(currentPassageIndex, passageChunks.length - 1));
-    }
-
-    const chunk = passageChunks[currentPassageIndex];
-
-    let html = '';
-    if (chunk.heading) {
-        const isHebrewLetter = chunk.heading.length < 20 && chunk.heading === chunk.heading.toUpperCase();
-        html += `<div class="${isHebrewLetter ? 'hebrew-heading' : 'section-heading'}">${chunk.heading}</div>`;
-    }
-    // Strip heading from first verse (already rendered above) before passing to content renderer
-    const verses = chunk.verses.map((v, i) => i === 0 ? Object.assign({}, v, { heading: undefined }) : v);
-    html += renderFluidModeContent(verses, book.number, chapter.number);
-
-    if (typeof renderMarkButton === 'function') {
-        html += renderMarkButton(currentBook, chapter.number, currentPassageIndex, passageChunks.length);
-    }
-
-    return html;
-}
-
-/**
  * Render chapter in fluid reading mode.
  * Splits into heading-delimited sections, each with a mark-as-read button.
  */
@@ -837,7 +689,7 @@ function renderFluidMode(chapter, book) {
 
         // Strip heading from first verse (already rendered above)
         const verses = section.verses.map((v, i) => i === 0 ? Object.assign({}, v, { heading: undefined }) : v);
-        html += renderFluidModeContent(verses, book.number, chapter.number);
+        html += renderFluidModeContent(verses, book.name, chapter.number);
 
         if (typeof renderMarkButton === 'function') {
             html += renderMarkButton(currentBook, chapter.number, sectionIndex, sections.length);
@@ -1028,16 +880,7 @@ function displayChapter() {
     // Reset continuous scroll state for fresh render
     resetContinuousScroll();
 
-    if (readingMode === 'passage') {
-        if (passageChunks.length === 0) {
-            passageChunks = buildPassageChunks(chapter);
-            currentPassageIndex = Math.max(0, Math.min(currentPassageIndex, passageChunks.length - 1));
-        }
-        document.getElementById('chapter-info').textContent =
-            `${book.name} ${currentChapter} · ${currentPassageIndex + 1}/${passageChunks.length}`;
-        html = renderChapterTitleWithOutline(book.name, currentChapter, sectionHeadings, hasOutline);
-        html += renderPassageMode(chapter, book);
-    } else {
+    {
         document.getElementById('chapter-info').textContent = `${book.name} ${currentChapter}`;
         html = renderChapterTitleWithOutline(book.name, currentChapter, sectionHeadings, hasOutline);
 
@@ -1252,34 +1095,21 @@ function displayChapter() {
     }
 
     // Add reading mode class
-    contentEl.classList.toggle('reading-mode-fluid', readingMode === 'fluid' || readingMode === 'passage');
+    contentEl.classList.toggle('reading-mode-fluid', readingMode === 'fluid');
     contentEl.classList.toggle('reading-mode-verse', readingMode === 'verse');
 
-    // Attach verse click handlers
-    if (readingMode === 'passage') {
-        // Passage mode: no chapter-section wrapper, use content element directly
-        const target = bibleWrapper || contentEl;
-        attachVerseHandlers(target);
-    } else {
-        // Fluid/verse mode: attach per chapter section (supports continuous scroll)
-        document.querySelectorAll('.chapter-section').forEach(section => {
-            attachVerseHandlers(section);
-        });
-    }
+    // Attach verse click handlers per chapter section (supports continuous scroll)
+    document.querySelectorAll('.chapter-section').forEach(section => {
+        attachVerseHandlers(section);
+    });
 
     // Update navigation buttons (top + bottom)
     const book_obj = bibleData.books.find(b => b.id === currentBook);
-    let prevDisabled, nextDisabled;
-    if (readingMode === 'passage') {
-        prevDisabled = currentChapter === 1 && currentPassageIndex === 0;
-        nextDisabled = currentChapter === book_obj.chapters.length && currentPassageIndex === passageChunks.length - 1;
-    } else {
-        // With continuous scroll, next is never disabled (auto-loads).
-        // Prev disabled only at Genesis 1.
-        const isFirstBook = bibleData.books.indexOf(book_obj) === 0;
-        prevDisabled = isFirstBook && currentChapter === 1;
-        nextDisabled = false;
-    }
+    // With continuous scroll, next is never disabled (auto-loads).
+    // Prev disabled only at Genesis 1.
+    const isFirstBook = bibleData.books.indexOf(book_obj) === 0;
+    const prevDisabled = isFirstBook && currentChapter === 1;
+    const nextDisabled = false;
     document.getElementById('prev-chapter').disabled = prevDisabled;
     document.getElementById('next-chapter').disabled = nextDisabled;
     const prevBottom = document.getElementById('prev-chapter-bottom');
@@ -1294,10 +1124,8 @@ function displayChapter() {
     // across prev/next nav and continuous scroll).
     if (typeof updateClipUI === 'function') updateClipUI();
 
-    // Set up continuous scroll for fluid and verse modes
-    if (readingMode !== 'passage') {
-        setupContinuousScroll();
-    }
+    // Set up continuous scroll
+    setupContinuousScroll();
 
     // Set up auto-mark-as-read observers
     if (typeof setupAutoMarkObserver === 'function' && autoMarkEnabled) {
@@ -1305,43 +1133,9 @@ function displayChapter() {
     }
 }
 
-// Navigate to previous/next chapter (or passage in passage mode)
+// Navigate to previous/next chapter
 async function navigateChapter(delta) {
     if (isNavigating) return;
-
-    // Passage mode: navigate within chunks first, cross chapter at boundaries
-    if (readingMode === 'passage' && passageChunks.length > 0) {
-        const newIndex = currentPassageIndex + delta;
-        if (newIndex >= 0 && newIndex < passageChunks.length) {
-            currentPassageIndex = newIndex;
-            saveLastPosition();
-            displayChapter();
-            window.scrollTo(0, 0);
-            return;
-        }
-        // At chapter boundary — move to adjacent chapter
-        isNavigating = true;
-        try {
-            currentChapter += delta;
-            passageChunks = [];
-            await loadAnnotations();
-            // Build chunks now so we can land on last passage when going back
-            const book = bibleData.books.find(b => b.id === currentBook);
-            const chapter = book && book.chapters.find(c => c.number === currentChapter);
-            if (chapter) {
-                passageChunks = buildPassageChunks(chapter);
-                currentPassageIndex = delta > 0 ? 0 : passageChunks.length - 1;
-            }
-            saveLastPosition();
-            displayChapter();
-            window.scrollTo(0, 0);
-        } catch (error) {
-            console.error('Error in navigateChapter:', error);
-        } finally {
-            isNavigating = false;
-        }
-        return;
-    }
 
     isNavigating = true;
     try {
@@ -1368,8 +1162,6 @@ async function navigateChapter(delta) {
             return;
         }
 
-        passageChunks = [];
-        currentPassageIndex = 0;
         saveLastPosition();
         await loadAnnotations();
         displayChapter();

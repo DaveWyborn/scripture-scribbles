@@ -62,8 +62,7 @@ function setAnnotationMode(mode) {
 
 const READING_MODE_DESCRIPTIONS = {
     verse: "Each verse on its own line with a clear gap between them. Easiest to track line-by-line and good for study.",
-    fluid: "Verses flow together as paragraphs, closer to a printed Bible. Better for continuous, natural reading.",
-    passage: "Breaks chapters into bite-sized passages of roughly 8–10 verses. Less overwhelming and easier to focus one thought at a time."
+    fluid: "Verses flow together as paragraphs, closer to a printed Bible. Better for continuous, natural reading."
 };
 
 function updateReadingModeDescription(mode) {
@@ -72,7 +71,8 @@ function updateReadingModeDescription(mode) {
 }
 
 function loadReadingMode() {
-    const savedMode = localStorage.getItem('readingMode') || 'verse';
+    let savedMode = localStorage.getItem('readingMode') || 'verse';
+    if (savedMode === 'passage') savedMode = 'fluid'; // passage mode removed
     readingMode = savedMode;
     const select = document.getElementById('reading-mode');
     if (select) select.value = savedMode;
@@ -81,9 +81,8 @@ function loadReadingMode() {
 }
 
 function setReadingMode(mode) {
+    if (mode === 'passage') mode = 'fluid'; // passage mode removed
     readingMode = mode;
-    passageChunks = [];
-    currentPassageIndex = 0;
     localStorage.setItem('readingMode', mode);
     updateVerseNumberStyleVisibility();
     updateReadingModeDescription(mode);
@@ -116,8 +115,8 @@ function setVerseNumberStyle(style) {
 function updateVerseNumberStyleVisibility() {
     const container = document.getElementById('verse-number-style-container');
     if (container) {
-        // Show verse number style in fluid and passage modes
-        container.style.display = (readingMode === 'fluid' || readingMode === 'passage') ? 'flex' : 'none';
+        // Show verse number style in fluid mode
+        container.style.display = readingMode === 'fluid' ? 'flex' : 'none';
     }
 }
 

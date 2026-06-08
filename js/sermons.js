@@ -361,7 +361,7 @@ function updateClipUI() {
         const verseNum = parseInt(el.dataset.verse);
         if (!verseNum) return;
         // Each chapter section in continuous scroll carries data-book + data-chapter.
-        // Passage mode has no section wrapper; fall back to current state.
+        // Fall back to current state if no section wrapper is found.
         const section = el.closest('.chapter-section');
         const bookId = section ? section.dataset.book : currentBook;
         const chapter = section ? parseInt(section.dataset.chapter) : currentChapter;
@@ -578,8 +578,6 @@ async function openClipTarget(target) {
     // Switch reader state.
     currentBook = target.bookId;
     currentChapter = target.chapter;
-    passageChunks = [];
-    currentPassageIndex = 0;
 
     if (typeof saveLastPosition === 'function') saveLastPosition();
     if (typeof loadAnnotations === 'function') await loadAnnotations();
