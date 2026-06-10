@@ -50,7 +50,8 @@ let clippedVerses = new Map();
 let currentAnnotations = {};
 let selectedVerse = null;
 let currentAnnotationSet = 'Study'; // Default annotation set
-let userAnnotationSets = ['Study', 'Church', 'Personal']; // Default sets
+let userAnnotationSets = ['Study']; // New users start with a single set
+let enableMultipleSets = false; // Set switcher hidden until opted in (or legacy multi-set user)
 
 // Tag management
 let knownTags = {}; // { tagName: color } - persisted to localStorage

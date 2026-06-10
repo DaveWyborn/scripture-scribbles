@@ -126,12 +126,70 @@ function loadAnnotationSets() {
     const saved = localStorage.getItem('annotationSets');
     if (saved) {
         userAnnotationSets = JSON.parse(saved);
+    } else {
+        userAnnotationSets = ['Study']; // new users start with a single set
     }
     const savedCurrent = localStorage.getItem('currentAnnotationSet');
     if (savedCurrent && userAnnotationSets.includes(savedCurrent)) {
         currentAnnotationSet = savedCurrent;
     }
+
+    // Set switcher is hidden by default. Show it only if the user has opted in,
+    // or — for legacy users with no explicit choice — if they already keep more
+    // than one set (so we never hide existing data behind a toggle).
+    const savedFlag = localStorage.getItem('enableMultipleSets');
+    if (savedFlag !== null) {
+        enableMultipleSets = savedFlag === 'true';
+    } else {
+        enableMultipleSets = userAnnotationSets.length > 1;
+    }
+
+    applySetSwitcherVisibility();
     updateSetSwitcherUI();
+}
+
+// Show/hide the set switcher and sync the advanced toggle to current state.
+function applySetSwitcherVisibility() {
+    const section = document.getElementById('set-switcher-section');
+    if (section) section.style.display = enableMultipleSets ? '' : 'none';
+    const toggle = document.getElementById('multi-set-toggle');
+    if (toggle) toggle.checked = enableMultipleSets;
+}
+
+// Advanced toggle: turn multiple annotation sets on/off.
+function setMultipleSetsEnabled(enabled) {
+    enableMultipleSets = enabled;
+    localStorage.setItem('enableMultipleSets', enabled ? 'true' : 'false');
+
+    if (enabled) {
+        showInfoPopup('Multiple annotation sets',
+            'A set is a separate layer of notes, highlights and tags over the same Bible. Keep personal study in one and sermon notes in another, and switch between them without them mixing. Anything you have already saved stays in whichever set you made it in.<br><br>Switch sets any time from <strong>Current set</strong> just below.');
+    } else {
+        // Returning to single-set mode: fall back to the default set. Data in
+        // other sets is preserved, just hidden until sets are re-enabled.
+        const fallback = userAnnotationSets.includes('Study') ? 'Study' : userAnnotationSets[0];
+        if (currentAnnotationSet !== fallback) {
+            switchAnnotationSet(fallback);
+        }
+    }
+
+    applySetSwitcherVisibility();
+}
+
+// Lightweight, reusable info popup (reuses the modal styles). The richer
+// first-use explainer system lands in a later step.
+function showInfoPopup(title, bodyHtml) {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay active';
+    overlay.style.zIndex = '10002';
+    overlay.innerHTML = `
+        <div class="modal" style="max-width:420px;">
+            <h2>${title}</h2>
+            <div style="color:var(--text-secondary); font-size:0.95em; line-height:1.5; margin-bottom:18px;">${bodyHtml}</div>
+            <button class="btn primary" style="width:100%;">Got it</button>
+        </div>`;
+    overlay.querySelector('button').addEventListener('click', () => overlay.remove());
+    document.body.appendChild(overlay);
 }
 
 function saveAnnotationSets() {

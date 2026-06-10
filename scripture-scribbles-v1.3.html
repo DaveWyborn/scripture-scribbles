@@ -146,13 +146,25 @@
             <div class="settings-item settings-toggle">
                 <div>
                     <i class="ph ph-stack"></i>
-                    <span>Annotation Set</span>
+                    <span>Multiple annotation sets</span>
                 </div>
-                <button class="set-switcher-btn" id="set-switcher-btn">
-                    <span id="current-set-name">Study</span>
-                </button>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="multi-set-toggle" onchange="setMultipleSetsEnabled(this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
             </div>
-            <div class="settings-description">Keep separate sets of notes, highlights and tags — for example, personal study in one set and sermon notes in another.</div>
+            <div class="settings-description">Keep separate layers of notes, highlights and tags over the same Bible — for example personal study in one set and sermon notes in another. Most people only need one.</div>
+            <div id="set-switcher-section">
+                <div class="settings-item settings-toggle">
+                    <div>
+                        <i class="ph ph-stack"></i>
+                        <span>Current set</span>
+                    </div>
+                    <button class="set-switcher-btn" id="set-switcher-btn">
+                        <span id="current-set-name">Study</span>
+                    </button>
+                </div>
+            </div>
             <div class="settings-item settings-toggle">
                 <div>
                     <i class="ph ph-book-bookmark"></i>
@@ -748,7 +760,7 @@
     <script src="supabase-config.js?v=1.3.27"></script>
 
     <!-- Modular JavaScript (loaded in dependency order) -->
-    <script src="js/state.js?v=1.6.2"></script>
+    <script src="js/state.js?v=1.6.3"></script>
     <script src="js/bible-loader.js?v=1.8.4"></script>
     <script src="js/paragraph-map.js?v=1.0.1"></script>
     <script src="js/auth.js?v=1.5.3"></script>
@@ -759,7 +771,7 @@
     <script src="js/typography.js?v=1.3.21"></script>
     <script src="js/preferences.js?v=1.6.1"></script>
     <script src="js/tag-manager.js?v=1.5.0"></script>
-    <script src="js/ui.js?v=1.3.32"></script>
+    <script src="js/ui.js?v=1.3.33"></script>
     <script src="js/reading-bar.js?v=1.1.0"></script>
     <script src="js/note-headings.js?v=1.0.0"></script>
     <script src="js/sermons.js?v=1.7.3"></script>
