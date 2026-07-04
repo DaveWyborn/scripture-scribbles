@@ -487,7 +487,7 @@ function buildInlineMenu(verseNumber, annotation) {
 
                 <!-- Note submenu -->
                 <div class="submenu" id="submenu-note-${verseNumber}">
-                    <textarea class="note-textarea" id="note-input-${verseNumber}" placeholder="Add your thoughts... (Cmd+Enter to save)" onkeydown="handleNoteKeydown(event, ${verseNumber})">${annotation.note || ''}</textarea>
+                    <textarea class="note-textarea" id="note-input-${verseNumber}" placeholder="Add your thoughts... (Cmd+Enter to save)" onkeydown="handleNoteKeydown(event, ${verseNumber})">${escapeHtml(annotation.note || '')}</textarea>
                     <div class="note-actions">
                         <button class="note-delete" onclick="deleteNote(${verseNumber})">Delete</button>
                         <button class="note-save" onclick="saveNote(${verseNumber})">Save</button>
@@ -800,7 +800,7 @@ function renderVerseMode(chapter, book) {
 
                 <!-- Note submenu -->
                 <div class="submenu" id="submenu-note-${verse.number}">
-                    <textarea class="note-textarea" id="note-input-${verse.number}" placeholder="Add your thoughts... (Cmd+Enter to save)" onkeydown="handleNoteKeydown(event, ${verse.number})">${annotation.note || ''}</textarea>
+                    <textarea class="note-textarea" id="note-input-${verse.number}" placeholder="Add your thoughts... (Cmd+Enter to save)" onkeydown="handleNoteKeydown(event, ${verse.number})">${escapeHtml(annotation.note || '')}</textarea>
                     <div class="note-actions">
                         <button class="note-delete" onclick="deleteNote(${verse.number})">Delete</button>
                         <button class="note-save" onclick="saveNote(${verse.number})">Save</button>
@@ -995,7 +995,7 @@ function displayChapter() {
 
                 <!-- Note submenu -->
                 <div class="submenu" id="submenu-note-${verse.number}">
-                    <textarea class="note-textarea" id="note-input-${verse.number}" placeholder="Add your thoughts... (Cmd+Enter to save)" onkeydown="handleNoteKeydown(event, ${verse.number})">${annotation.note || ''}</textarea>
+                    <textarea class="note-textarea" id="note-input-${verse.number}" placeholder="Add your thoughts... (Cmd+Enter to save)" onkeydown="handleNoteKeydown(event, ${verse.number})">${escapeHtml(annotation.note || '')}</textarea>
                     <div class="note-actions">
                         <button class="note-delete" onclick="deleteNote(${verse.number})">Delete</button>
                         <button class="note-save" onclick="saveNote(${verse.number})">Save</button>

@@ -113,7 +113,7 @@ function renderTagChips() {
         chip.className = 'tag-chip';
         chip.style.background = tag.color;
         chip.innerHTML = `
-            ${tag.name}
+            ${escapeHtml(tag.name)}
             <span class="tag-chip-remove" data-index="${index}">×</span>
         `;
         container.appendChild(chip);

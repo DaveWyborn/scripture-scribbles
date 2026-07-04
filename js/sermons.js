@@ -271,7 +271,7 @@ window.closeNotesMenu = function() {
 function setupTrixListeners() {
     // Auto-save on content change
     document.addEventListener('trix-change', () => {
-        if (currentSermon) {
+        if (currentUser && ((currentSermon && currentSermon.id) || sermonHasSavableContent())) {
             debounceSaveSermon();
         }
     });
@@ -282,7 +282,7 @@ function setupTrixListeners() {
         const field = document.getElementById(fieldId);
         if (field) {
             field.addEventListener('input', () => {
-                if (currentSermon) {
+                if (currentUser && ((currentSermon && currentSermon.id) || sermonHasSavableContent())) {
                     debounceSaveSermon();
                 }
             });
@@ -798,51 +798,99 @@ function debounceSaveSermon() {
 }
 
 /**
- * Save current sermon to Supabase
+ * True when there's something worth persisting. Guards against spawning empty
+ * sermon rows from stray editor 'change' events fired on init/clear.
+ */
+function sermonHasSavableContent() {
+    const contentEl = document.getElementById('sermon-content');
+    const titleEl = document.getElementById('sermon-title');
+    const bodyText = contentEl ? contentEl.value.replace(/<[^>]*>/g, '').trim() : '';
+    const titleText = titleEl ? titleEl.value.trim() : '';
+    return Boolean(bodyText || titleText);
+}
+
+// Serialise saves so two writes never overlap (prevents duplicate inserts and
+// lost updates). A save requested mid-flight sets the pending flag and re-runs
+// once the in-flight save settles, so the latest keystrokes are never lost.
+let sermonSaveInFlight = false;
+let sermonSavePending = false;
+
+/**
+ * Save current sermon to Supabase. Creates the row if one doesn't exist yet,
+ * so typed content is never silently dropped when createSermon failed or is
+ * still in flight (the data-loss bug).
  */
 async function saveSermon() {
-    if (!currentUser || !currentSermon) {
-        console.warn('Cannot save: no user or sermon');
+    if (!currentUser) {
+        console.warn('Cannot save sermon: not signed in');
         return;
     }
 
-    // Get HTML content from Trix (not plain text)
-    const contentInput = document.getElementById('sermon-content');
-    const content = contentInput ? contentInput.value : '';
+    // No persisted row and nothing typed — nothing to do (don't create empties).
+    if ((!currentSermon || !currentSermon.id) && !sermonHasSavableContent()) {
+        return;
+    }
 
-    const sermonData = {
-        user_id: currentUser.id,
-        title: document.getElementById('sermon-title').value || 'Untitled',
-        date: document.getElementById('sermon-date').value || new Date().toISOString().split('T')[0],
-        speaker: document.getElementById('sermon-speaker').value || null,
-        location: document.getElementById('sermon-location').value || null,
-        series: document.getElementById('sermon-series').value || null,
-        passage: document.getElementById('sermon-passage').value || null,
-        content: content,
-        metadata: {
-            bible_position: { book: currentBook, chapter: currentChapter }
-        },
-        updated_at: new Date().toISOString()
-    };
+    if (sermonSaveInFlight) {
+        sermonSavePending = true;
+        return;
+    }
+    sermonSaveInFlight = true;
 
     try {
-        if (currentSermon.id) {
-            // Update existing
+        // Get HTML content from Trix (not plain text)
+        const contentInput = document.getElementById('sermon-content');
+        const content = contentInput ? contentInput.value : '';
+
+        const sermonData = {
+            user_id: currentUser.id,
+            title: document.getElementById('sermon-title').value || 'Untitled',
+            date: document.getElementById('sermon-date').value || new Date().toISOString().split('T')[0],
+            speaker: document.getElementById('sermon-speaker').value || null,
+            location: document.getElementById('sermon-location').value || null,
+            series: document.getElementById('sermon-series').value || null,
+            passage: document.getElementById('sermon-passage').value || null,
+            content: content,
+            metadata: {
+                bible_position: { book: currentBook, chapter: currentChapter }
+            },
+            updated_at: new Date().toISOString()
+        };
+
+        if (currentSermon && currentSermon.id) {
+            // Update existing row
             const { error } = await supabase
                 .from('sermons')
                 .update(sermonData)
                 .eq('id', currentSermon.id);
-
             if (error) throw error;
-
-            // Update local copy
             Object.assign(currentSermon, sermonData);
-
-            showSaveIndicator();
+        } else {
+            // No row yet — create one so the typed content has somewhere to live.
+            const { data, error } = await supabase
+                .from('sermons')
+                .insert(sermonData)
+                .select()
+                .single();
+            if (error) throw error;
+            currentSermon = data;
+            if (!sermonList.some(s => s.id === data.id)) {
+                sermonList.unshift(data);
+            }
+            localStorage.setItem('lastSermonId', data.id);
         }
+
+        showSaveIndicator();
     } catch (error) {
         console.error('Error saving sermon:', error);
+        // Leave content in the editor so the next change retries — never clear on failure.
         showErrorIndicator('Failed to save');
+    } finally {
+        sermonSaveInFlight = false;
+        if (sermonSavePending) {
+            sermonSavePending = false;
+            saveSermon();
+        }
     }
 }
 
@@ -1232,9 +1280,9 @@ window.openSermonSelector = function() {
 
             item.innerHTML = `
                 <div class="sermon-item-content" onclick="selectSermon('${sermon.id}')">
-                    <h4>${sermon.title || 'Untitled'}</h4>
-                    <p>${sermon.date || ''} ${sermon.speaker ? '• ' + sermon.speaker : ''}</p>
-                    <p class="sermon-passage">${sermon.passage || ''}</p>
+                    <h4>${escapeHtml(sermon.title || 'Untitled')}</h4>
+                    <p>${escapeHtml(sermon.date || '')} ${sermon.speaker ? '• ' + escapeHtml(sermon.speaker) : ''}</p>
+                    <p class="sermon-passage">${escapeHtml(sermon.passage || '')}</p>
                 </div>
                 <button class="btn-icon" onclick="event.stopPropagation(); deleteSermon('${sermon.id}')">
                     <i class="ph ph-trash"></i>

@@ -11,7 +11,9 @@
       "Bash(git push:*)",
       "Bash(git add:*)",
       "Bash(ls:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "WebFetch(domain:api.bible)",
+      "WebFetch(domain:library.bible)"
     ],
     "deny": [],
     "ask": []
