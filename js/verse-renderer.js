@@ -502,7 +502,7 @@ function buildInlineMenu(verseNumber, annotation) {
                             ${hasTags ? annotation.tags.map(tag => {
                                 const tagName = typeof tag === 'string' ? tag : tag.name;
                                 const tagColor = typeof tag === 'object' ? tag.color : knownTags[tagName.toLowerCase()] || '#ACE5CB';
-                                return `<span class="tag-item active" style="background: ${tagColor}" onclick="removeTag(${verseNumber}, '${tagName}')">${tagName}</span>`;
+                                return `<span class="tag-item active" style="background: ${tagColor}" onclick="removeTag(${verseNumber}, '${escapeAttr(tagName)}')">${escapeHtml(tagName)}</span>`;
                             }).join('') : '<span style="color: var(--text-tertiary); font-size: 0.8em;">No tags</span>'}
                         </div>
                     </div>
@@ -513,7 +513,7 @@ function buildInlineMenu(verseNumber, annotation) {
                                 Object.entries(knownTags).map(([name, color]) => {
                                     const isActive = hasTags && annotation.tags.some(t => (typeof t === 'string' ? t : t.name).toLowerCase() === name.toLowerCase());
                                     if (isActive) return '';
-                                    return `<span class="tag-item" style="background: ${color}" onclick="addExistingTag(${verseNumber}, '${name}', '${color}')">${name}</span>`;
+                                    return `<span class="tag-item" style="background: ${color}" onclick="addExistingTag(${verseNumber}, '${escapeAttr(name)}', '${color}')">${escapeHtml(name)}</span>`;
                                 }).join('') || '<span style="color: var(--text-tertiary); font-size: 0.8em;">No saved tags</span>'
                             : '<span style="color: var(--text-tertiary); font-size: 0.8em;">No saved tags</span>'}
                         </div>
@@ -565,7 +565,7 @@ function renderSegmentLine(seg, verse, isFirstSegment, extraClasses) {
         annotation.tags.forEach(tag => {
             const tagName = typeof tag === 'string' ? tag : tag.name;
             const tagColor = typeof tag === 'object' ? tag.color : (knownTags[tagName.toLowerCase()] || '#ACE5CB');
-            html += `<span class="tag-chip-inline" style="background: ${tagColor}">${tagName}</span>`;
+            html += `<span class="tag-chip-inline" style="background: ${tagColor}">${escapeHtml(tagName)}</span>`;
         });
         html += '</span>';
     }
@@ -743,9 +743,9 @@ function renderVerseMode(chapter, book) {
             if (tags.length === 1) {
                 const tag = tags[0];
                 const tagColor = typeof tag === 'object' ? tag.color : (knownTags[tag.toLowerCase()] || '#ACE5CB');
-                html += `<i class="ph-fill ph-tag indicator-icon" style="color: ${tagColor}" title="${tagNames}"></i>`;
+                html += `<i class="ph-fill ph-tag indicator-icon" style="color: ${tagColor}" title="${escapeAttr(tagNames)}"></i>`;
             } else {
-                html += `<i class="ph-fill ph-tags indicator-icon" style="color: var(--text-tertiary)" title="${tagNames}"></i>`;
+                html += `<i class="ph-fill ph-tags indicator-icon" style="color: var(--text-tertiary)" title="${escapeAttr(tagNames)}"></i>`;
             }
         }
         if (hasNote) {
@@ -815,7 +815,7 @@ function renderVerseMode(chapter, book) {
                             ${hasTags ? annotation.tags.map(tag => {
                                 const tagName = typeof tag === 'string' ? tag : tag.name;
                                 const tagColor = typeof tag === 'object' ? tag.color : knownTags[tagName.toLowerCase()] || '#ACE5CB';
-                                return `<span class="tag-item active" style="background: ${tagColor}" onclick="removeTag(${verse.number}, '${tagName}')">${tagName}</span>`;
+                                return `<span class="tag-item active" style="background: ${tagColor}" onclick="removeTag(${verse.number}, '${escapeAttr(tagName)}')">${escapeHtml(tagName)}</span>`;
                             }).join('') : '<span style="color: var(--text-tertiary); font-size: 0.8em;">No tags</span>'}
                         </div>
                     </div>
@@ -826,7 +826,7 @@ function renderVerseMode(chapter, book) {
                                 Object.entries(knownTags).map(([name, color]) => {
                                     const isActive = hasTags && annotation.tags.some(t => (typeof t === 'string' ? t : t.name).toLowerCase() === name.toLowerCase());
                                     if (isActive) return '';
-                                    return `<span class="tag-item" style="background: ${color}" onclick="addExistingTag(${verse.number}, '${name}', '${color}')">${name}</span>`;
+                                    return `<span class="tag-item" style="background: ${color}" onclick="addExistingTag(${verse.number}, '${escapeAttr(name)}', '${color}')">${escapeHtml(name)}</span>`;
                                 }).join('') || '<span style="color: var(--text-tertiary); font-size: 0.8em;">No saved tags</span>'
                             : '<span style="color: var(--text-tertiary); font-size: 0.8em;">No saved tags</span>'}
                         </div>
@@ -938,9 +938,9 @@ function displayChapter() {
             if (tags.length === 1) {
                 const tag = tags[0];
                 const tagColor = typeof tag === 'object' ? tag.color : (knownTags[tag.toLowerCase()] || '#ACE5CB');
-                html += `<i class="ph-fill ph-tag indicator-icon" style="color: ${tagColor}" title="${tagNames}"></i>`;
+                html += `<i class="ph-fill ph-tag indicator-icon" style="color: ${tagColor}" title="${escapeAttr(tagNames)}"></i>`;
             } else {
-                html += `<i class="ph-fill ph-tags indicator-icon" style="color: var(--text-tertiary)" title="${tagNames}"></i>`;
+                html += `<i class="ph-fill ph-tags indicator-icon" style="color: var(--text-tertiary)" title="${escapeAttr(tagNames)}"></i>`;
             }
         }
         if (hasNote) {
@@ -1010,7 +1010,7 @@ function displayChapter() {
                             ${hasTags ? annotation.tags.map(tag => {
                                 const tagName = typeof tag === 'string' ? tag : tag.name;
                                 const tagColor = typeof tag === 'object' ? tag.color : knownTags[tagName.toLowerCase()] || '#ACE5CB';
-                                return `<span class="tag-item active" style="background: ${tagColor}" onclick="removeTag(${verse.number}, '${tagName}')">${tagName}</span>`;
+                                return `<span class="tag-item active" style="background: ${tagColor}" onclick="removeTag(${verse.number}, '${escapeAttr(tagName)}')">${escapeHtml(tagName)}</span>`;
                             }).join('') : '<span style="color: var(--text-tertiary); font-size: 0.8em;">No tags</span>'}
                         </div>
                     </div>
@@ -1021,7 +1021,7 @@ function displayChapter() {
                                 Object.entries(knownTags).map(([name, color]) => {
                                     const isActive = hasTags && annotation.tags.some(t => (typeof t === 'string' ? t : t.name).toLowerCase() === name.toLowerCase());
                                     if (isActive) return '';
-                                    return `<span class="tag-item" style="background: ${color}" onclick="addExistingTag(${verse.number}, '${name}', '${color}')">${name}</span>`;
+                                    return `<span class="tag-item" style="background: ${color}" onclick="addExistingTag(${verse.number}, '${escapeAttr(name)}', '${color}')">${escapeHtml(name)}</span>`;
                                 }).join('') || '<span style="color: var(--text-tertiary); font-size: 0.8em;">No saved tags</span>'
                             : '<span style="color: var(--text-tertiary); font-size: 0.8em;">No saved tags</span>'}
                         </div>

@@ -75,7 +75,7 @@ async function handleAuth(e) {
             hideAuthModal();
         }
     } catch (error) {
-        messageEl.innerHTML = `<div class="error-message">${error.message}</div>`;
+        messageEl.innerHTML = `<div class="error-message">${escapeHtml(error.message)}</div>`;
     }
 }
 

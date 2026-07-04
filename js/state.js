@@ -32,7 +32,7 @@ let isNavigating = false;
 
 // Reading mode state
 let readingMode = 'verse'; // 'verse' or 'fluid'
-let verseNumberStyle = 'superscript'; // 'superscript', 'margin', or 'hidden'
+let verseNumberStyle = 'margin'; // 'superscript', 'margin', or 'hidden'
 
 // Sermon notes state
 let sermonViewMode = 'single'; // 'single', 'split'

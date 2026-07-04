@@ -8,7 +8,7 @@ const DEFAULT_PREFERENCES = {
     letterSpacing: 0,
     wordSpacing: 0,
     readingMode: 'verse',
-    verseNumberStyle: 'superscript',
+    verseNumberStyle: 'margin',
     annotationMode: 'on',
     bibleVersion: 'web'
 };

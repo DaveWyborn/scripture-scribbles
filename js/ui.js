@@ -91,7 +91,7 @@ function setReadingMode(mode) {
 }
 
 function loadVerseNumberStyle() {
-    const savedStyle = localStorage.getItem('verseNumberStyle') || 'superscript';
+    const savedStyle = localStorage.getItem('verseNumberStyle') || 'margin';
     verseNumberStyle = savedStyle;
     const select = document.getElementById('verse-number-style');
     if (select) select.value = savedStyle;
@@ -220,10 +220,10 @@ function renderSetList() {
     userAnnotationSets.forEach(setName => {
         const isActive = setName === currentAnnotationSet;
         html += `
-            <div class="set-item ${isActive ? 'active' : ''}" onclick="switchAnnotationSet('${setName}')">
-                <span class="set-item-name">${setName}</span>
+            <div class="set-item ${isActive ? 'active' : ''}" onclick="switchAnnotationSet('${escapeAttr(setName)}')">
+                <span class="set-item-name">${escapeHtml(setName)}</span>
                 <div class="set-item-actions" onclick="event.stopPropagation()">
-                    ${userAnnotationSets.length > 1 ? `<button onclick="deleteSet('${setName}')" title="Delete set"><i class="ph ph-trash"></i></button>` : ''}
+                    ${userAnnotationSets.length > 1 ? `<button onclick="deleteSet('${escapeAttr(setName)}')" title="Delete set"><i class="ph ph-trash"></i></button>` : ''}
                 </div>
             </div>
         `;
